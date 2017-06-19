@@ -5,6 +5,7 @@ set(F90_SRCS avmesh.f90)
 
 add_subdirectory (rev0)
 add_subdirectory (rev1)
+add_subdirectory (rev2)
 
 add_library (avmesh_shared SHARED ${CPP_SRCS} ${F90_SRCS})
 add_library (avmesh_static STATIC ${CPP_SRCS} ${F90_SRCS})

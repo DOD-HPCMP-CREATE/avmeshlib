@@ -11,6 +11,8 @@ using namespace std;
 #include "rev0/avmesh_rev0.h"
 #include "rev1/avmhdrs.h"
 #include "rev1/avmesh_rev1.h"
+#include "rev2/avmhdrs.h"
+#include "rev2/avmesh_rev2.h"
 
 static int file_counter=1;
 static char error_msg[AVM_STD_STRING_LENGTH] = "\0";
@@ -77,6 +79,21 @@ int avm_open(const char* filename, int* id)
       *id = file_counter++;
       return 0;
    }
+   else if (file_prefix->formatRevision == 2) {
+      avf->formatRevision = 2;
+      avf->rev2 = new rev2_avmesh_file;
+      avf->rev2->fp = fp;
+      avf->rev2->byte_swap = byte_swap;
+      avf->rev2->file_prefix = *file_prefix;
+      avf->rev2->filename = filename;
+      avf->rev2->file_prefix.formatRevision = 2;
+      if (rev2::avm_open(avf->rev2, id)) {
+         delete avf;
+         return 1;
+      }
+      *id = file_counter++;
+      return 0;
+   }
 
    delete file_prefix;
    avm_close(file_counter);
@@ -94,6 +111,10 @@ int avm_read_mesh_headers(int fileid)
 
    else if (avf->formatRevision == 1) {
       return rev1::avm_read_mesh_headers(avf->rev1);
+   }
+
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_read_mesh_headers(avf->rev2);
    }
 
    RETURN_ERROR("avm_read_mesh_headers: unsupported formatRevision in file");
@@ -123,6 +144,14 @@ int avm_new_file(int* id, const char* filename, int rev)
       *id = file_counter++;
       return 0;
    }
+   else if (rev == 2) {
+      avf->formatRevision = 2;
+      avf->rev2 = new rev2_avmesh_file;
+      avf->rev2->file_prefix.formatRevision = 2;
+      CHECK_RETURN(rev2::avm_new_file(avf->rev2, filename));
+      *id = file_counter++;
+      return 0;
+   }
    RETURN_ERROR("avm_new_file: unsupported rev");
 #undef CHECK_RETURN
 }
@@ -139,6 +168,10 @@ int avm_write_headers(int fileid)
    }
    else if (avf->formatRevision == 1) {
       CHECK_RETURN(rev1::avm_write_headers(avf->rev1));
+      return 0;
+   }
+   else if (avf->formatRevision == 2) {
+      CHECK_RETURN(rev2::avm_write_headers(avf->rev2));
       return 0;
    }
 
@@ -169,6 +202,9 @@ int avm_close(int fileid)
    else if (avf->formatRevision == 1) {
       if (avf->rev1->fp) fclose(avf->rev1->fp);
    }
+   else if (avf->formatRevision == 2) {
+      if (avf->rev2->fp) fclose(avf->rev2->fp);
+   }
 
    delete avf;
    file_list[fileid] = NULL;
@@ -188,6 +224,9 @@ int avm_select(int fileid, const char* section, int id)
    else if (avf->formatRevision == 1) {
       return rev1::avm_select(avf->rev1, section, id);
    }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_select(avf->rev2, section, id);
+   }
    RETURN_ERROR("avm_select: unsupported formatRevision in file");
 }
 
@@ -203,6 +242,9 @@ int avm_get_int(int fileid, const char* field, int* value)
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_get_int(avf->rev1, field, value);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_get_int(avf->rev2, field, value);
    }
 
    RETURN_ERROR("avm_get_int: unsupported formatRevision in file");
@@ -221,6 +263,9 @@ int avm_get_real(int fileid, const char* field, double* value)
    else if (avf->formatRevision == 1) {
       return rev1::avm_get_real(avf->rev1, field, value);
    }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_get_real(avf->rev2, field, value);
+   }
 
    RETURN_ERROR("avm_get_real: unsupported formatRevision in file");
 }
@@ -237,6 +282,9 @@ int avm_get_str(int fileid, const char* field, char* str, int len)
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_get_str(avf->rev1, field, str, len);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_get_str(avf->rev2, field, str, len);
    }
 
    RETURN_ERROR("avm_get_str: unsupported formatRevision in file");
@@ -255,6 +303,9 @@ int avm_get_int_array(int fileid, const char* field, int* values, int len)
    else if (avf->formatRevision == 1) {
       return rev1::avm_get_int_array(avf->rev1, field, values, len);
    }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_get_int_array(avf->rev2, field, values, len);
+   }
 
    RETURN_ERROR("avm_get_int_array: unsupported formatRevision in file");
 }
@@ -272,6 +323,9 @@ int avm_get_real_array(int fileid, const char* field, double* values, int len)
    else if (avf->formatRevision == 1) {
       return rev1::avm_get_real_array(avf->rev1, field, values, len);
    }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_get_real_array(avf->rev2, field, values, len);
+   }
 
    RETURN_ERROR("avm_get_real_array: unsupported formatRevision in file");
 }
@@ -288,6 +342,9 @@ int avm_set_int(int fileid, const char* field, int value)
    else if (avf->formatRevision == 1) {
       return rev1::avm_set_int(avf->rev1, field, value);
    }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_set_int(avf->rev2, field, value);
+   }
 
    RETURN_ERROR("avm_set_int: unsupported formatRevision in file");
 }
@@ -303,6 +360,9 @@ int avm_set_real(int fileid, const char* field, double value)
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_set_real(avf->rev1, field, value);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_set_real(avf->rev2, field, value);
    }
 
    RETURN_ERROR("avm_set_real: unsupported formatRevision in file");
@@ -321,6 +381,9 @@ int avm_set_str(int fileid, const char* field, const char* str, int len)
    else if (avf->formatRevision == 1) {
       return rev1::avm_set_str(avf->rev1, field, str, len);
    }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_set_str(avf->rev2, field, str, len);
+   }
 
    RETURN_ERROR("avm_set_str: unsupported formatRevision in file");
 }
@@ -338,6 +401,9 @@ int avm_set_int_array(int fileid, const char* field, const int* values, int len)
    else if (avf->formatRevision == 1) {
       return rev1::avm_set_int_array(avf->rev1, field, values, len);
    }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_set_int_array(avf->rev2, field, values, len);
+   }
 
    RETURN_ERROR("avm_set_int_array: unsupported formatRevision in file");
 }
@@ -354,6 +420,9 @@ int avm_set_real_array(int fileid, const char* field, const double* values, int 
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_set_real_array(avf->rev1, field, values, len);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_set_real_array(avf->rev2, field, values, len);
    }
 
    RETURN_ERROR("avm_set_real_array: unsupported formatRevision in file");
@@ -381,6 +450,9 @@ int avm_mesh_header_offset(int fileid, int mesh, off_t* offset)
    else if (avf->formatRevision == 1) {
       return rev1::avm_mesh_header_offset(avf->rev1, mesh, offset);
    }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_mesh_header_offset(avf->rev2, mesh, offset);
+   }
 
    RETURN_ERROR("avm_mesh_header_offset: unsupported formatRevision in file");
 }
@@ -397,6 +469,9 @@ int avm_mesh_data_offset(int fileid, int mesh, off_t* offset)
    else if (avf->formatRevision == 1) {
       return rev1::avm_mesh_data_offset(avf->rev1, mesh, offset);
    }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_mesh_data_offset(avf->rev2, mesh, offset);
+   }
 
    RETURN_ERROR("avm_mesh_data_offset: unsupported formatRevision in file");
 }
@@ -411,6 +486,9 @@ int avm_seek_to_mesh(int fileid, int mesh)
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_seek_to_mesh(avf->rev1, mesh);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_seek_to_mesh(avf->rev2, mesh);
    }
 
    RETURN_ERROR("avm_seek_to_mesh: unsupported formatRevision in file");
@@ -589,7 +667,7 @@ int avm_strand_read_r4(int fileid,
                          pointingVec, pointingVec_size,
                          xStrand,     xStrand_size);
    }
-   else if (avf->formatRevision == 1) {
+   else if (avf->formatRevision == 1 || avf->formatRevision == 2) {
       RETURN_ERROR("avm_strand_read_r4: This call is only supported in formatRevision 0");
    }
 
@@ -635,7 +713,7 @@ int avm_strand_read_r8(int fileid,
                          pointingVec, pointingVec_size,
                          xStrand,     xStrand_size);
    }
-   else if (avf->formatRevision == 1) {
+   else if (avf->formatRevision == 1 || avf->formatRevision == 2) {
       RETURN_ERROR("avm_strand_read_r8: This call is only supported in formatRevision 0");
    }
 
@@ -681,7 +759,7 @@ int avm_strand_write_r4(int fileid,
                          pointingVec, pointingVec_size,
                          xStrand,     xStrand_size);
    }
-   else if (avf->formatRevision == 1) {
+   else if (avf->formatRevision == 1 || avf->formatRevision == 2) {
       RETURN_ERROR("avm_strand_write_r4: This call is only supported in formatRevision 0");
    }
 
@@ -727,7 +805,7 @@ int avm_strand_write_r8(int fileid,
                          pointingVec, pointingVec_size,
                          xStrand,     xStrand_size);
    }
-   else if (avf->formatRevision == 1) {
+   else if (avf->formatRevision == 1 || avf->formatRevision == 2) {
       RETURN_ERROR("avm_strand_write_r8: This call is only supported in formatRevision 0");
    }
 
@@ -751,10 +829,18 @@ int avm_strand_read_nodes_r4(int fileid,
    if (!avf) RETURN_ERROR("avm_strand_read_nodes_r4: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_strand_read_nodes_r4: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_strand_read_nodes_r4: This call is only supported in formatRevision 1++");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_strand_read_nodes_r4(avf->rev1,
+                         xyz,         xyz_size,
+                         nodeID,      nodeID_size,
+                         nodeClip,    nodeClip_size,
+                         pointingVec, pointingVec_size,
+                         xStrand,     xStrand_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_strand_read_nodes_r4(avf->rev2,
                          xyz,         xyz_size,
                          nodeID,      nodeID_size,
                          nodeClip,    nodeClip_size,
@@ -782,10 +868,18 @@ int avm_strand_read_nodes_r8(int fileid,
    if (!avf) RETURN_ERROR("avm_strand_read_nodes_r8: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_strand_read_nodes_r8: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_strand_read_nodes_r8: This call is only supported in formatRevision 1++");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_strand_read_nodes_r8(avf->rev1,
+                         xyz,         xyz_size,
+                         nodeID,      nodeID_size,
+                         nodeClip,    nodeClip_size,
+                         pointingVec, pointingVec_size,
+                         xStrand,     xStrand_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_strand_read_nodes_r8(avf->rev2,
                          xyz,         xyz_size,
                          nodeID,      nodeID_size,
                          nodeClip,    nodeClip_size,
@@ -811,10 +905,17 @@ int avm_strand_read_faces(int fileid,
    if (!avf) RETURN_ERROR("avm_strand_read_faces: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_strand_read_faces: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_strand_read_faces: This call is only supported in formatRevision 1++");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_strand_read_faces(avf->rev1,
+                         triFaces,     triFaces_size,
+                         quadFaces,    quadFaces_size,
+                         polyFaces,    polyFaces_size,
+                         faceTag,     faceTag_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_strand_read_faces(avf->rev2,
                          triFaces,     triFaces_size,
                          quadFaces,    quadFaces_size,
                          polyFaces,    polyFaces_size,
@@ -835,10 +936,15 @@ int avm_strand_read_edges(int fileid,
    if (!avf) RETURN_ERROR("avm_strand_read_edges: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_strand_read_edges: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_strand_read_edges: This call is only supported in formatRevision 1++");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_strand_read_edges(avf->rev1,
+                         bndEdges,    bndEdges_size,
+                         edgeTag,     edgeTag_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_strand_read_edges(avf->rev2,
                          bndEdges,    bndEdges_size,
                          edgeTag,     edgeTag_size);
    }
@@ -859,10 +965,16 @@ int avm_strand_read_amr(int fileid,
    if (!avf) RETURN_ERROR("avm_strand_read_amr: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_strand_read_amr: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_strand_read_amr: This call is only supported in formatRevision 1++");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_strand_read_amr(avf->rev1,
+                      nodesOnGeometry,  nodesOnGeometry_size,
+                      edgesOnGeometry,  edgesOnGeometry_size,
+                      facesOnGeometry,  facesOnGeometry_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_strand_read_amr(avf->rev2,
                       nodesOnGeometry,  nodesOnGeometry_size,
                       edgesOnGeometry,  edgesOnGeometry_size,
                       facesOnGeometry,  facesOnGeometry_size);
@@ -888,10 +1000,18 @@ int avm_strand_write_nodes_r4(int fileid,
    if (!avf) RETURN_ERROR("avm_strand_write_nodes_r4: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_strand_write_nodes_r4: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_strand_write_nodes_r4: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_strand_write_nodes_r4(avf->rev1,
+                         xyz,         xyz_size,
+                         nodeID,      nodeID_size,
+                         nodeClip,    nodeClip_size,
+                         pointingVec, pointingVec_size,
+                         xStrand,     xStrand_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_strand_write_nodes_r4(avf->rev2,
                          xyz,         xyz_size,
                          nodeID,      nodeID_size,
                          nodeClip,    nodeClip_size,
@@ -919,10 +1039,18 @@ int avm_strand_write_nodes_r8(int fileid,
    if (!avf) RETURN_ERROR("avm_strand_write_nodes_r8: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_strand_write_nodes_r8: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_strand_write_nodes_r8: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_strand_write_nodes_r8(avf->rev1,
+                         xyz,         xyz_size,
+                         nodeID,      nodeID_size,
+                         nodeClip,    nodeClip_size,
+                         pointingVec, pointingVec_size,
+                         xStrand,     xStrand_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_strand_write_nodes_r8(avf->rev2,
                          xyz,         xyz_size,
                          nodeID,      nodeID_size,
                          nodeClip,    nodeClip_size,
@@ -948,10 +1076,17 @@ int avm_strand_write_faces(int fileid,
    if (!avf) RETURN_ERROR("avm_strand_write_faces: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_strand_write_faces: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_strand_write_faces: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_strand_write_faces(avf->rev1,
+                         triFaces,     triFaces_size,
+                         quadFaces,    quadFaces_size,
+                         polyFaces,    polyFaces_size,
+                         faceTag,     faceTag_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_strand_write_faces(avf->rev2,
                          triFaces,     triFaces_size,
                          quadFaces,    quadFaces_size,
                          polyFaces,    polyFaces_size,
@@ -972,10 +1107,15 @@ int avm_strand_write_edges(int fileid,
    if (!avf) RETURN_ERROR("avm_strand_write_edges: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_strand_write_edges: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_strand_write_edges: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_strand_write_edges(avf->rev1,
+                         bndEdges,    bndEdges_size,
+                         edgeTag,     edgeTag_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_strand_write_edges(avf->rev2,
                          bndEdges,    bndEdges_size,
                          edgeTag,     edgeTag_size);
    }
@@ -996,10 +1136,16 @@ int avm_strand_write_amr(int fileid,
    if (!avf) RETURN_ERROR("avm_strand_write_amr: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_strand_write_amr: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_strand_write_amr: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_strand_write_amr(avf->rev1,
+                      nodesOnGeometry,  nodesOnGeometry_size,
+                      edgesOnGeometry,  edgesOnGeometry_size,
+                      facesOnGeometry,  facesOnGeometry_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_strand_write_amr(avf->rev2,
                       nodesOnGeometry,  nodesOnGeometry_size,
                       edgesOnGeometry,  edgesOnGeometry_size,
                       facesOnGeometry,  facesOnGeometry_size);
@@ -1020,6 +1166,9 @@ int avm_unstruc_read_nodes_r4(int fileid, float* xyz, int xyz_size)
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_read_nodes_r4(avf->rev1, xyz, xyz_size);
    }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_read_nodes_r4(avf->rev2, xyz, xyz_size);
+   }
 
    RETURN_ERROR("avm_unstruc_read_nodes_r4: unsupported formatRevision in file");
 }
@@ -1036,6 +1185,9 @@ int avm_unstruc_read_nodes_r8(int fileid, double* xyz, int xyz_size)
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_read_nodes_r8(avf->rev1, xyz, xyz_size);
    }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_read_nodes_r8(avf->rev2, xyz, xyz_size);
+   }
 
    RETURN_ERROR("avm_unstruc_read_nodes_r8: unsupported formatRevision in file");
 }
@@ -1047,10 +1199,13 @@ int avm_unstruc_read_partial_nodes_r4(int fileid, float* xyz, int xyz_size, int 
    if (!avf) RETURN_ERROR("avm_unstruc_read_partial_nodes_r4: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_unstruc_read_partial_nodes_r4: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_unstruc_read_partial_nodes_r4: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_read_partial_nodes_r4(avf->rev1, xyz, xyz_size, start, end);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_read_partial_nodes_r4(avf->rev2, xyz, xyz_size, start, end);
    }
 
    RETURN_ERROR("avm_unstruc_read_partial_nodes_r4: unsupported formatRevision in file");
@@ -1063,10 +1218,13 @@ int avm_unstruc_read_partial_nodes_r8(int fileid, double* xyz, int xyz_size, int
    if (!avf) RETURN_ERROR("avm_unstruc_read_partial_nodes_r8: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_unstruc_read_partial_nodes_r8: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_unstruc_read_partial_nodes_r8: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_read_partial_nodes_r8(avf->rev1, xyz, xyz_size, start, end);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_read_partial_nodes_r8(avf->rev2, xyz, xyz_size, start, end);
    }
 
    RETURN_ERROR("avm_unstruc_read_partial_nodes_r8: unsupported formatRevision in file");
@@ -1097,6 +1255,12 @@ int avm_unstruc_read_faces(int fileid,
                                quadFaces, quadFaces_size,
                                polyFaces, polyFaces_size);
    }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_read_faces(avf->rev2, 
+                               triFaces,  triFaces_size,
+                               quadFaces, quadFaces_size,
+                               polyFaces, polyFaces_size);
+   }
 
    RETURN_ERROR("avm_unstruc_read_faces: unsupported formatRevision in file");
 }
@@ -1112,10 +1276,15 @@ int avm_unstruc_read_tri(int fileid,
    if (!avf) RETURN_ERROR("avm_unstruc_read_tri: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_unstruc_read_tri: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_unstruc_read_tri: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_read_tri(avf->rev1,
+                               triFaces,  triFaces_size,
+                               stride, start, end, flags);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_read_tri(avf->rev2,
                                triFaces,  triFaces_size,
                                stride, start, end, flags);
    }
@@ -1134,10 +1303,15 @@ int avm_unstruc_read_quad(int fileid,
    if (!avf) RETURN_ERROR("avm_unstruc_read_quad: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_unstruc_read_quad: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_unstruc_read_quad: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_read_quad(avf->rev1,
+                               quadFaces,  quadFaces_size,
+                               stride, start, end, flags);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_read_quad(avf->rev2,
                                quadFaces,  quadFaces_size,
                                stride, start, end, flags);
    }
@@ -1159,10 +1333,16 @@ int avm_unstruc_read_partial_faces(int fileid,
    if (!avf) RETURN_ERROR("avm_unstruc_read_partial_faces: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_unstruc_read_partial_faces: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_unstruc_read_partial_faces: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_read_partial_faces(avf->rev1,
+                               triFaces,  triFaces_size, triStart, triEnd,
+                               quadFaces, quadFaces_size, quadStart, quadEnd,
+                               polyFaces, polyFaces_size, polyStart, polyEnd);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_read_partial_faces(avf->rev2,
                                triFaces,  triFaces_size, triStart, triEnd,
                                quadFaces, quadFaces_size, quadStart, quadEnd,
                                polyFaces, polyFaces_size, polyStart, polyEnd);
@@ -1185,10 +1365,16 @@ int avm_unstruc_read_bnd_faces(int fileid,
    if (!avf) RETURN_ERROR("avm_unstruc_read_bnd_faces: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_unstruc_read_bnd_faces: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_unstruc_read_bnd_faces: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_read_bnd_faces(avf->rev1, 
+                                bndTriFaces,  bndTriFaces_size,
+                                bndQuadFaces, bndQuadFaces_size,
+                                bndPolyFaces, bndPolyFaces_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_read_bnd_faces(avf->rev2, 
                                 bndTriFaces,  bndTriFaces_size,
                                 bndQuadFaces, bndQuadFaces_size,
                                 bndPolyFaces, bndPolyFaces_size);
@@ -1212,10 +1398,17 @@ int avm_unstruc_read_cells(int fileid,
    if (!avf) RETURN_ERROR("avm_unstruc_read_cells: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_unstruc_read_cells: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_unstruc_read_cells: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_read_cells(avf->rev1, 
+                                hexCells, hexCells_size,
+                                tetCells, tetCells_size,
+                                priCells, priCells_size,
+                                pyrCells, pyrCells_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_read_cells(avf->rev2, 
                                 hexCells, hexCells_size,
                                 tetCells, tetCells_size,
                                 priCells, priCells_size,
@@ -1240,10 +1433,17 @@ int avm_unstruc_read_partial_cells(int fileid,
    if (!avf) RETURN_ERROR("avm_unstruc_read_partial_cells: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_unstruc_read_partial_cells: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_unstruc_read_partial_cells: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_read_partial_cells(avf->rev1, 
+                                hexCells,  hexCells_size,  hexStart,  hexEnd,
+                                tetCells,  tetCells_size,  tetStart,  tetEnd,
+                                priCells,  priCells_size,  priStart,  priEnd,
+                                pyrCells,  pyrCells_size,  pyrStart,  pyrEnd);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_read_partial_cells(avf->rev2, 
                                 hexCells,  hexCells_size,  hexStart,  hexEnd,
                                 tetCells,  tetCells_size,  tetStart,  tetEnd,
                                 priCells,  priCells_size,  priStart,  priEnd,
@@ -1261,10 +1461,13 @@ int avm_unstruc_read_edges(int fileid, int* edges, int edges_size)
    if (!avf) RETURN_ERROR("avm_unstruc_read_edges: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_unstruc_read_edges: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_unstruc_read_edges: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_read_edges(avf->rev1, edges, edges_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_read_edges(avf->rev2, edges, edges_size);
    }
 
    RETURN_ERROR("avm_unstruc_read_edges: unsupported formatRevision in file");
@@ -1283,10 +1486,16 @@ int avm_unstruc_read_amr(int fileid,
    if (!avf) RETURN_ERROR("avm_unstruc_read_amr: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_unstruc_read_amr: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_unstruc_read_amr: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_read_amr(avf->rev1,
+                      nodesOnGeometry,  nodesOnGeometry_size,
+                      edgesOnGeometry,  edgesOnGeometry_size,
+                      facesOnGeometry,  facesOnGeometry_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_read_amr(avf->rev2,
                       nodesOnGeometry,  nodesOnGeometry_size,
                       edgesOnGeometry,  edgesOnGeometry_size,
                       facesOnGeometry,  facesOnGeometry_size);
@@ -1310,10 +1519,17 @@ int avm_unstruc_read_amr_volumeids(int fileid,
    if (!avf) RETURN_ERROR("avm_unstruc_read_amr_volumeids: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_unstruc_read_amr_volumeids: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_unstruc_read_amr_volumeids: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_read_amr_volumeids(avf->rev1,
+                                     hexGeomIds, hexGeomIds_size,
+                                     tetGeomIds, tetGeomIds_size,
+                                     priGeomIds, priGeomIds_size,
+                                     pyrGeomIds, pyrGeomIds_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_read_amr_volumeids(avf->rev2,
                                      hexGeomIds, hexGeomIds_size,
                                      tetGeomIds, tetGeomIds_size,
                                      priGeomIds, priGeomIds_size,
@@ -1336,6 +1552,9 @@ int avm_unstruc_write_nodes_r4(int fileid, float* xyz, int xyz_size)
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_write_nodes_r4(avf->rev1, xyz, xyz_size);
    }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_write_nodes_r4(avf->rev2, xyz, xyz_size);
+   }
 
    RETURN_ERROR("avm_unstruc_write_nodes_r4: unsupported formatRevision in file");
 }
@@ -1352,6 +1571,9 @@ int avm_unstruc_write_nodes_r8(int fileid, double* xyz, int xyz_size)
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_write_nodes_r8(avf->rev1, xyz, xyz_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_write_nodes_r8(avf->rev2, xyz, xyz_size);
    }
 
    RETURN_ERROR("avm_unstruc_write_nodes_r8: unsupported formatRevision in file");
@@ -1382,6 +1604,12 @@ int avm_unstruc_write_faces(int fileid,
                                quadFaces, quadFaces_size,
                                polyFaces, polyFaces_size);
    }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_write_faces(avf->rev2, 
+                               triFaces,  triFaces_size,
+                               quadFaces, quadFaces_size,
+                               polyFaces, polyFaces_size);
+   }
 
    RETURN_ERROR("avm_unstruc_write_faces: unsupported formatRevision in file");
 }
@@ -1400,10 +1628,16 @@ int avm_unstruc_write_bnd_faces(int fileid,
    if (!avf) RETURN_ERROR("avm_unstruc_write_bnd_faces: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_unstruc_write_bnd_faces: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_unstruc_write_bnd_faces: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_write_bnd_faces(avf->rev1, 
+                               triFaces,  triFaces_size,
+                               quadFaces, quadFaces_size,
+                               polyFaces, polyFaces_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_write_bnd_faces(avf->rev2, 
                                triFaces,  triFaces_size,
                                quadFaces, quadFaces_size,
                                polyFaces, polyFaces_size);
@@ -1427,10 +1661,17 @@ int avm_unstruc_write_cells(int fileid,
    if (!avf) RETURN_ERROR("avm_unstruc_write_cells: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_unstruc_write_cells: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_unstruc_write_cells: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_write_cells(avf->rev1, 
+                                hexCells, hexCells_size,
+                                tetCells, tetCells_size,
+                                priCells, priCells_size,
+                                pyrCells, pyrCells_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_write_cells(avf->rev2, 
                                 hexCells, hexCells_size,
                                 tetCells, tetCells_size,
                                 priCells, priCells_size,
@@ -1448,10 +1689,13 @@ int avm_unstruc_write_edges(int fileid, int* edges, int edges_size)
    if (!avf) RETURN_ERROR("avm_unstruc_write_edges: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_unstruc_write_edges: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_unstruc_write_edges: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_write_edges(avf->rev1, edges, edges_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_write_edges(avf->rev2, edges, edges_size);
    }
 
    RETURN_ERROR("avm_unstruc_write_edges: unsupported formatRevision in file");
@@ -1470,10 +1714,16 @@ int avm_unstruc_write_amr(int fileid,
    if (!avf) RETURN_ERROR("avm_unstruc_write_amr: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_unstruc_write_amr: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_unstruc_write_amr: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_write_amr(avf->rev1,
+                      nodesOnGeometry,  nodesOnGeometry_size,
+                      edgesOnGeometry,  edgesOnGeometry_size,
+                      facesOnGeometry,  facesOnGeometry_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_write_amr(avf->rev2,
                       nodesOnGeometry,  nodesOnGeometry_size,
                       edgesOnGeometry,  edgesOnGeometry_size,
                       facesOnGeometry,  facesOnGeometry_size);
@@ -1497,10 +1747,17 @@ int avm_unstruc_write_amr_volumeids(int fileid,
    if (!avf) RETURN_ERROR("avm_unstruc_write_amr_volumeids: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      RETURN_ERROR("avm_unstruc_write_amr_volumeids: This call is only supported in formatRevision 1");
+      RETURN_ERROR("avm_unstruc_write_amr_volumeids: This call is only supported in formatRevision 1+");
    }
    else if (avf->formatRevision == 1) {
       return rev1::avm_unstruc_write_amr_volumeids(avf->rev1,
+                                     hexGeomIds, hexGeomIds_size,
+                                     tetGeomIds, tetGeomIds_size,
+                                     priGeomIds, priGeomIds_size,
+                                     pyrGeomIds, pyrGeomIds_size);
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_write_amr_volumeids(avf->rev2,
                                      hexGeomIds, hexGeomIds_size,
                                      tetGeomIds, tetGeomIds_size,
                                      priGeomIds, priGeomIds_size,

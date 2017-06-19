@@ -13,6 +13,10 @@
 #include "rev1/strand.h"
 #include "rev1/unstruc.h"
 
+#include "rev2/avmhdrs.h"
+#include "rev2/strand.h"
+#include "rev2/unstruc.h"
+
 #ifdef __cplusplus
 #include <string>
 #include <vector>
@@ -97,10 +101,35 @@ struct rev1_avmesh_file {
                  ENDIAN_BIG } write_endian;
 };
 
+struct rev2_avmesh_file {
+   FILE* fp;
+   std::string filename;
+   bool byte_swap;
+
+   file_id_prefix file_prefix;
+   rev2::file_header file_hdr;
+   std::string description;
+
+   std::vector<rev2::mesh_header> mesh_hdrs;
+
+   std::vector<rev2::strand_info> strand;
+   std::vector<rev2::unstruc_info> unstruc;
+
+   int selection_meshid;
+   int selection_patchid;
+   int selection_surfpatchid;
+   int selection_edgepatchid;
+
+   enum Endian { ENDIAN_NATIVE,
+                 ENDIAN_LITTLE,
+                 ENDIAN_BIG } write_endian;
+};
+
 struct avmesh_file {
    int formatRevision;
    rev0_avmesh_file* rev0;
    rev1_avmesh_file* rev1;
+   rev2_avmesh_file* rev2;
 };
 
 #endif /* AVMESH_FILE */
