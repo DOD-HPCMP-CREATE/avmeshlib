@@ -1,0 +1,39 @@
+PROJECT_NAME           = "AVMesh Format and Library"
+INPUT                  = @PROJECT_SOURCE_DIR@ \
+                         @PROJECT_SOURCE_DIR@/src \
+                         @PROJECT_SOURCE_DIR@/src/rev1 \
+                         @PROJECT_SOURCE_DIR@/src/rev0
+IMAGE_PATH             = @PROJECT_SOURCE_DIR@/doc
+FILE_PATTERNS          = INSTALL.txt README.txt \
+                         avmesh.cpp avmesh.h avmesh_file.cpp avmesh_file.h \
+                         avmhdrs.cpp avmhdrs.h \
+                         bfstruc.cpp bfstruc.h unstruc.cpp unstruc.h \
+                         cart.cpp cart.h strand.cpp strand.h \
+OUTPUT_DIRECTORY       = .
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_FILE_EXTENSION    = .html
+JAVADOC_AUTOBRIEF      = YES
+OPTIMIZE_OUTPUT_FOR_C  = YES
+QUIET                  = YES
+SORT_MEMBER_DOCS       = NO
+ALIASES                = fortran="\par Fortran Interface:\n"@code endfortran=@endcode \
+                         history="\par Modification History:\n"
+EXAMPLE_PATH           = @PROJECT_SOURCE_DIR@/src/rev1/test
+GENERATE_LATEX         = YES
+PDF_HYPERLINKS         = YES
+USE_PDFLATEX           = YES
+COMPACT_LATEX          = YES
+OPTIMIZE_FOR_FORTRAN   = YES
+EXTRACT_ALL            = YES
+#---------------------------------------------------------------------------
+# configuration options related to source browsing
+#---------------------------------------------------------------------------
+SOURCE_BROWSER         = NO
+INLINE_SOURCES         = NO
+STRIP_CODE_COMMENTS    = NO
+REFERENCED_BY_RELATION = YES
+REFERENCES_RELATION    = YES
+REFERENCES_LINK_SOURCE = YES
+USE_HTAGS              = NO
+VERBATIM_HEADERS       = YES

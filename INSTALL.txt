@@ -1,0 +1,104 @@
+/** @page install_guide Install Guide
+
+CMake (http://www.cmake.org/cmake/resources/software.html) is required to
+build avmeshlib.
+
+@section quick_start Quick Start
+
+<pre>
+   ./configure
+   make
+</pre>
+
+Run <code>./configure --help</code> for more options.
+
+@section configure_options Options
+
+<pre>
+   $ ./configure --help
+   Usage: ./configure
+      [--with-gnu]    Use GNU compilers
+      [--with-intel]  Use Intel compilers (default)
+      [--with-pg]     Use Portland Group compilers
+      [--prefix=$INSTALL_PATH]
+      [--test-big-endian] Run tests with byte swapping compiler flags
+      [--gtest-dir=$GTEST_PATH] Build unit tests with Google Test
+      [--enable-shared] Build shared library (.so)
+      [--enable-python] Build python bindings
+      [--debug]
+      [-v | --verbose]
+      [-h | --help]
+</pre>
+
+@section install Installation
+
+To install avmeshlib to a specific location use the
+<code>--prefix=/path/to/location</code> option then run <code>make
+install</code>. The following files are installed:
+
+<pre>
+   bin/avmesh2fvp3d - Tool to convert to Fieldview visualization
+   bin/over2avmesh - Tool to convert from Overflow2 files
+   include/avmesh.h - Header file
+   lib/libavmesh.a - Library file
+   share/avmesh/html - HTML Documentation
+   share/avmesh/avmesh.pdf - PDF Documentation
+</pre>
+
+@section unit_tests Unit Tests
+
+GoogleTest (http://code.google.com/p/googletest) is required to build the unit
+tests.
+
+To enable the built-in tests, pass <code>--gtest-dir</code> to <code>
+./configure</code> then run <code>make test</code>. Here is some sample output
+of the testing:
+
+<pre>
+   Running tests...
+   Test project /home/jcalahan/avmeshlib
+         Start  1: bfstruc_write_with_avmeshlib
+    1/18 Test  #1: bfstruc_write_with_avmeshlib .....   Passed    0.00 sec
+         Start  2: bfstruc_read_with_pure_fortran
+    2/18 Test  #2: bfstruc_read_with_pure_fortran ...   Passed    0.00 sec
+         Start  3: bfstruc_tests
+    3/18 Test  #3: bfstruc_tests ....................   Passed    0.01 sec
+         Start  4: unstruc_write_with_avmeshlib
+    4/18 Test  #4: unstruc_write_with_avmeshlib .....   Passed    0.00 sec
+         Start  5: unstruc_read_with_pure_fortran
+    5/18 Test  #5: unstruc_read_with_pure_fortran ...   Passed    0.00 sec
+         Start  6: unstruc_tests
+    6/18 Test  #6: unstruc_tests ....................   Passed    0.01 sec
+         Start  7: strand_write_with_avmeshlib
+    7/18 Test  #7: strand_write_with_avmeshlib ......   Passed    0.00 sec
+         Start  8: strand_read_with_pure_fortran
+    8/18 Test  #8: strand_read_with_pure_fortran ....   Passed    0.00 sec
+         Start  9: strand_tests
+    9/18 Test  #9: strand_tests .....................   Passed    0.01 sec
+         Start 10: cart_write_with_avmeshlib
+   10/18 Test #10: cart_write_with_avmeshlib ........   Passed    0.00 sec
+         Start 11: cart_read_with_pure_fortran
+   11/18 Test #11: cart_read_with_pure_fortran ......   Passed    0.00 sec
+         Start 12: cart_tests
+   12/18 Test #12: cart_tests .......................   Passed    0.01 sec
+         Start 13: mixed_write_with_pure_fortran
+   13/18 Test #13: mixed_write_with_pure_fortran ....   Passed    0.00 sec
+         Start 14: mixed_tests
+   14/18 Test #14: mixed_tests ......................   Passed    0.01 sec
+         Start 15: mixed_tests.py
+   15/18 Test #15: mixed_tests.py ...................   Passed    0.02 sec
+         Start 16: example_reader.c
+   16/18 Test #16: example_reader.c .................   Passed    0.00 sec
+         Start 17: example_reader.f90
+   17/18 Test #17: example_reader.f90 ...............   Passed    0.00 sec
+         Start 18: example_reader.py
+   18/18 Test #18: example_reader.py ................   Passed    0.02 sec
+
+   100% tests passed, 0 tests failed out of 18
+
+   Total Test time (real) =   0.12 sec
+</pre>
+
+@note CMake 2.8.1 or higher is required to use Portland Group compilers
+      (i.e., --with-pg).
+*/

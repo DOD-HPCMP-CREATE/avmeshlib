@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="17cm" height="37cm" viewBox="18 0 323 731" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <text style="fill: #000000;text-anchor:start;font-size:16.9333;font-family:sanserif;font-style:normal;font-weight:normal" x="20" y="16">
+    <tspan x="20" y="16">&lt;file header&gt;</tspan>
+  </text>
+  <g>
+    <rect style="fill: #e5e5e5" x="20" y="20" width="320" height="70"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="20" y="20" width="320" height="70"/>
+  </g>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="40" y="40">
+    <tspan x="40" y="40">file id prefix</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="40" y="60">
+    <tspan x="40" y="60">file meta data</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="40" y="80">
+    <tspan x="40" y="80">file description</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:16.9333;font-family:sanserif;font-style:normal;font-weight:normal" x="40" y="116">
+    <tspan x="40" y="116">&lt;mesh-1 header&gt;</tspan>
+  </text>
+  <g>
+    <rect style="fill: #e5e5e5" x="40" y="120" width="300" height="68"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="40" y="120" width="300" height="68"/>
+  </g>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="60" y="140">
+    <tspan x="60" y="140">mesh-1 generic meta data</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="60" y="160">
+    <tspan x="60" y="160">mesh-1 description</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="60" y="180">
+    <tspan x="60" y="180">mesh-1 format specific meta data</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:16.9333;font-family:sanserif;font-style:normal;font-weight:normal" x="40" y="216">
+    <tspan x="40" y="216">&lt;mesh-2 header&gt;</tspan>
+  </text>
+  <g>
+    <rect style="fill: #e5e5e5" x="40" y="220" width="300" height="72"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="40" y="220" width="300" height="72"/>
+  </g>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="60" y="240">
+    <tspan x="60" y="240">mesh-2 generic meta data</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="60" y="260">
+    <tspan x="60" y="260">mesh-2 description</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="60" y="280">
+    <tspan x="60" y="280">mesh-2 format specific meta data</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:16.9333;font-family:sanserif;font-style:normal;font-weight:normal" x="40" y="336">
+    <tspan x="40" y="336">&lt;mesh-n header&gt;</tspan>
+  </text>
+  <g>
+    <rect style="fill: #e5e5e5" x="40" y="340" width="300" height="72"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="40" y="340" width="300" height="72"/>
+  </g>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="60" y="360">
+    <tspan x="60" y="360">mesh-n generic meta data</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="60" y="380">
+    <tspan x="60" y="380">mesh-n description</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="60" y="400">
+    <tspan x="60" y="400">mesh-n format specific meta data</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:16.9333;font-family:sanserif;font-style:normal;font-weight:normal" x="40" y="316">
+    <tspan x="40" y="316">...</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:16.9333;font-family:sanserif;font-style:normal;font-weight:normal" x="40" y="446">
+    <tspan x="40" y="446">&lt;mesh-1 data&gt;</tspan>
+  </text>
+  <g>
+    <rect style="fill: #e5e5e5" x="40" y="450" width="300" height="70"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="40" y="450" width="300" height="70"/>
+  </g>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="60" y="470">
+    <tspan x="60" y="470">mesh-1 data</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="60" y="490">
+    <tspan x="60" y="490">...</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:16.9333;font-family:sanserif;font-style:normal;font-weight:normal" x="40" y="546">
+    <tspan x="40" y="546">&lt;mesh-2 data&gt;</tspan>
+  </text>
+  <g>
+    <rect style="fill: #e5e5e5" x="40" y="550" width="300" height="70"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="40" y="550" width="300" height="70"/>
+  </g>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="60" y="570">
+    <tspan x="60" y="570">mesh-2 data</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:16.9333;font-family:sanserif;font-style:normal;font-weight:normal" x="40" y="656">
+    <tspan x="40" y="656">&lt;mesh-n data&gt;</tspan>
+  </text>
+  <g>
+    <rect style="fill: #e5e5e5" x="40" y="660" width="300" height="70"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="40" y="660" width="300" height="70"/>
+  </g>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="60" y="680">
+    <tspan x="60" y="680">mesh-n data</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="60" y="700">
+    <tspan x="60" y="700">...</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:16.9333;font-family:sanserif;font-style:normal;font-weight:normal" x="40" y="636">
+    <tspan x="40" y="636">...</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="60" y="510">
+    <tspan x="60" y="510">...</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="60" y="590">
+    <tspan x="60" y="590">...</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="60" y="610">
+    <tspan x="60" y="610">...</tspan>
+  </text>
+  <text style="fill: #000000;text-anchor:start;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="60" y="720">
+    <tspan x="60" y="720">...</tspan>
+  </text>
+</svg>

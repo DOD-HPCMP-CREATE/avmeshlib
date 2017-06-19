@@ -1,0 +1,150 @@
+#!/bin/sh
+
+SOURCE_DIR=$(dirname $(readlink -f $0))
+
+# Default to Intel compilers
+CC="icc"
+CXX="icpc"
+FC="ifort"
+CCFLAGS="-vec-report0"
+CXXFLAGS="-vec-report0"
+FCFLAGS="-align sequence -vec-report0"
+CC_DEBUG_FLAGS=""
+CXX_DEBUG_FLAGS=""
+FC_DEBUG_FLAGS=""
+
+prefix=$PWD
+test_bigendian=FALSE
+gtest_dir=""
+help=FALSE
+verbose=FALSE
+shared=FALSE
+python=FALSE
+ac_prev=
+for ac_option
+do
+  # If the previous option needs an argument, assign it.
+  if test -n "$ac_prev"; then
+    eval "$ac_prev=\$ac_option"
+    ac_prev=
+    continue
+  fi
+
+  ac_optarg=`expr "x$ac_option" : 'x[^=]*=\(.*\)'`
+
+  case $ac_option in
+
+  --with-gnu)
+CC="gcc"
+CXX="g++"
+FC="gfortran"
+CCFLAGS=""
+CXXFLAGS=""
+FCFLAGS=""
+;;
+
+  --with-pg)
+CC="pgcc"
+CXX="pgCC"
+FC="pgf90"
+CCFLAGS=""
+CXXFLAGS=""
+FCFLAGS=""
+;;
+
+  --with-intel)
+CC="icc"
+CXX="icpc"
+FC="ifort"
+CCFLAGS="-vec-report0"
+CXXFLAGS="-vec-report0"
+FCFLAGS="-align sequence -vec-report0"
+;;
+
+  --debug | -debug)
+CC_DEBUG_FLAGS="-O0 -g"
+CXX_DEBUG_FLAGS="-O0 -g"
+FC_DEBUG_FLAGS="-O0 -g"
+;;
+
+  --test-bigendian)
+    test_bigendian=TRUE ;;
+
+  --build-unittests)
+    build_unittests=TRUE ;;
+
+  -h | -help | --help)
+    help=TRUE ;;
+
+  -prefix | --prefix)
+    ac_prev=prefix ;;
+  -prefix=* | --prefix=*)
+    prefix=$ac_optarg ;;
+
+  -gtest-dir | --gtest-dir)
+    ac_prev=gtest_dir ;;
+  -gtest-dir=* | --gtest-dir=*)
+    gtest_dir=$ac_optarg ;;
+
+  -v | -verbose | --verbose)
+    verbose=TRUE ;;
+
+  --enable-shared)
+    shared=TRUE ;;
+
+  --enable-python)
+    python=TRUE ;;
+
+  -*) { echo "$as_me: error: unrecognized option: $ac_option
+Try \`$0 --help' for more information." >&2
+   { (exit 1); exit 1; }; }
+    ;;
+
+  esac
+done
+
+# Be sure to have absolute path
+case $prefix in
+ [\\/$]* | ?:[\\/]* | NONE | '' ) ;;
+ *)  { echo "$as_me: error: expected an absolute directory name for --prefix: $prefix" >&2
+{ (exit 1); exit 1; }; };;
+esac
+
+if [ "xTRUE" = "x$help" ]; then
+   echo "Usage: ./configure"
+   echo "   [--with-gnu]    Use GNU compilers"
+   echo "   [--with-intel]  Use Intel compilers (default)"
+   echo "   [--with-pg]     Use Portland Group compilers"
+   echo "   [--prefix=\$INSTALL_PATH]"
+   echo "   [--test-bigendian] Run tests with big endian swapping"
+   echo "   [--gtest-dir=\$GTEST_PATH] Build unit tests with Google Test"
+   echo "   [--enable-shared] Build shared library (.so)"
+   echo "   [--enable-python] Build python bindings"
+   echo "   [--debug]"
+   echo "   [-v | --verbose]"
+   echo "   [-h | --help]"
+   exit
+fi
+
+if [ "xTRUE" = "x$test_bigendian" ]; then
+case $FC in
+  gfortran) FCFLAGS="$FCFLAGS -fconvert=big-endian" ;;
+  pgf90) FCFLAGS="$FCFLAGS -byteswapio" ;;
+  ifort) FCFLAGS="$FCFLAGS -convert big_endian" ;;
+esac
+fi
+
+cmake \
+   -DBUILD_SHARED_LIBS:BOOL="$shared" \
+   -DENABLE_PYTHON:BOOL="$python" \
+   -DCMAKE_VERBOSE_MAKEFILE:BOOL="$verbose" \
+   -DCMAKE_C_COMPILER:FILEPATH="$CC" \
+   -DCMAKE_C_FLAGS:STRING="$CCFLAGS $CC_DEBUG_FLAGS" \
+   -DCMAKE_CXX_COMPILER:FILEPATH="$CXX" \
+   -DCMAKE_CXX_FLAGS:STRING="$CXXFLAGS $CXX_DEBUG_FLAGS" \
+   -DCMAKE_Fortran_COMPILER:FILEPATH="$FC" \
+   -DCMAKE_Fortran_FLAGS:STRING="$FCFLAGS $FC_DEBUG_FLAGS" \
+   -DCMAKE_INSTALL_PREFIX:PATH="$prefix" \
+   -DGTEST_DIR:PATH="$gtest_dir" \
+   -DTEST_BIGENDIAN:BOOL="$test_bigendian" \
+   $SOURCE_DIR
