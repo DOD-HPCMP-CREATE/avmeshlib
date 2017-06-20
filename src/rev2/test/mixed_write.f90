@@ -485,15 +485,22 @@ program mixed_write
    open(unit=10, file=filename, access='stream', form='unformatted')
 
    call avm_write_file_header(10, file_hdr, file_description) 
+   write(6,'(A)')  'wrote file header '
 
    call avm_write_mesh_header(10, mesh_hdrs(1))
+   write(6,'(A)')  'wrote mesh header '
    call avm_write_strand_header(10, strandHeader, strandSurfPatch, strandEdgePatch)
+   write(6,'(A)')  'wrote strand header '
 
    call avm_write_mesh_header(10, mesh_hdrs(2))
+   write(6,'(A)')  'wrote mesh header '
    call avm_write_unstruc_header(10, unstruc_hdr, unstruc_patchhdrs)
+   write(6,'(A)')  'wrote unstruc header '
 
    call write_strand_mesh()
+   write(6,'(A)')  'wrote strand mesh'
    call write_unstruc_mesh()
+   write(6,'(A)')  'wrote unstruc mesh'
 
    close(10)
 
@@ -505,16 +512,16 @@ subroutine init_strand_mesh
    implicit none
    integer :: i
 
-   mesh_hdrs(2)%meshName                   = 'two'
-   mesh_hdrs(2)%meshType                   = 'strand'
-   mesh_hdrs(2)%meshGenerator              = 'mixed_write'
-   mesh_hdrs(2)%coordinateSystem           = 'xByUzL'
-   mesh_hdrs(2)%modelScale                 = 1.0
-   mesh_hdrs(2)%gridUnits                  = 'm'
-   mesh_hdrs(2)%referenceLength            = 1.0
-   mesh_hdrs(2)%referenceArea            = 1.0
-   mesh_hdrs(2)%referencePoint(:)          = (/4.0,5.0,6.0/)
-   mesh_hdrs(2)%referencePointDescription = 'origin'
+   mesh_hdrs(1)%meshName                   = 'two'
+   mesh_hdrs(1)%meshType                   = 'strand'
+   mesh_hdrs(1)%meshGenerator              = 'mixed_write'
+   mesh_hdrs(1)%coordinateSystem           = 'xByUzL'
+   mesh_hdrs(1)%modelScale                 = 1.0
+   mesh_hdrs(1)%gridUnits                  = 'm'
+   mesh_hdrs(1)%referenceLength            = 1.0
+   mesh_hdrs(1)%referenceArea            = 1.0
+   mesh_hdrs(1)%referencePoint(:)          = (/4.0,5.0,6.0/)
+   mesh_hdrs(1)%referencePointDescription = 'origin'
    mesh_hdrs(1)%meshDescription = 'A nonsensical strand mesh that just demonstrates the format.'
 
    strandHeader%surfaceOnly        = 0 ! FALSE
@@ -556,17 +563,17 @@ subroutine init_unstruc_mesh
    implicit none
    integer :: j
 
-   mesh_hdrs(3)%meshName = 'three'
-   mesh_hdrs(3)%meshType = 'unstruc'
-   mesh_hdrs(3)%meshGenerator = 'mixed_write'
-   mesh_hdrs(3)%coordinateSystem = 'xByUzL'
-   mesh_hdrs(3)%modelScale = 1.0
-   mesh_hdrs(3)%gridUnits = 'in'
-   mesh_hdrs(3)%referenceLength = 1.0
-   mesh_hdrs(3)%referenceArea = 1.0
-   mesh_hdrs(3)%referencePoint(:) = (/7.0,8.0,9.0/)
-   mesh_hdrs(3)%referencePointDescription = 'origin'
-   mesh_hdrs(1)%meshDescription = 'A nonsensical unstruc mesh that just demonstrates the format.'
+   mesh_hdrs(2)%meshName = 'three'
+   mesh_hdrs(2)%meshType = 'unstruc'
+   mesh_hdrs(2)%meshGenerator = 'mixed_write'
+   mesh_hdrs(2)%coordinateSystem = 'xByUzL'
+   mesh_hdrs(2)%modelScale = 1.0
+   mesh_hdrs(2)%gridUnits = 'in'
+   mesh_hdrs(2)%referenceLength = 1.0
+   mesh_hdrs(2)%referenceArea = 1.0
+   mesh_hdrs(2)%referencePoint(:) = (/7.0,8.0,9.0/)
+   mesh_hdrs(2)%referencePointDescription = 'origin'
+   mesh_hdrs(2)%meshDescription = 'A nonsensical unstruc mesh that just demonstrates the format.'
 
    unstruc_hdr%nNodes = 12
    unstruc_hdr%nFaces = 17

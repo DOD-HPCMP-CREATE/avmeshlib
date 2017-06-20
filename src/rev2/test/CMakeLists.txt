@@ -63,22 +63,22 @@ endif (BUILD_UNIT_TESTS)
 
 # pure fortran write tests
 if (SUPPORTED_COMPILER)
-   add_test (rev2_unstruc_write_with_pure_fortran unstruc_write_ftn.exe)
+   add_test (rev2_unstruc_write_with_pure_fortran rev2_unstruc_write_ftn.exe)
    set_tests_properties (rev2_unstruc_write_with_pure_fortran
    PROPERTIES PASS_REGULAR_EXPRESSION "Successfully wrote")
 
-   add_test (rev2_unstruc_read_test1 unstruc_read.exe)
+   add_test (rev2_unstruc_read_test1 rev2_unstruc_read.exe)
    set_tests_properties (rev2_unstruc_read_test1
    PROPERTIES PASS_REGULAR_EXPRESSION "Successfully read"
    DEPENDS rev2_unstruc_write_with_pure_fortran)
 
-   add_test (rev2_unstruc_read_bnd_test1 unstruc_read_bnd.exe)
+   add_test (rev2_unstruc_read_bnd_test1 rev2_unstruc_read_bnd.exe)
    set_tests_properties (rev2_unstruc_read_bnd_test1
    PROPERTIES PASS_REGULAR_EXPRESSION "Successfully read"
    DEPENDS rev2_unstruc_write_with_pure_fortran)
 
    if (BUILD_UNIT_TESTS)
-      add_test (rev2_unstruc_tests_with_fortran_written_file unstruc_tests.exe)
+      add_test (rev2_unstruc_tests_with_fortran_written_file rev2_unstruc_tests.exe)
       set_tests_properties(rev2_unstruc_tests_with_fortran_written_file
       PROPERTIES DEPENDS rev2_unstruc_write_with_pure_fortran)
    endif (BUILD_UNIT_TESTS)
@@ -91,17 +91,17 @@ if (SUPPORTED_COMPILER)
 endif (SUPPORTED_COMPILER)
 
 # avmeshlib write tests
-add_test (rev2_unstruc_write_with_avmeshlib unstruc_write_avm.exe ${WRITE_ENDIAN})
+add_test (rev2_unstruc_write_with_avmeshlib rev2_unstruc_write_avm.exe ${WRITE_ENDIAN})
 set_tests_properties (rev2_unstruc_write_with_avmeshlib
 PROPERTIES PASS_REGULAR_EXPRESSION "Successfully wrote")
 
 if (TEST_NATIVE_FORTRAN_READ)
-   add_test (rev2_unstruc_read_test2 unstruc_read.exe)
+   add_test (rev2_unstruc_read_test2 rev2_unstruc_read.exe)
    set_tests_properties (rev2_unstruc_read_test2
    PROPERTIES PASS_REGULAR_EXPRESSION "Successfully read"
    DEPENDS rev2_unstruc_write_with_avmeshlib)
 
-   add_test (rev2_unstruc_read_bnd_test2 unstruc_read_bnd.exe)
+   add_test (rev2_unstruc_read_bnd_test2 rev2_unstruc_read_bnd.exe)
    set_tests_properties (rev2_unstruc_read_bnd_test2
    PROPERTIES PASS_REGULAR_EXPRESSION "Successfully read"
    DEPENDS rev2_unstruc_write_with_avmeshlib)
@@ -109,7 +109,7 @@ if (TEST_NATIVE_FORTRAN_READ)
 endif (TEST_NATIVE_FORTRAN_READ)
 
 if (BUILD_UNIT_TESTS)
-   add_test (rev2_unstruc_tests_with_avmeshlib_written_file unstruc_tests.exe)
+   add_test (rev2_unstruc_tests_with_avmeshlib_written_file rev2_unstruc_tests.exe)
    set_tests_properties(rev2_unstruc_tests_with_avmeshlib_written_file
    PROPERTIES DEPENDS rev2_unstruc_write_with_avmeshlib)
 endif (BUILD_UNIT_TESTS)
@@ -120,11 +120,11 @@ if (ENABLE_PYTHON)
    PROPERTIES DEPENDS rev2_unstruc_write_with_avmeshlib)
 endif (ENABLE_PYTHON)
 
-add_test (rev2_unstruc_write_out_of_order unstruc_write_out_of_order.exe ${WRITE_ENDIAN})
+add_test (rev2_unstruc_write_out_of_order rev2_unstruc_write_out_of_order.exe ${WRITE_ENDIAN})
 set_tests_properties (rev2_unstruc_write_out_of_order
 PROPERTIES PASS_REGULAR_EXPRESSION "Successfully wrote")
 
-add_test (rev2_unstruc_read_out_of_order unstruc_read_out_of_order.exe)
+add_test (rev2_unstruc_read_out_of_order rev2_unstruc_read_out_of_order.exe)
 set_tests_properties (rev2_unstruc_read_out_of_order
 PROPERTIES PASS_REGULAR_EXPRESSION "Successfully read"
 DEPENDS rev2_unstruc_write_out_of_order)
@@ -140,12 +140,12 @@ PROPERTIES LINKER_LANGUAGE Fortran)
 
 add_executable (rev2_strand_read.exe strand_read.f90)
 
-add_test (rev2_strand_write_with_avmeshlib strand_write.exe ${WRITE_ENDIAN})
+add_test (rev2_strand_write_with_avmeshlib rev2_strand_write.exe ${WRITE_ENDIAN})
 set_tests_properties (rev2_strand_write_with_avmeshlib
 PROPERTIES PASS_REGULAR_EXPRESSION "Successfully wrote")
 
 if (TEST_NATIVE_FORTRAN_READ)
-   add_test (rev2_strand_read_with_pure_fortran strand_read.exe)
+   add_test (rev2_strand_read_with_pure_fortran rev2_strand_read.exe)
    set_tests_properties (rev2_strand_read_with_pure_fortran
    PROPERTIES PASS_REGULAR_EXPRESSION "Successfully read"
    DEPENDS rev2_strand_write_with_avmeshlib)
@@ -155,7 +155,7 @@ if (BUILD_UNIT_TESTS)
    add_executable (rev2_strand_tests.exe strand_tests.cpp)
    target_link_libraries (rev2_strand_tests.exe avmesh_shared
                           gtest gtest_main pthread)
-   add_test (rev2_strand_tests strand_tests.exe)
+   add_test (rev2_strand_tests rev2_strand_tests.exe)
    set_tests_properties(rev2_strand_tests
    PROPERTIES DEPENDS rev2_strand_write_with_avmeshlib)
 endif (BUILD_UNIT_TESTS)
@@ -166,7 +166,7 @@ endif (BUILD_UNIT_TESTS)
 
 if (SUPPORTED_COMPILER)
    add_executable (rev2_mixed_write.exe mixed_write.f90)
-   add_test (rev2_mixed_write_with_pure_fortran mixed_write.exe)
+   add_test (rev2_mixed_write_with_pure_fortran rev2_mixed_write.exe)
    target_link_libraries (rev2_mixed_write.exe avmesh_shared)
    set_target_properties (rev2_mixed_write.exe
    PROPERTIES LINKER_LANGUAGE Fortran)
@@ -177,7 +177,7 @@ if (SUPPORTED_COMPILER)
       add_executable (rev2_mixed_tests.exe mixed_tests.cpp)
       target_link_libraries (rev2_mixed_tests.exe avmesh_shared
                              gtest gtest_main pthread)
-      add_test (rev2_mixed_tests mixed_tests.exe)
+      add_test (rev2_mixed_tests rev2_mixed_tests.exe)
       set_tests_properties(rev2_mixed_tests
       PROPERTIES DEPENDS rev2_mixed_write_with_pure_fortran)
    endif (BUILD_UNIT_TESTS)
@@ -199,7 +199,7 @@ endif (SUPPORTED_COMPILER)
 add_executable (rev2_example_reader_c.exe example_reader.c)
 target_link_libraries (rev2_example_reader_c.exe avmesh_shared)
 if (SUPPORTED_COMPILER)
-add_test (rev2_example_reader.c example_reader_c.exe)
+add_test (rev2_example_reader.c rev2_example_reader_c.exe)
 set_tests_properties (rev2_example_reader.c
 PROPERTIES PASS_REGULAR_EXPRESSION
 "Mesh Count is 2"
@@ -211,7 +211,7 @@ target_link_libraries (rev2_example_reader_f90.exe avmesh_shared)
 set_target_properties (rev2_example_reader_f90.exe
 PROPERTIES LINKER_LANGUAGE Fortran)
 if (SUPPORTED_COMPILER)
-add_test (rev2_example_reader.f90 example_reader_f90.exe)
+add_test (rev2_example_reader.f90 rev2_example_reader_f90.exe)
 set_tests_properties (rev2_example_reader.f90
 PROPERTIES PASS_REGULAR_EXPRESSION
 "Mesh Count is 2"
@@ -230,7 +230,7 @@ endif (SUPPORTED_COMPILER)
 add_executable (rev2_example_offset.exe example_offset.c)
 target_link_libraries (rev2_example_offset.exe avmesh_shared)
 if (SUPPORTED_COMPILER)
-add_test (rev2_example_offset.c example_offset.exe mixed.avm)
+add_test (rev2_example_offset.c rev2_example_offset.exe mixed.avm)
 set_tests_properties (rev2_example_offset.c
 PROPERTIES PASS_REGULAR_EXPRESSION
 "File size is 13754"
