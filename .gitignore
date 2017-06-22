@@ -1,0 +1,15 @@
+*.mod
+*.exe
+CMakeFiles
+*.cmake
+CMakeCache.txt
+Makefile
+*.so
+*.a
+Testing
+*.swp
+*.pyc
+*.pyo
+*.avm
+src/avmeshlib.py
+src/avmeshlibPYTHON_wrap.c
