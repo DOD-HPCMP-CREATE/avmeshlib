@@ -186,6 +186,10 @@ if (SUPPORTED_COMPILER)
       add_test (rev2_mixed_tests.py python mixed_tests.py)
       set_tests_properties(rev2_mixed_tests.py
       PROPERTIES DEPENDS rev2_mixed_write_with_pure_fortran)
+
+      add_test (rev2_mesh_size_tests.py python mesh_size_tests.py)
+      set_tests_properties(rev2_mesh_size_tests.py
+      PROPERTIES DEPENDS rev2_example_offset.exe)
    endif (ENABLE_PYTHON)
 endif (SUPPORTED_COMPILER)
 
@@ -229,13 +233,6 @@ endif (SUPPORTED_COMPILER)
 
 add_executable (rev2_example_offset.exe example_offset.c)
 target_link_libraries (rev2_example_offset.exe avmesh_shared)
-if (SUPPORTED_COMPILER)
-add_test (rev2_example_offset.c rev2_example_offset.exe mixed.avm)
-set_tests_properties (rev2_example_offset.c
-PROPERTIES PASS_REGULAR_EXPRESSION
-"File size is 13754"
-DEPENDS rev2_mixed_write_with_pure_fortran)
-endif (SUPPORTED_COMPILER)
 
 add_executable (rev2_print_descriptions.exe print_descriptions.cpp)
 target_link_libraries (rev2_print_descriptions.exe avmesh_shared)
