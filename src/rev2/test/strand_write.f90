@@ -5,8 +5,8 @@ program strand_write
                          nNodes=6, nStrands=8, nTriFaces=2, nQuadFaces=1, &
                          nPolyFaces=1, polyFacesSize=10, &
                          nBndEdges=6, nPtsPerStrand=4
-   real*8 :: value, refPt(3)
-   integer :: avmid, istat, k, n, m, avmeshRev=1
+   real*8 :: value, refPt(3), refLength(3)
+   integer :: avmid, istat, k, n, m, avmeshRev=2
    character*256 :: str
 
    integer,dimension(3,nTriFaces)            :: triFaces
@@ -39,6 +39,7 @@ program strand_write
    call avm_set_strf(avmid, 'AVM_WRITE_ENDIAN', write_endian, istat)
    if (istat.ne.0) stop 'ERROR: avm_set_str("AVM_WRITE_ENDIAN")'
 
+   refLength(:) = (/1.0,1.0,1.0/)
    refPt(:) = (/0.0,0.0,0.0/)
 
    call avm_selectf(avmid, 'header', 0, istat)
@@ -61,7 +62,7 @@ program strand_write
       call avm_set_strf(avmid, 'coordinateSystem', 'xByUzL', istat)
       call avm_set_realf(avmid, 'modelScale', 1.0d0, istat)
       call avm_set_strf(avmid, 'gridUnits', 'm', istat)
-      call avm_set_realf(avmid, 'referenceLength', 1.0d0, istat)
+      call avm_set_real_arrayf(avmid, 'referenceLength', refLength, 3, istat)
       call avm_set_realf(avmid, 'referenceArea', 1.0d0, istat)
       call avm_set_real_arrayf(avmid, 'referencePoint', refPt, 3, istat)
       call avm_set_strf(avmid, 'referencePointDescription', 'origin', istat)

@@ -22,7 +22,7 @@ program unstruc_read
    character(128) :: coordinateSystem
    real(8)        :: modelScale
    character(128) :: gridUnits
-   real(8)        :: referenceLength
+   real(8)        :: referenceLength(3)
    real(8)        :: referenceArea
    real(8)        :: referencePoint(3)
    character(128) :: referencePointDescription
@@ -161,7 +161,7 @@ program unstruc_read
          call exit(1)
       end if
 
-      if (formatRevision /= 1) then
+      if (formatRevision /= 2) then
          print '(A)', 'formatRevision incorrect, exiting'
          call exit(1)
       end if

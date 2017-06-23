@@ -17,7 +17,7 @@ The first 14 bytes of a AVMesh File are:
 <pre>    
    AVMESH (AVMesh id character sequence)
    1      (AVMesh id integer)
-   0      (AVMesh format revision)
+   2      (AVMesh format revision)
 </pre>
 
 For additional details see @ref file_id_prefix_t.
@@ -46,7 +46,7 @@ Here is the generic mesh header:
    coordinateSystem          
    modelScale                
    gridUnits                 
-   referenceLength           
+   referenceLength(3)
    referenceArea
    referencePoint(3)        
    referencePointDescription
@@ -109,7 +109,7 @@ xFyRzD --- traditional S&C system
 /*! Description of units of the mesh */
    char gridUnits[128];
 /*! Reference length for Reynolds number */
-   double referenceLength;
+   double referenceLength[3];
 /*! Reference area for force/moment calculation */
    double referenceArea;
 /*! XYZ coordinate of the reference point */

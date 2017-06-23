@@ -22,7 +22,7 @@ program unstruc_write
    character(128) :: coordinateSystem
    real(8)        :: modelScale
    character(128) :: gridUnits
-   real(8)        :: referenceLength
+   real(8)        :: referenceLength(3)
    real(8)        :: referenceArea
    real(8)        :: referencePoint(3)
    character(128) :: referencePointDescription
@@ -91,7 +91,7 @@ program unstruc_write
 
     magicString = 'AVMESH'
     magicNumber = 1
-    formatRevision = 1
+    formatRevision = 2
     meshCount = 1
     contactInfo = 'David McDaniel'
     precision = 2
@@ -120,7 +120,7 @@ program unstruc_write
        coordinateSystem = 'xByUzL'
        modelScale = 1.0d0
        gridUnits = 'in'
-       referenceLength = 1.0d0
+       referenceLength = (/1.0d0,1.0d0,1.0d0/)
        referenceArea = 1.0d0
        referencePoint = (/0.0,0.0,0.0/)
        referencePointDescription = 'origin'

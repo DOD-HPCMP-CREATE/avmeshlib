@@ -28,7 +28,7 @@ class TestAVM(unittest.TestCase):
 
       err, i = AVM.get_int(self.avmid, 'formatRevision')
       self.assertEqual(0, err)
-      self.assertEqual(1, i)
+      self.assertEqual(2, i)
 
       err, i = AVM.get_int(self.avmid, 'meshCount')
       self.assertEqual(0, err)
@@ -86,15 +86,17 @@ class TestAVM(unittest.TestCase):
          self.assertEqual(0, err)
          self.assertEqual('in', s)
 
-         err, r = AVM.get_real(self.avmid, 'referenceLength')
+         vec3 = AVM.r8Array(3)
+         err = AVM.get_real_array(self.avmid, 'referenceLength', vec3, 3)
          self.assertEqual(0, err)
-         self.assertEqual(1.0, r)
+         self.assertEqual(1.0, vec3[0])
+         self.assertEqual(1.0, vec3[1])
+         self.assertEqual(1.0, vec3[2])
 
          err, r = AVM.get_real(self.avmid, 'referenceArea')
          self.assertEqual(0, err)
          self.assertEqual(1.0, r)
 
-         vec3 = AVM.r8Array(3)
          err = AVM.get_real_array(self.avmid, 'referencePoint', vec3, 3)
          self.assertEqual(0, err)
          self.assertEqual(0.0, vec3[0])

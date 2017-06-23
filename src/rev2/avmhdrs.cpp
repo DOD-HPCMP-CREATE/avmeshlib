@@ -74,7 +74,9 @@ int file_header_t::read(FILE* fp, bool swap, file_header_t* p)
 mesh_header_t::mesh_header_t()
 {
    modelScale      = 1.0;
-   referenceLength = 1.0;
+   referenceLength[0] = 1.0;
+   referenceLength[1] = 1.0;
+   referenceLength[2] = 1.0;
    referenceArea   = 1.0;
    referencePoint[0]    = 0.0;
    referencePoint[1]    = 0.0;
@@ -108,7 +110,9 @@ int mesh_header_t::write(FILE* fp, bool swap, mesh_header_t* p)
 {
    if (swap) {
       byte_swap_double(&p->modelScale);
-      byte_swap_double(&p->referenceLength);
+      byte_swap_double(&p->referenceLength[0]);
+      byte_swap_double(&p->referenceLength[1]);
+      byte_swap_double(&p->referenceLength[2]);
       byte_swap_double(&p->referenceArea);
       byte_swap_double(&p->referencePoint[0]);
       byte_swap_double(&p->referencePoint[1]);
@@ -121,7 +125,7 @@ int mesh_header_t::write(FILE* fp, bool swap, mesh_header_t* p)
    if (!fwrite(p->coordinateSystem, sizeof(p->coordinateSystem), 1, fp)) return 0;
    if (!fwrite(&p->modelScale, sizeof(p->modelScale), 1, fp)) return 0;
    if (!fwrite(p->gridUnits, sizeof(p->gridUnits), 1, fp)) return 0;
-   if (!fwrite(&p->referenceLength, sizeof(p->referenceLength), 1, fp)) return 0;
+   if (!fwrite(p->referenceLength, sizeof(p->referenceLength), 1, fp)) return 0;
    if (!fwrite(&p->referenceArea, sizeof(p->referenceArea), 1, fp)) return 0;
    if (!fwrite(p->referencePoint, sizeof(p->referencePoint), 1, fp)) return 0;
    if (!fwrite(p->referencePointDescription, sizeof(p->referencePointDescription), 1, fp)) return 0;
@@ -129,7 +133,9 @@ int mesh_header_t::write(FILE* fp, bool swap, mesh_header_t* p)
 
    if (swap) {
       byte_swap_double(&p->modelScale);
-      byte_swap_double(&p->referenceLength);
+      byte_swap_double(&p->referenceLength[0]);
+      byte_swap_double(&p->referenceLength[1]);
+      byte_swap_double(&p->referenceLength[2]);
       byte_swap_double(&p->referenceArea);
       byte_swap_double(&p->referencePoint[0]);
       byte_swap_double(&p->referencePoint[1]);
@@ -147,7 +153,7 @@ int mesh_header_t::read(FILE* fp, bool swap, mesh_header_t* p)
    if (!fread(p->coordinateSystem, sizeof(p->coordinateSystem), 1, fp)) return 0;
    if (!fread(&p->modelScale, sizeof(p->modelScale), 1, fp)) return 0;
    if (!fread(p->gridUnits, sizeof(p->gridUnits), 1, fp)) return 0;
-   if (!fread(&p->referenceLength, sizeof(p->referenceLength), 1, fp)) return 0;
+   if (!fread(p->referenceLength, sizeof(p->referenceLength), 1, fp)) return 0;
    if (!fread(&p->referenceArea, sizeof(p->referenceArea), 1, fp)) return 0;
    if (!fread(p->referencePoint, sizeof(p->referencePoint), 1, fp)) return 0;
    if (!fread(p->referencePointDescription, sizeof(p->referencePointDescription), 1, fp)) return 0;
@@ -155,7 +161,9 @@ int mesh_header_t::read(FILE* fp, bool swap, mesh_header_t* p)
 
    if (swap) {
       byte_swap_double(&p->modelScale);
-      byte_swap_double(&p->referenceLength);
+      byte_swap_double(&p->referenceLength[0]);
+      byte_swap_double(&p->referenceLength[1]);
+      byte_swap_double(&p->referenceLength[2]);
       byte_swap_double(&p->referenceArea);
       byte_swap_double(&p->referencePoint[0]);
       byte_swap_double(&p->referencePoint[1]);

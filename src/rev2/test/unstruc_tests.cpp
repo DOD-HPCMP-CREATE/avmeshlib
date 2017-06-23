@@ -76,7 +76,10 @@ TEST_F(TestFixture, MeshHeaders) {
          EXPECT_STREQ("in", str);
 
          EXPECT_EQ(0, avm_get_real(fileid, "referenceLength", &d));
-         EXPECT_DOUBLE_EQ(1.0, d);
+         EXPECT_EQ(0, avm_get_real_array(fileid, "referenceLength", vec3, 3));
+         EXPECT_DOUBLE_EQ(1.0, vec3[0]);
+         EXPECT_DOUBLE_EQ(1.0, vec3[1]);
+         EXPECT_DOUBLE_EQ(1.0, vec3[2]);
 
          EXPECT_EQ(0, avm_get_real_array(fileid, "referencePoint", vec3, 3));
          EXPECT_DOUBLE_EQ(0.0, vec3[0]);

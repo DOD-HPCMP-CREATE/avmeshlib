@@ -7,10 +7,11 @@ program unstruc_write
         nPolyFaces=8, nBndPolyFaces=6, bndPolyFacesSize=42, polyFacesSize=56, &
         nPolyCells=1, nEdges=12, &
         nNodesOnGeometry=4,nEdgesOnGeometry=1,nFacesOnGeometry=2, geomRegionId=-1, &
-        avmeshRev=1
+        avmeshRev=2
     integer :: i, j, avmid, istat
     character*256 :: str
     real*8 :: refPt(3)
+    real*8 :: refLength(3)
     real*8, allocatable :: xyz(:,:)
     integer, allocatable :: triFaces(:,:)
     integer, allocatable :: quadFaces(:,:)
@@ -54,6 +55,7 @@ program unstruc_write
     print *, errorMsg
 
     refPt(:) = (/0.0,0.0,0.0/)
+    refLength(:) = (/1.0,1.0,1.0/)
 
     call avm_selectf(avmid, 'header', 0, istat)
     call avm_set_intf(avmid, 'meshCount', nMesh, istat)
@@ -75,7 +77,7 @@ program unstruc_write
         call avm_set_strf(avmid, 'coordinateSystem', 'xByUzL', istat)
         call avm_set_realf(avmid, 'modelScale', 1.0d0, istat)
         call avm_set_strf(avmid, 'gridUnits', 'in', istat)
-        call avm_set_realf(avmid, 'referenceLength', 1.0d0, istat)
+        call avm_set_real_arrayf(avmid, 'referenceLength', refLength, 3, istat)
         call avm_set_realf(avmid, 'referenceArea', 1.0d0, istat)
         call avm_set_real_arrayf(avmid, 'referencePoint', refPt, 3, istat)
         call avm_set_strf(avmid, 'referencePointDescription', 'origin', istat)

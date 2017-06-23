@@ -287,7 +287,6 @@ int rev2::avm_get_real(rev2_avmesh_file* avf, const char* field, double* value)
    }
 
    if (FIELD_EQ("modelScale")) RETURN_ANSWER(avf->mesh_hdrs[meshid].modelScale)
-   if (FIELD_EQ("referenceLength")) RETURN_ANSWER(avf->mesh_hdrs[meshid].referenceLength)
    if (FIELD_EQ("referenceArea")) RETURN_ANSWER(avf->mesh_hdrs[meshid].referenceArea)
 
    bool strand_mesh  = 0==strncmp("strand", avf->mesh_hdrs[meshid].meshType, strlen("strand"));
@@ -438,6 +437,7 @@ int rev2::avm_get_real_array(rev2_avmesh_file* avf, const char* field, double* v
    }
 
    if (FIELD_EQ("referencePoint")) RETURN_ANSWER(avf->mesh_hdrs[meshid].referencePoint, min(len,3))
+   if (FIELD_EQ("referenceLength")) RETURN_ANSWER(avf->mesh_hdrs[meshid].referenceLength, min(len,3))
 
    RETURN_ERROR("avm_get_real_array: invalid field");
 #undef FIELD_EQ
@@ -572,7 +572,6 @@ int rev2::avm_set_real(rev2_avmesh_file* avf, const char* field, double value)
    }
 
    if (FIELD_EQ("modelScale")) SET_AND_RETURN(avf->mesh_hdrs[meshid].modelScale)
-   if (FIELD_EQ("referenceLength")) SET_AND_RETURN(avf->mesh_hdrs[meshid].referenceLength)
    if (FIELD_EQ("referenceArea")) SET_AND_RETURN(avf->mesh_hdrs[meshid].referenceArea)
 
    bool strand_mesh  = 0==strncmp("strand", avf->mesh_hdrs[meshid].meshType, strlen("strand"));
@@ -715,6 +714,7 @@ int rev2::avm_set_real_array(rev2_avmesh_file* avf, const char* field, const dou
       RETURN_ERROR("avm_set_real_array: invalid meshid");
    }
    if (FIELD_EQ("referencePoint")) SET_AND_RETURN(avf->mesh_hdrs[meshid].referencePoint, min(len,3))
+   if (FIELD_EQ("referenceLength")) SET_AND_RETURN(avf->mesh_hdrs[meshid].referenceLength, min(len,3))
 
    RETURN_ERROR("avm_set_real_array: invalid field");
 #undef FIELD_EQ

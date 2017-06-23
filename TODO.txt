@@ -28,4 +28,5 @@ Steve Lamberson has a race condition (?) in the build system. See email for deta
 
 Todd's weird python-optimize bug
 
+update rev2/test/read_avm_rev1.cpp and write_avm_rev1.cpp
 */

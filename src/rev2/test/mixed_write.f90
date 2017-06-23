@@ -24,7 +24,7 @@ module avmesh_mod
       character(128) :: coordinateSystem
       real(8)        :: modelScale
       character(128) :: gridUnits
-      real(8)        :: referenceLength
+      real(8)        :: referenceLength(3)
       real(8)        :: referenceArea
       real(8)        :: referencePoint(3)
       character(128) :: referencePointDescription
@@ -518,7 +518,7 @@ subroutine init_strand_mesh
    mesh_hdrs(1)%coordinateSystem           = 'xByUzL'
    mesh_hdrs(1)%modelScale                 = 1.0
    mesh_hdrs(1)%gridUnits                  = 'm'
-   mesh_hdrs(1)%referenceLength            = 1.0
+   mesh_hdrs(1)%referenceLength(:)          = (/1.0,1.0,1.0/)
    mesh_hdrs(1)%referenceArea            = 1.0
    mesh_hdrs(1)%referencePoint(:)          = (/4.0,5.0,6.0/)
    mesh_hdrs(1)%referencePointDescription = 'origin'
@@ -569,7 +569,7 @@ subroutine init_unstruc_mesh
    mesh_hdrs(2)%coordinateSystem = 'xByUzL'
    mesh_hdrs(2)%modelScale = 1.0
    mesh_hdrs(2)%gridUnits = 'in'
-   mesh_hdrs(2)%referenceLength = 1.0
+   mesh_hdrs(2)%referenceLength(:) = (/2.0,2.0,2.0/)
    mesh_hdrs(2)%referenceArea = 1.0
    mesh_hdrs(2)%referencePoint(:) = (/7.0,8.0,9.0/)
    mesh_hdrs(2)%referencePointDescription = 'origin'
