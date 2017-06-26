@@ -137,8 +137,7 @@ int avm_unstruc_read_partial_nodes_r4(rev2_avmesh_file* avf, float* xyz, int xyz
 int avm_unstruc_read_partial_nodes_r8(rev2_avmesh_file* avf, double* xyz, int xyz_size, int start, int end);
 int avm_unstruc_read_faces(rev2_avmesh_file* avf,
    int* triFaces,  int triFaces_size,
-   int* quadFaces, int quadFaces_size,
-   int* polyFaces, int polyFaces_size
+   int* quadFaces, int quadFaces_size
 );
 int avm_unstruc_read_tri(rev2_avmesh_file* avf,
    int* triFaces, int triFaces_size,
@@ -150,13 +149,11 @@ int avm_unstruc_read_quad(rev2_avmesh_file* avf,
 );
 int avm_unstruc_read_partial_faces(rev2_avmesh_file* avf,
    int* triFaces,  int triFaces_size,  int triStart,  int triEnd,
-   int* quadFaces, int quadFaces_size, int quadStart, int quadEnd,
-   int* polyFaces, int polyFaces_size, int polyStart, int polyEnd
+   int* quadFaces, int quadFaces_size, int quadStart, int quadEnd
 );
 int avm_unstruc_read_bnd_faces(rev2_avmesh_file* avf,
    int* bndTriFaces,  int bndTriFaces_size,
-   int* bndQuadFaces, int bndQuadFaces_size,
-   int* bndPolyFaces, int bndPolyFaces_size
+   int* bndQuadFaces, int bndQuadFaces_size
 );
 int avm_unstruc_read_cells(rev2_avmesh_file* avf,
    int* hexCells, int hexCells_size,
@@ -189,13 +186,11 @@ int avm_unstruc_write_nodes_r4(rev2_avmesh_file* avf, float* xyz, int xyz_size);
 int avm_unstruc_write_nodes_r8(rev2_avmesh_file* avf, double* xyz, int xyz_size);
 int avm_unstruc_write_faces(rev2_avmesh_file* avf,
    int* triFaces,  int triFaces_size,
-   int* quadFaces, int quadFaces_size,
-   int* polyFaces, int polyFaces_size
+   int* quadFaces, int quadFaces_size
 );
 int avm_unstruc_write_bnd_faces(rev2_avmesh_file* avf,
    int* triFaces,  int triFaces_size,
-   int* quadFaces, int quadFaces_size,
-   int* polyFaces, int polyFaces_size
+   int* quadFaces, int quadFaces_size
 );
 int avm_unstruc_write_cells(rev2_avmesh_file* avf,
    int* hexCells, int hexCells_size,

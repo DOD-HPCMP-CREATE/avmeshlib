@@ -241,15 +241,10 @@ int rev2::avm_get_int(rev2_avmesh_file* avf, const char* field, int* value)
       if (FIELD_EQ("nTetCells")) RETURN_ANSWER(avf->unstruc[meshid].header.nTetCells)
       if (FIELD_EQ("nPriCells")) RETURN_ANSWER(avf->unstruc[meshid].header.nPriCells)
       if (FIELD_EQ("nPyrCells")) RETURN_ANSWER(avf->unstruc[meshid].header.nPyrCells)
-      if (FIELD_EQ("nPolyCells")) RETURN_ANSWER(avf->unstruc[meshid].header.nPolyCells)
       if (FIELD_EQ("nBndTriFaces")) RETURN_ANSWER(avf->unstruc[meshid].header.nBndTriFaces)
       if (FIELD_EQ("nTriFaces")) RETURN_ANSWER(avf->unstruc[meshid].header.nTriFaces)
       if (FIELD_EQ("nBndQuadFaces")) RETURN_ANSWER(avf->unstruc[meshid].header.nBndQuadFaces)
       if (FIELD_EQ("nQuadFaces")) RETURN_ANSWER(avf->unstruc[meshid].header.nQuadFaces)
-      if (FIELD_EQ("nBndPolyFaces")) RETURN_ANSWER(avf->unstruc[meshid].header.nBndPolyFaces)
-      if (FIELD_EQ("nPolyFaces")) RETURN_ANSWER(avf->unstruc[meshid].header.nPolyFaces)
-      if (FIELD_EQ("bndPolyFacesSize")) RETURN_ANSWER(avf->unstruc[meshid].header.bndPolyFacesSize)
-      if (FIELD_EQ("polyFacesSize")) RETURN_ANSWER(avf->unstruc[meshid].header.polyFacesSize)
       if (FIELD_EQ("nEdges")) RETURN_ANSWER(avf->unstruc[meshid].header.nEdges)
       if (FIELD_EQ("nNodesOnGeometry")) RETURN_ANSWER(avf->unstruc[meshid].header.nNodesOnGeometry)
       if (FIELD_EQ("nEdgesOnGeometry")) RETURN_ANSWER(avf->unstruc[meshid].header.nEdgesOnGeometry)
@@ -528,15 +523,10 @@ int rev2::avm_set_int(rev2_avmesh_file* avf, const char* field, int value)
       if (FIELD_EQ("nTetCells")) SET_AND_RETURN(avf->unstruc[meshid].header.nTetCells)
       if (FIELD_EQ("nPriCells")) SET_AND_RETURN(avf->unstruc[meshid].header.nPriCells)
       if (FIELD_EQ("nPyrCells")) SET_AND_RETURN(avf->unstruc[meshid].header.nPyrCells)
-      if (FIELD_EQ("nPolyCells")) SET_AND_RETURN(avf->unstruc[meshid].header.nPolyCells)
       if (FIELD_EQ("nBndTriFaces")) SET_AND_RETURN(avf->unstruc[meshid].header.nBndTriFaces)
       if (FIELD_EQ("nTriFaces")) SET_AND_RETURN(avf->unstruc[meshid].header.nTriFaces)
       if (FIELD_EQ("nBndQuadFaces")) SET_AND_RETURN(avf->unstruc[meshid].header.nBndQuadFaces)
       if (FIELD_EQ("nQuadFaces")) SET_AND_RETURN(avf->unstruc[meshid].header.nQuadFaces)
-      if (FIELD_EQ("nBndPolyFaces")) SET_AND_RETURN(avf->unstruc[meshid].header.nBndPolyFaces)
-      if (FIELD_EQ("nPolyFaces")) SET_AND_RETURN(avf->unstruc[meshid].header.nPolyFaces)
-      if (FIELD_EQ("bndPolyFacesSize")) SET_AND_RETURN(avf->unstruc[meshid].header.bndPolyFacesSize)
-      if (FIELD_EQ("polyFacesSize")) SET_AND_RETURN(avf->unstruc[meshid].header.polyFacesSize)
       if (FIELD_EQ("nEdges")) SET_AND_RETURN(avf->unstruc[meshid].header.nEdges)
       if (FIELD_EQ("nNodesOnGeometry")) SET_AND_RETURN(avf->unstruc[meshid].header.nNodesOnGeometry)
       if (FIELD_EQ("nEdgesOnGeometry")) SET_AND_RETURN(avf->unstruc[meshid].header.nEdgesOnGeometry)
@@ -1570,15 +1560,6 @@ int rev2::avm_unstruc_seek_to(rev2_avmesh_file* avf, char* section, off_t start=
 
    offset += 6 * (off_t)hdr.nBndQuadFaces * 4;
 
-   if(0==strncmp("bndPolys",section,strlen("bndPolys"))) {
-      //since we don't know how big polys are, expect start to be the number of array indices to skip
-      //or we could read only the nNodesInFace to jump to the next one as a way of counting...
-      offset += start * 4;
-      return seek(avf->fp,offset);
-   }
-
-   offset += (off_t)hdr.bndPolyFacesSize * 4;
-
    if(0==strncmp("faces",section,strlen("faces")))
       return seek(avf->fp,offset);
    if(0==strncmp("intTris",section,strlen("intTris"))) {
@@ -1594,15 +1575,6 @@ int rev2::avm_unstruc_seek_to(rev2_avmesh_file* avf, char* section, off_t start=
    }
 
    offset += 6 * ((off_t)hdr.nQuadFaces-(off_t)hdr.nBndQuadFaces) * 4;
-
-   if(0==strncmp("intPolys",section,strlen("intPolys"))) {
-      //since we don't know how big polys are, expect start to be the number of array indices to skip
-      //or we could read only the nNodesInFace to jump to the next one as a way of counting...
-      offset += start * 4;
-      return seek(avf->fp,offset);
-   }
-
-   offset += ((off_t)hdr.polyFacesSize-(off_t)hdr.bndPolyFacesSize) * 4;
 
    if(0==strncmp("cells",section,strlen("cells")))
       return seek(avf->fp,offset);
@@ -1769,13 +1741,11 @@ int rev2::avm_unstruc_read_partial_nodes_r8(rev2_avmesh_file* avf, double* xyz, 
 
 int rev2::avm_unstruc_read_faces(rev2_avmesh_file* avf,
    int* triFaces,  int triFaces_size,
-   int* quadFaces, int quadFaces_size,
-   int* polyFaces, int polyFaces_size
+   int* quadFaces, int quadFaces_size
 )
 {
    if (triFaces_size>0 && triFaces==NULL) RETURN_ERROR("avm_unstruc_read_faces: triFaces is NULL");
    if (quadFaces_size>0 && quadFaces==NULL) RETURN_ERROR("avm_unstruc_read_faces: quadFaces is NULL");
-   if (polyFaces_size>0 && polyFaces==NULL) RETURN_ERROR("avm_unstruc_read_faces: polyFaces is NULL");
 
    if (!avf) RETURN_ERROR("avm_unstruc_read_faces: avf is NULL");
 
@@ -1797,9 +1767,6 @@ int rev2::avm_unstruc_read_faces(rev2_avmesh_file* avf,
    if (quadFaces && quadFaces_size != 6*hdr.nQuadFaces) {
       RETURN_ERROR("avm_unstruc_read_faces: quadFaces_size does not match header");
    }
-   if (polyFaces && polyFaces_size != hdr.polyFacesSize) {
-      RETURN_ERROR("avm_unstruc_read_faces: polyFaces_size does not match header");
-   }
 
    if (avm_unstruc_seek_to(avf,"bndFaces")) return 1;
 
@@ -1819,14 +1786,6 @@ int rev2::avm_unstruc_read_faces(rev2_avmesh_file* avf,
       }
    }
 
-// Poly patch faces
-   if(polyFaces && hdr.bndPolyFacesSize > 0) {
-      if (avm_unstruc_seek_to(avf,"bndPolys")) return 1;
-      if (!fread(polyFaces, sizeof(int)*hdr.bndPolyFacesSize, 1, avf->fp)) {
-         RETURN_ERROR("avm_unstruc_read_faces: failed reading boundary polyFaces array");
-      }
-   }
-
 // Tri interior faces
    if(triFaces && hdr.nTriFaces-hdr.nBndTriFaces > 0) {
       if (avm_unstruc_seek_to(avf,"intTris")) return 1;
@@ -1843,18 +1802,9 @@ int rev2::avm_unstruc_read_faces(rev2_avmesh_file* avf,
       }
    }
 
-// Poly interior faces
-   if(polyFaces && hdr.polyFacesSize-hdr.bndPolyFacesSize > 0) {
-      if (avm_unstruc_seek_to(avf,"intPolys")) return 1;
-      if (!fread(polyFaces+hdr.bndPolyFacesSize, sizeof(int)*(hdr.polyFacesSize-hdr.bndPolyFacesSize), 1, avf->fp)) {
-         RETURN_ERROR("avm_unstruc_read_faces: failed reading volume polyFaces array");
-      }
-   }
-
 // byte swap
    if (avf->byte_swap) for (int i=0; i<triFaces_size; ++i) byte_swap_int(triFaces+i);
    if (avf->byte_swap) for (int i=0; i<quadFaces_size; ++i) byte_swap_int(quadFaces+i);
-   if (avf->byte_swap) for (int i=0; i<polyFaces_size; ++i) byte_swap_int(polyFaces+i);
 
    return 0;
 }
@@ -2017,15 +1967,11 @@ int rev2::avm_unstruc_read_quad(rev2_avmesh_file* avf,
 
 int rev2::avm_unstruc_read_partial_faces(rev2_avmesh_file* avf,
    int* triFaces,  int triFaces_size, int triStart, int triEnd,
-   int* quadFaces, int quadFaces_size, int quadStart, int quadEnd,
-   int* polyFaces, int polyFaces_size, int polyStart, int polyEnd
+   int* quadFaces, int quadFaces_size, int quadStart, int quadEnd
 )
 {
    if (triFaces_size>0 && triFaces==NULL) RETURN_ERROR("avm_unstruc_read_faces: triFaces is NULL");
    if (quadFaces_size>0 && quadFaces==NULL) RETURN_ERROR("avm_unstruc_read_faces: quadFaces is NULL");
-   if (polyFaces_size>0 && polyFaces==NULL) RETURN_ERROR("avm_unstruc_read_faces: polyFaces is NULL");
-
-   if (polyStart > 0 || polyEnd > 0) RETURN_ERROR("avm_unstruc_read_faces: partial poly faces read is unimplemented");
 
    if (!avf) RETURN_ERROR("avm_unstruc_read_faces: avf is NULL");
 
@@ -2043,7 +1989,6 @@ int rev2::avm_unstruc_read_partial_faces(rev2_avmesh_file* avf,
 
    int bndTriStart, bndTriEnd, bndTriSize, intTriStart, intTriEnd, intTriSize;
    int bndQuadStart, bndQuadEnd, bndQuadSize, intQuadStart, intQuadEnd, intQuadSize;
-   int bndPolySize, intPolySize;
 
    bndTriStart = triStart - 1;
    bndTriEnd = triEnd - 1;
@@ -2069,13 +2014,9 @@ int rev2::avm_unstruc_read_partial_faces(rev2_avmesh_file* avf,
    if (bndQuadSize < 0) bndQuadSize = 0;
    if (intQuadSize < 0) intQuadSize = 0;
 
-   //FIXME: partial poly reads not supported yet
-   bndPolySize = intPolySize = 0;
-
-   //handle the zero tri/quad/poly case gracefully
+   //handle the zero tri/quad case gracefully
    if(triFaces_size == 0 && triStart < 0 && triEnd < 0) bndTriSize = intTriSize = 0;
    if(quadFaces_size == 0 && quadStart < 0 && quadEnd < 0) bndQuadSize = intQuadSize = 0;
-   if(polyFaces_size == 0 && polyStart < 0 && polyEnd < 0) bndPolySize = intPolySize = 0;
 
 // validate size of face buffers
 // (this is unstruc format revision 1)
@@ -2085,9 +2026,6 @@ int rev2::avm_unstruc_read_partial_faces(rev2_avmesh_file* avf,
    if (quadFaces_size != bndQuadSize + intQuadSize) {
       RETURN_ERROR("avm_unstruc_read_faces: quadFaces_size does not match requested size/header");
    }
-   //if (polyFaces_size != bndPolySize + intPolySize) {
-   //   RETURN_ERROR("avm_unstruc_read_faces: polyFaces_size does not match requested size/header");
-   //}
 
 // Tri patch faces
    if(hdr.nBndTriFaces > 0 && bndTriStart <= hdr.nBndTriFaces && bndTriSize > 0) {
@@ -2102,13 +2040,6 @@ int rev2::avm_unstruc_read_partial_faces(rev2_avmesh_file* avf,
       if (avm_unstruc_seek_to(avf,"bndTris",bndQuadStart)) return 1;
       if (!fread(quadFaces, bndQuadSize*4, 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_faces: failed reading boundary quadFaces array");
-      }
-   }
-
-// Poly patch faces
-   if(hdr.bndPolyFacesSize > 0 && bndPolySize > 0) {
-      if (!fread(polyFaces, sizeof(int)*hdr.bndPolyFacesSize, 1, avf->fp)) {
-         RETURN_ERROR("avm_unstruc_read_faces: failed reading boundary polyFaces array");
       }
    }
 
@@ -2128,30 +2059,20 @@ int rev2::avm_unstruc_read_partial_faces(rev2_avmesh_file* avf,
       }
    }
 
-// Poly interior faces
-   if(hdr.polyFacesSize-hdr.bndPolyFacesSize > 0 && intPolySize > 0) {
-      if (!fread(polyFaces+hdr.bndPolyFacesSize, sizeof(int)*(hdr.polyFacesSize-hdr.bndPolyFacesSize), 1, avf->fp)) {
-         RETURN_ERROR("avm_unstruc_read_faces: failed reading volume polyFaces array");
-      }
-   }
-
 // byte swap
    if (avf->byte_swap) for (int i=0; i<triFaces_size; ++i) byte_swap_int(triFaces+i);
    if (avf->byte_swap) for (int i=0; i<quadFaces_size; ++i) byte_swap_int(quadFaces+i);
-   if (avf->byte_swap) for (int i=0; i<polyFaces_size; ++i) byte_swap_int(polyFaces+i);
 
    return 0;
 }
 
 int rev2::avm_unstruc_read_bnd_faces(rev2_avmesh_file* avf,
    int* bndTriFaces,  int bndTriFaces_size,
-   int* bndQuadFaces, int bndQuadFaces_size,
-   int* bndPolyFaces, int bndPolyFaces_size
+   int* bndQuadFaces, int bndQuadFaces_size
 )
 {
    if (bndTriFaces_size>0 && bndTriFaces==NULL) RETURN_ERROR("avm_unstruc_read_bnd_faces: bndTriFaces is NULL");
    if (bndQuadFaces_size>0 && bndQuadFaces==NULL) RETURN_ERROR("avm_unstruc_read_bnd_faces: bndQuadFaces is NULL");
-   if (bndPolyFaces_size>0 && bndPolyFaces==NULL) RETURN_ERROR("avm_unstruc_read_bnd_faces: bndPolyFaces is NULL");
 
    if (!avf) RETURN_ERROR("avm_unstruc_read_bnd_faces: avf is NULL");
 
@@ -2173,9 +2094,6 @@ int rev2::avm_unstruc_read_bnd_faces(rev2_avmesh_file* avf,
    if (bndQuadFaces_size != 6*hdr.nBndQuadFaces) {
       RETURN_ERROR("avm_unstruc_read_bnd_faces: bndQuadFaces_size does not match header");
    }
-   if (bndPolyFaces_size != hdr.bndPolyFacesSize) {
-      RETURN_ERROR("avm_unstruc_read_bnd_faces: bndPolyFaces_size does not match header");
-   }
 
    if (avm_unstruc_seek_to(avf,"bndFaces")) return 1;
 
@@ -2193,18 +2111,10 @@ int rev2::avm_unstruc_read_bnd_faces(rev2_avmesh_file* avf,
       }
    }
 
-// Poly patch faces
-   if(hdr.bndPolyFacesSize > 0) {
-      if (!fread(bndPolyFaces, sizeof(int)*hdr.bndPolyFacesSize, 1, avf->fp)) {
-         RETURN_ERROR("avm_unstruc_read_bnd_faces: failed reading bndPolyFaces array");
-      }
-   }
-
 // byte swap
    if (avf->byte_swap) {
       for (int i=0; i<bndTriFaces_size; ++i) byte_swap_int(bndTriFaces+i);
       for (int i=0; i<bndQuadFaces_size; ++i) byte_swap_int(bndQuadFaces+i);
-      for (int i=0; i<bndPolyFaces_size; ++i) byte_swap_int(bndPolyFaces+i);
    }
 
    return 0;
@@ -2610,13 +2520,11 @@ int rev2::avm_unstruc_write_nodes_r8(rev2_avmesh_file* avf, double* xyz, int xyz
 
 int rev2::avm_unstruc_write_bnd_faces(rev2_avmesh_file* avf,
    int* triFaces,  int triFaces_size,
-   int* quadFaces, int quadFaces_size,
-   int* polyFaces, int polyFaces_size
+   int* quadFaces, int quadFaces_size
 )
 {
    if (triFaces_size>0 && triFaces==NULL) RETURN_ERROR("avm_unstruc_write_bnd_faces: triFaces is NULL");
    if (quadFaces_size>0 && quadFaces==NULL) RETURN_ERROR("avm_unstruc_write_bnd_faces: quadFaces is NULL");
-   if (polyFaces_size>0 && polyFaces==NULL) RETURN_ERROR("avm_unstruc_write_bnd_faces: polyFaces is NULL");
 
    if (!avf) RETURN_ERROR("avm_unstruc_write_bnd_faces: avf is NULL");
 
@@ -2630,10 +2538,9 @@ int rev2::avm_unstruc_write_bnd_faces(rev2_avmesh_file* avf,
       
    const unstruc_header& hdr = avf->unstruc[meshid].header;
 
-   avf->unstruc[meshid].faces_reordering.resize(hdr.nTriFaces+hdr.nQuadFaces+hdr.nPolyFaces);
+   avf->unstruc[meshid].faces_reordering.resize(hdr.nTriFaces+hdr.nQuadFaces);
    int triFacesIndex = 0;
    int quadFacesIndex = 0;
-   int polyFacesIndex = 0;
 
 // validate size of face buffers
 // (this is unstruc format revision 1)
@@ -2642,9 +2549,6 @@ int rev2::avm_unstruc_write_bnd_faces(rev2_avmesh_file* avf,
    }
    if (quadFaces_size != 6*hdr.nQuadFaces) {
       RETURN_ERROR("avm_unstruc_write_bnd_faces: quadFaces_size does not match header");
-   }
-   if (polyFaces_size != hdr.polyFacesSize) {
-      RETURN_ERROR("avm_unstruc_write_bnd_faces: polyFaces_size does not match header");
    }
 
 // byte swap
@@ -2675,25 +2579,6 @@ int rev2::avm_unstruc_write_bnd_faces(rev2_avmesh_file* avf,
       }
    }
 
-// Poly patch faces
-   int j=0;
-   int rightCellIndex = 0;
-   int nodesInFace = 0;
-   for (int i=0; i<hdr.nPolyFaces; ++i) {
-      nodesInFace = polyFaces[j];
-      if(nodesInFace<1) return 1; //nNodesInFace must be > 0
-      rightCellIndex = j + nodesInFace + 2;
-      if (polyFaces[rightCellIndex] < 0) {
-         avf->unstruc[meshid].faces_reordering[hdr.nTriFaces+hdr.nQuadFaces+i] = hdr.nTriFaces + hdr.nQuadFaces + polyFacesIndex++;
-         if (avf->byte_swap) for (int k=j; k<j+nodesInFace+3; ++k) byte_swap_int(polyFaces+k);
-         if (!fwrite(&polyFaces[j], sizeof(int)*(nodesInFace+3), 1, avf->fp)) {
-            RETURN_ERROR("avm_unstruc_write_bnd_faces: failed writing polyFaces array");
-         }
-         if (avf->byte_swap) for (int k=j; k<j+nodesInFace+3; ++k) byte_swap_int(polyFaces+k);
-      }
-      j += nodesInFace + 3;
-   }
-
 // byte swap
    if (avf->byte_swap) {
       for (int i=0; i<triFaces_size; ++i) byte_swap_int(triFaces+i);
@@ -2705,13 +2590,11 @@ int rev2::avm_unstruc_write_bnd_faces(rev2_avmesh_file* avf,
 
 int rev2::avm_unstruc_write_faces(rev2_avmesh_file* avf,
    int* triFaces,  int triFaces_size,
-   int* quadFaces, int quadFaces_size,
-   int* polyFaces, int polyFaces_size
+   int* quadFaces, int quadFaces_size
 )
 {
    if (triFaces_size>0 && triFaces==NULL) RETURN_ERROR("avm_unstruc_write_faces: triFaces is NULL");
    if (quadFaces_size>0 && quadFaces==NULL) RETURN_ERROR("avm_unstruc_write_faces: quadFaces is NULL");
-   if (polyFaces_size>0 && polyFaces==NULL) RETURN_ERROR("avm_unstruc_write_faces: polyFaces is NULL");
 
    if (!avf) RETURN_ERROR("avm_unstruc_write_faces: avf is NULL");
 
@@ -2725,10 +2608,9 @@ int rev2::avm_unstruc_write_faces(rev2_avmesh_file* avf,
       
    const unstruc_header& hdr = avf->unstruc[meshid].header;
 
-   avf->unstruc[meshid].faces_reordering.resize(hdr.nTriFaces+hdr.nQuadFaces+hdr.nPolyFaces);
+   avf->unstruc[meshid].faces_reordering.resize(hdr.nTriFaces+hdr.nQuadFaces);
    int triFacesIndex = 0;
    int quadFacesIndex = 0;
-   int polyFacesIndex = 0;
 
 // validate size of face buffers
 // (this is unstruc format revision 1)
@@ -2737,9 +2619,6 @@ int rev2::avm_unstruc_write_faces(rev2_avmesh_file* avf,
    }
    if (quadFaces_size != 6*hdr.nQuadFaces) {
       RETURN_ERROR("avm_unstruc_write_faces: quadFaces_size does not match header");
-   }
-   if (polyFaces_size != hdr.polyFacesSize) {
-      RETURN_ERROR("avm_unstruc_write_faces: polyFaces_size does not match header");
    }
 
 // byte swap
@@ -2770,27 +2649,6 @@ int rev2::avm_unstruc_write_faces(rev2_avmesh_file* avf,
       }
    }
 
-// Poly patch faces
-   int j=0;
-   int rightCellIndex = 0;
-   int nodesInFace = 0;
-   for (int i=0; i<hdr.nPolyFaces; ++i) {
-      nodesInFace = polyFaces[j];
-      if(nodesInFace<1) { //nNodesInFace must be > 0
-         RETURN_ERROR("avm_unstruc_write_faces: can't write a polyFace with nodesInFace < 1");
-      }
-      rightCellIndex = j + nodesInFace + 2;
-      if (polyFaces[rightCellIndex] < 0) {
-         avf->unstruc[meshid].faces_reordering[hdr.nTriFaces+hdr.nQuadFaces+i] = hdr.nTriFaces + hdr.nQuadFaces + polyFacesIndex++;
-         if (avf->byte_swap) for (int k=j; k<j+nodesInFace+3; ++k) byte_swap_int(polyFaces+k);
-         if (!fwrite(&polyFaces[j], sizeof(int)*(nodesInFace+3), 1, avf->fp)) {
-            RETURN_ERROR("avm_unstruc_write_faces: failed writing patch polyFaces array");
-         }
-         if (avf->byte_swap) for (int k=j; k<j+nodesInFace+3; ++k) byte_swap_int(polyFaces+k);
-      }
-      j += nodesInFace + 3;
-   }
-
 // Tri interior faces
    for (int i=0; i<hdr.nTriFaces; ++i) {
       if (triFaces[(i*5)+4] > 0) {
@@ -2809,27 +2667,6 @@ int rev2::avm_unstruc_write_faces(rev2_avmesh_file* avf,
             RETURN_ERROR("avm_unstruc_write_faces: failed writing interior quadFaces array");
          }
       }
-   }
-
-// Poly interior faces
-   j=0;
-   rightCellIndex = 0;
-   nodesInFace = 0;
-   for (int i=0; i<hdr.nPolyFaces; ++i) {
-      nodesInFace = polyFaces[j];
-      if(nodesInFace<1) { //nNodesInFace must be > 0
-         RETURN_ERROR("avm_unstruc_write_faces: can't write a polyFace with nodesInFace < 1");
-      }
-      rightCellIndex = j + nodesInFace + 2;
-      if (polyFaces[rightCellIndex] > 0) {
-         avf->unstruc[meshid].faces_reordering[hdr.nTriFaces+hdr.nQuadFaces+i] = hdr.nTriFaces + hdr.nQuadFaces + polyFacesIndex++;
-         if (avf->byte_swap) for (int i=j; i<j+nodesInFace+3; ++i) byte_swap_int(polyFaces+i);
-         if (!fwrite(&polyFaces[j], sizeof(int)*(nodesInFace+3), 1, avf->fp)) {
-            RETURN_ERROR("avm_unstruc_write_faces: failed writing interior polyFaces array");
-         }
-         if (avf->byte_swap) for (int i=j; i<j+nodesInFace+3; ++i) byte_swap_int(polyFaces+i);
-      }
-      j += nodesInFace + 3;
    }
 
 // byte swap

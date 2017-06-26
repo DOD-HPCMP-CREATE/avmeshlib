@@ -44,15 +44,10 @@ module avmesh_mod
       integer(4) :: nTetCells
       integer(4) :: nPriCells
       integer(4) :: nPyrCells
-      integer(4) :: nPolyCells
       integer(4) :: nBndTriFaces
       integer(4) :: nTriFaces
       integer(4) :: nBndQuadFaces
       integer(4) :: nQuadFaces
-      integer(4) :: nBndPolyFaces
-      integer(4) :: nPolyFaces
-      integer(4) :: bndPolyFacesSize
-      integer(4) :: polyFacesSize
       integer(4) :: nEdges
       integer(4) :: nNodesOnGeometry
       integer(4) :: nEdgesOnGeometry
@@ -257,15 +252,10 @@ contains
                   unstruc_hdr%nTetCells, &
                   unstruc_hdr%nPriCells, &
                   unstruc_hdr%nPyrCells, &
-                  unstruc_hdr%nPolyCells, &
                   unstruc_hdr%nBndTriFaces, &
                   unstruc_hdr%nTriFaces, &
                   unstruc_hdr%nBndQuadFaces, &
                   unstruc_hdr%nQuadFaces, &
-                  unstruc_hdr%nBndPolyFaces, &
-                  unstruc_hdr%nPolyFaces, &
-                  unstruc_hdr%bndPolyFacesSize, &
-                  unstruc_hdr%polyFacesSize, &
                   unstruc_hdr%nEdges, &
                   unstruc_hdr%nNodesOnGeometry, &
                   unstruc_hdr%nEdgesOnGeometry, &
@@ -283,8 +273,6 @@ contains
       xyz, nNodes, &
       triFaces, nTriFaces, &
       quadFaces, nQuadFaces, &
-      polyFaces, nPolyFaces, &
-      polyFacesSize, &
       hexCells, nHexCells, &
       tetCells, nTetCells, &
       priCells, nPriCells, &
@@ -301,14 +289,13 @@ contains
       implicit none
       integer :: ui, i, j
       integer :: k, nodesInFace, rightCellIndex
-      integer :: nNodes, nTriFaces, nQuadFaces, nPolyFaces, polyFacesSize
-      integer :: nHexCells, nTetCells, nPriCells, nPyrCells, nPolyCells
+      integer :: nNodes, nTriFaces, nQuadFaces
+      integer :: nHexCells, nTetCells, nPriCells, nPyrCells
       integer :: nEdges
       integer nNodesOnGeometry, nEdgesOnGeometry, nFacesOnGeometry
       real :: xyz(3,nNodes)
       integer :: triFaces(5,nTriFaces)
       integer :: quadFaces(6,nQuadFaces)
-      integer :: polyFaces(polyFacesSize)
       integer :: hexCells(8, nHexCells)
       integer :: tetCells(4, nTetCells)
       integer :: priCells(6, nPriCells)
@@ -336,16 +323,6 @@ contains
               write(ui) (quadFaces(i,j),i=1,6)
           end if
       end do
-      ! Poly patch faces
-      k = 1;
-      do j = 1,nPolyFaces
-          nodesInFace = polyFaces(k)
-          rightCellIndex = k + nodesInFace + 2
-          if(polyFaces(rightCellIndex) < 0) then
-              write(ui) (polyFaces(i),i=k,k+nodesInFace+2)
-          end if
-          k = k + nodesInFace + 3
-      end do
       ! Tri interior faces
       do j = 1,nTriFaces
           if(triFaces(5,j) > 0) then
@@ -357,15 +334,6 @@ contains
           if(quadFaces(6,j) > 0) then
               write(ui) (quadFaces(i,j),i=1,6)
           end if
-      end do
-      k = 1;
-      do j = 1,nPolyFaces
-          nodesInFace = polyFaces(k)
-          rightCellIndex = k + nodesInFace + 2
-          if(polyFaces(rightCellIndex) > 0) then
-              write(ui) (polyFaces(i),i=k,k+nodesInFace+2)
-          end if
-          k = k + nodesInFace + 3
       end do
 
       ! Hex cells
@@ -448,7 +416,6 @@ module data_mod
    real, allocatable :: xyz(:,:)
    integer, allocatable :: triFaces(:,:)
    integer, allocatable :: quadFaces(:,:)
-   integer, allocatable :: polyFaces(:)
    integer, allocatable :: hexCells(:,:)
    integer, allocatable :: tetCells(:,:)
    integer, allocatable :: priCells(:,:)
@@ -586,15 +553,10 @@ subroutine init_unstruc_mesh
    unstruc_hdr%nTetCells = 1
    unstruc_hdr%nPriCells = 1
    unstruc_hdr%nPyrCells = 1
-   unstruc_hdr%nPolyCells = 1
    unstruc_hdr%nBndTriFaces = 8
    unstruc_hdr%nTriFaces = 9
    unstruc_hdr%nBndQuadFaces = 6
    unstruc_hdr%nQuadFaces = 8
-   unstruc_hdr%nBndPolyFaces = 6
-   unstruc_hdr%nPolyFaces = 8
-   unstruc_hdr%bndPolyFacesSize = 42
-   unstruc_hdr%polyFacesSize = 56
    unstruc_hdr%nEdges = 12
    unstruc_hdr%nNodesOnGeometry = 4
    unstruc_hdr%nEdgesOnGeometry = 1
@@ -610,7 +572,6 @@ subroutine init_unstruc_mesh
    allocate(xyz(3,unstruc_hdr%nNodes), &
             triFaces(5,unstruc_hdr%nTriFaces), &
             quadFaces(6,unstruc_hdr%nQuadFaces), &
-            polyFaces(unstruc_hdr%polyFacesSize), &
             hexCells(8, unstruc_hdr%nHexCells), &
             tetCells(4, unstruc_hdr%nTetCells), &
             priCells(6, unstruc_hdr%nPriCells), &
@@ -656,15 +617,6 @@ subroutine init_unstruc_mesh
     quadFaces(:,6) = (/1, 2, 3, 4, 1, -2/)
     quadFaces(:,7) = (/3, 10, 9, 8, 4, -1/)
     quadFaces(:,8) = (/2, 10, 9, 7, 4, -1/)
-
-    polyFaces(:) = (/4, 1, 4, 5, 6, 1, -1, &
-                     4, 3, 8, 5, 4, 1, -1, &
-                     4, 2, 3, 8, 7, 1, 4, &
-                     4, 1, 6, 7, 2, 1, -1, &
-                     4, 5, 6, 7, 8, 1, 2, &
-                     4, 1, 2, 3, 4, 1, -2, &
-                     4, 3, 10, 9, 8, 4, -1, &
-                     4, 2, 10, 9, 7, 4, -1/)
 
     hexCells(:,1) = (/1, 4, 5, 6, 3, 8, 5, 4/)
     tetCells(:,1) = (/5, 12, 11, 3/)
@@ -771,8 +723,6 @@ subroutine write_unstruc_mesh
            xyz, unstruc_hdr%nNodes, &
            triFaces, unstruc_hdr%nTriFaces, &
            quadFaces, unstruc_hdr%nQuadFaces, &
-           polyFaces, unstruc_hdr%nPolyFaces, &
-           unstruc_hdr%polyFacesSize, &
            hexCells, unstruc_hdr%nHexCells, &
            tetCells, unstruc_hdr%nTetCells, &
            priCells, unstruc_hdr%nPriCells, &

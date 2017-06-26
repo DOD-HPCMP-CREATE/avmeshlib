@@ -189,7 +189,6 @@ TEST_F(TestFixture, offsets) {
       int nBndTriFaces;
       int nBndQuadFaces;
       int nHexCells, nTetCells, nPriCells, nPyrCells;
-      int polyFacesSize;
       int nNodesOnGeometry, nEdgesOnGeometry, nFacesOnGeometry;
       int nEdges;
       EXPECT_EQ(0, avm_select(fileid, "mesh", 3));
@@ -203,7 +202,6 @@ TEST_F(TestFixture, offsets) {
       EXPECT_EQ(0, avm_get_int(fileid, "nTetCells", &nTetCells));
       EXPECT_EQ(0, avm_get_int(fileid, "nPriCells", &nPriCells));
       EXPECT_EQ(0, avm_get_int(fileid, "nPyrCells", &nPyrCells));
-      EXPECT_EQ(0, avm_get_int(fileid, "polyFacesSize", &polyFacesSize));
       EXPECT_EQ(0, avm_get_int(fileid, "nNodesOnGeometry", &nNodesOnGeometry));
       EXPECT_EQ(0, avm_get_int(fileid, "nEdgesOnGeometry", &nEdgesOnGeometry));
       EXPECT_EQ(0, avm_get_int(fileid, "nFacesOnGeometry", &nFacesOnGeometry));
@@ -214,7 +212,6 @@ TEST_F(TestFixture, offsets) {
                        6 * nBndQuadFaces * 4 +
                        5 * (nTriFaces - nBndTriFaces) * 4 +
                        6 * (nQuadFaces - nBndQuadFaces) * 4 +
-                       polyFacesSize * 4 +
                        8 * nHexCells * 4 +
                        4 * nTetCells * 4 +
                        6 * nPriCells * 4 +
@@ -400,8 +397,7 @@ TEST_F(TestFixture, data_reads) {
 
       int p;
       int nNodes;
-      int nTriFaces, nQuadFaces, nPolyFaces;
-      int polyFacesSize;
+      int nTriFaces, nQuadFaces;
       int nHexCells, nTetCells, nPriCells, nPyrCells;
       int nEdges;
       int nNodesOnGeometry, nEdgesOnGeometry, nFacesOnGeometry;
@@ -409,8 +405,6 @@ TEST_F(TestFixture, data_reads) {
       EXPECT_EQ(0, avm_get_int(fileid, "nNodes", &nNodes));
       EXPECT_EQ(0, avm_get_int(fileid, "nTriFaces", &nTriFaces));
       EXPECT_EQ(0, avm_get_int(fileid, "nQuadFaces", &nQuadFaces));
-      EXPECT_EQ(0, avm_get_int(fileid, "nPolyFaces", &nPolyFaces));
-      EXPECT_EQ(0, avm_get_int(fileid, "polyFacesSize", &polyFacesSize));
       EXPECT_EQ(0, avm_get_int(fileid, "nHexCells", &nHexCells));
       EXPECT_EQ(0, avm_get_int(fileid, "nTetCells", &nTetCells));
       EXPECT_EQ(0, avm_get_int(fileid, "nPriCells", &nPriCells));
@@ -423,7 +417,6 @@ TEST_F(TestFixture, data_reads) {
       float* xyz = new (nothrow) float[3*nNodes];
       int* triFaces = new (nothrow) int[5*nTriFaces];
       int* quadFaces = new (nothrow) int[6*nQuadFaces];
-      int* polyFaces = new (nothrow) int[polyFacesSize];
       int* hexCells = new (nothrow) int[8*nHexCells];
       int* tetCells = new (nothrow) int[4*nTetCells];
       int* priCells = new (nothrow) int[6*nPriCells];
@@ -443,8 +436,7 @@ TEST_F(TestFixture, data_reads) {
 
       EXPECT_EQ(0, avm_unstruc_read_nodes_r4(fileid, xyz, 3*nNodes));
       EXPECT_EQ(0, avm_unstruc_read_faces(fileid, triFaces,  5*nTriFaces,
-                                                  quadFaces, 6*nQuadFaces,
-                                                  polyFaces, polyFacesSize));
+                                                  quadFaces, 6*nQuadFaces));
       EXPECT_EQ(0, avm_unstruc_read_cells(fileid, hexCells,  8*nHexCells,
                                                   tetCells, 4*nTetCells,
                                                   priCells, 6*nPriCells,
@@ -572,29 +564,22 @@ TEST_F(TestFixture, data_reads_in_opposite_order) {
       int nNodes;
       int nTriFaces;
       int nQuadFaces;
-      int nPolyFaces;
-      int polyFacesSize;
 
       EXPECT_EQ(0, avm_get_int(fileid, "nNodes", &nNodes));
       EXPECT_EQ(0, avm_get_int(fileid, "nTriFaces", &nTriFaces));
       EXPECT_EQ(0, avm_get_int(fileid, "nQuadFaces", &nQuadFaces));
-      EXPECT_EQ(0, avm_get_int(fileid, "nPolyFaces", &nPolyFaces));
-      EXPECT_EQ(0, avm_get_int(fileid, "polyFacesSize", &polyFacesSize));
 
       float* xyz = new (nothrow) float[3*nNodes];
       int* triFaces = new (nothrow) int[5*nTriFaces];
       int* quadFaces = new (nothrow) int[6*nQuadFaces];
-      int* polyFaces = new (nothrow) int[polyFacesSize];
 
       EXPECT_TRUE(0!=xyz);
       EXPECT_TRUE(0!=triFaces);
       EXPECT_TRUE(0!=quadFaces);
-      EXPECT_TRUE(0!=polyFaces);
 
       EXPECT_EQ(0, avm_unstruc_read_nodes_r4(fileid, xyz, 3*nNodes));
       EXPECT_EQ(0, avm_unstruc_read_faces(fileid, triFaces,  5*nTriFaces,
-                                                  quadFaces, 6*nQuadFaces,
-                                                  polyFaces, polyFacesSize));
+                                                  quadFaces, 6*nQuadFaces));
 
       // nodes
       if (0) {

@@ -156,19 +156,11 @@ class TestAVM(unittest.TestCase):
          self.assertEqual(0, err)
          self.assertEqual(1, i)
 
-         err, i = AVM.get_int(self.avmid, 'nPolyCells')
-         self.assertEqual(0, err)
-         self.assertEqual(1, i)
-
          err, i = AVM.get_int(self.avmid, 'nBndTriFaces')
          self.assertEqual(0, err)
          self.assertEqual(8, i)
 
          err, i = AVM.get_int(self.avmid, 'nBndQuadFaces')
-         self.assertEqual(0, err)
-         self.assertEqual(6, i)
-
-         err, i = AVM.get_int(self.avmid, 'nBndPolyFaces')
          self.assertEqual(0, err)
          self.assertEqual(6, i)
 
@@ -179,18 +171,6 @@ class TestAVM(unittest.TestCase):
          err, i = AVM.get_int(self.avmid, 'nQuadFaces')
          self.assertEqual(0, err)
          self.assertEqual(8, i)
-
-         err, i = AVM.get_int(self.avmid, 'nPolyFaces')
-         self.assertEqual(0, err)
-         self.assertEqual(8, i)
-
-         err, i = AVM.get_int(self.avmid, 'bndPolyFacesSize')
-         self.assertEqual(0, err)
-         self.assertEqual(42, i)
-
-         err, i = AVM.get_int(self.avmid, 'polyFacesSize')
-         self.assertEqual(0, err)
-         self.assertEqual(56, i)
 
          err, i = AVM.get_int(self.avmid, 'nEdges')
          self.assertEqual(0, err)
@@ -239,23 +219,17 @@ class TestAVM(unittest.TestCase):
          err, nNodes = AVM.get_int(self.avmid, 'nNodes')
          err, nTriFaces = AVM.get_int(self.avmid, 'nTriFaces')
          err, nQuadFaces = AVM.get_int(self.avmid, 'nQuadFaces')
-         err, nPolyFaces = AVM.get_int(self.avmid, 'nPolyFaces')
          err, nBndTriFaces = AVM.get_int(self.avmid, 'nBndTriFaces')
          err, nBndQuadFaces = AVM.get_int(self.avmid, 'nBndQuadFaces')
-         err, nBndPolyFaces = AVM.get_int(self.avmid, 'nBndPolyFaces')
-         err, bndPolyFacesSize = AVM.get_int(self.avmid, 'bndPolyFacesSize')
-         err, polyFacesSize = AVM.get_int(self.avmid, 'polyFacesSize')
 
          xyz = AVM.r8Array(3*nNodes)
          triFaces = AVM.intArray(5*nTriFaces)
          quadFaces = AVM.intArray(6*nQuadFaces)
-         polyFaces = AVM.intArray(polyFacesSize)
 
          err = AVM.unstruc_read_nodes_r8(self.avmid, xyz, 3*nNodes)
          self.assertEqual(0, err)
          err = AVM.unstruc_read_faces(self.avmid, triFaces, 5*nTriFaces,
-                                                  quadFaces, 6*nQuadFaces,
-                                                  polyFaces, polyFacesSize)
+                                                  quadFaces, 6*nQuadFaces)
          self.assertEqual(0, err)
 
          # nodes
@@ -310,25 +284,6 @@ class TestAVM(unittest.TestCase):
          self.assertEqual(8, quadFaces[p+3])
          self.assertEqual(1, quadFaces[p+4])
          self.assertEqual(2, quadFaces[p+5])
-
-         # check the first and last polyFace
-         BUFF_LEN=7; FIRST_POINT=0; LAST_POINT=7
-         p = FIRST_POINT * BUFF_LEN
-         self.assertEqual(4, polyFaces[p+0])
-         self.assertEqual(1, polyFaces[p+1])
-         self.assertEqual(4, polyFaces[p+2])
-         self.assertEqual(5, polyFaces[p+3])
-         self.assertEqual(6, polyFaces[p+4])
-         self.assertEqual(1, polyFaces[p+5])
-         self.assertEqual(-1, polyFaces[p+6])
-         p = LAST_POINT * BUFF_LEN
-         self.assertEqual(4, polyFaces[p+0])
-         self.assertEqual(5, polyFaces[p+1])
-         self.assertEqual(6, polyFaces[p+2])
-         self.assertEqual(7, polyFaces[p+3])
-         self.assertEqual(8, polyFaces[p+4])
-         self.assertEqual(1, polyFaces[p+5])
-         self.assertEqual(2, polyFaces[p+6])
 
    def test_partialDataReads(self):
       err, meshCount = AVM.get_int(self.avmid, 'meshCount')

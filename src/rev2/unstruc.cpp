@@ -28,15 +28,10 @@ unstruc_header_t::unstruc_header_t()
    nTetCells = 0;
    nPriCells = 0;
    nPyrCells = 0;
-   nPolyCells = 0;
    nBndTriFaces = 0;
    nTriFaces = 0;
    nBndQuadFaces = 0;
    nQuadFaces = 0;
-   nBndPolyFaces = 0;
-   nPolyFaces = 0;
-   bndPolyFacesSize = 0;
-   polyFacesSize = 0;
    nEdges = 0;
    nNodesOnGeometry = 0;
    nEdgesOnGeometry = 0;
@@ -57,15 +52,10 @@ int unstruc_header_t::size() const
           sizeof(nTetCells) +
           sizeof(nPriCells) +
           sizeof(nPyrCells) +
-          sizeof(nPolyCells) +
           sizeof(nBndTriFaces) +
           sizeof(nTriFaces) +
           sizeof(nBndQuadFaces) +
           sizeof(nQuadFaces) +
-          sizeof(nBndPolyFaces) +
-          sizeof(nPolyFaces) +
-          sizeof(bndPolyFacesSize) +
-          sizeof(polyFacesSize) +
           sizeof(nEdges) +
           sizeof(nNodesOnGeometry) +
           sizeof(nEdgesOnGeometry) +
@@ -86,15 +76,10 @@ void unstruc_byte_swap_header(unstruc_header_t* p)
    byte_swap_int(&p->nTetCells);
    byte_swap_int(&p->nPriCells);
    byte_swap_int(&p->nPyrCells);
-   byte_swap_int(&p->nPolyCells);
    byte_swap_int(&p->nBndTriFaces);
    byte_swap_int(&p->nTriFaces);
    byte_swap_int(&p->nBndQuadFaces);
    byte_swap_int(&p->nQuadFaces);
-   byte_swap_int(&p->nBndPolyFaces);
-   byte_swap_int(&p->nPolyFaces);
-   byte_swap_int(&p->bndPolyFacesSize);
-   byte_swap_int(&p->polyFacesSize);
    byte_swap_int(&p->nEdges);
    byte_swap_int(&p->nNodesOnGeometry);
    byte_swap_int(&p->nEdgesOnGeometry);
@@ -117,15 +102,10 @@ int unstruc_header_t::write(FILE* fp, bool swap, unstruc_header_t* p)
    if (!fwrite(&p->nTetCells, sizeof(p->nTetCells), 1, fp)) return 0;
    if (!fwrite(&p->nPriCells, sizeof(p->nPriCells), 1, fp)) return 0;
    if (!fwrite(&p->nPyrCells, sizeof(p->nPyrCells), 1, fp)) return 0;
-   if (!fwrite(&p->nPolyCells, sizeof(p->nPolyCells), 1, fp)) return 0;
    if (!fwrite(&p->nBndTriFaces, sizeof(p->nBndTriFaces), 1, fp)) return 0;
    if (!fwrite(&p->nTriFaces, sizeof(p->nTriFaces), 1, fp)) return 0;
    if (!fwrite(&p->nBndQuadFaces, sizeof(p->nBndQuadFaces), 1, fp)) return 0;
    if (!fwrite(&p->nQuadFaces, sizeof(p->nQuadFaces), 1, fp)) return 0;
-   if (!fwrite(&p->nBndPolyFaces, sizeof(p->nBndPolyFaces), 1, fp)) return 0;
-   if (!fwrite(&p->nPolyFaces, sizeof(p->nPolyFaces), 1, fp)) return 0;
-   if (!fwrite(&p->bndPolyFacesSize, sizeof(p->bndPolyFacesSize), 1, fp)) return 0;
-   if (!fwrite(&p->polyFacesSize, sizeof(p->polyFacesSize), 1, fp)) return 0;
    if (!fwrite(&p->nEdges, sizeof(p->nEdges), 1, fp)) return 0;
    if (!fwrite(&p->nNodesOnGeometry, sizeof(p->nNodesOnGeometry), 1, fp)) return 0;
    if (!fwrite(&p->nEdgesOnGeometry, sizeof(p->nEdgesOnGeometry), 1, fp)) return 0;
@@ -150,15 +130,10 @@ int unstruc_header_t::read(FILE* fp, bool swap, unstruc_header_t* p)
    if (!fread(&p->nTetCells, sizeof(p->nTetCells), 1, fp)) return 0;
    if (!fread(&p->nPriCells, sizeof(p->nPriCells), 1, fp)) return 0;
    if (!fread(&p->nPyrCells, sizeof(p->nPyrCells), 1, fp)) return 0;
-   if (!fread(&p->nPolyCells, sizeof(p->nPolyCells), 1, fp)) return 0;
    if (!fread(&p->nBndTriFaces, sizeof(p->nBndTriFaces), 1, fp)) return 0;
    if (!fread(&p->nTriFaces, sizeof(p->nTriFaces), 1, fp)) return 0;
    if (!fread(&p->nBndQuadFaces, sizeof(p->nBndQuadFaces), 1, fp)) return 0;
    if (!fread(&p->nQuadFaces, sizeof(p->nQuadFaces), 1, fp)) return 0;
-   if (!fread(&p->nBndPolyFaces, sizeof(p->nBndPolyFaces), 1, fp)) return 0;
-   if (!fread(&p->nPolyFaces, sizeof(p->nPolyFaces), 1, fp)) return 0;
-   if (!fread(&p->bndPolyFacesSize, sizeof(p->bndPolyFacesSize), 1, fp)) return 0;
-   if (!fread(&p->polyFacesSize, sizeof(p->polyFacesSize), 1, fp)) return 0;
    if (!fread(&p->nEdges, sizeof(p->nEdges), 1, fp)) return 0;
    if (!fread(&p->nNodesOnGeometry, sizeof(p->nNodesOnGeometry), 1, fp)) return 0;
    if (!fread(&p->nEdgesOnGeometry, sizeof(p->nEdgesOnGeometry), 1, fp)) return 0;
@@ -255,10 +230,8 @@ off_t unstruc_info::datasize(const file_header_t& filehdr,
              (1==precision ? sizeof(float) : sizeof(double));
    offset += 5 * header.nBndTriFaces * sizeof(int);
    offset += 6 * header.nBndQuadFaces * sizeof(int);
-   offset += header.bndPolyFacesSize * sizeof(int);
    offset += 5 * (header.nTriFaces - header.nBndTriFaces) * sizeof(int);
    offset += 6 * (header.nQuadFaces - header.nBndQuadFaces) * sizeof(int);
-   offset += (header.polyFacesSize - header.bndPolyFacesSize) * sizeof(int);
    offset += 8 * header.nHexCells * sizeof(int);
    offset += 4 * header.nTetCells * sizeof(int);
    offset += 6 * header.nPriCells * sizeof(int);

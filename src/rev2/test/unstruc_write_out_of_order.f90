@@ -6,8 +6,7 @@ program unstruc_write
     integer, parameter :: nMesh=1, nPatches=2, nNodes=12, nTriFaces=9, &
         nQuadFaces=8, nHexCells=1, nTetCells=2, nPriCells=1, nPyrCells=1, &
         nBndTriFaces=8, nBndQuadFaces=6, &
-        nPolyFaces=8, nBndPolyFaces=6, bndPolyFacesSize=42, polyFacesSize=56, &
-        nPolyCells=1, nEdges=12, &
+        nEdges=12, &
         nNodesOnGeometry=4,nEdgesOnGeometry=1,nFacesOnGeometry=2, geomRegionId=-1, &
         avmeshRev=2
     integer :: i, j, avmid, istat
@@ -17,7 +16,6 @@ program unstruc_write
     real, allocatable :: xyz(:,:)
     integer, allocatable :: triFaces(:,:)
     integer, allocatable :: quadFaces(:,:)
-    integer, allocatable :: polyFaces(:)
     integer, allocatable :: hexCells(:,:)
     integer, allocatable :: tetCells(:,:)
     integer, allocatable :: priCells(:,:)
@@ -88,15 +86,10 @@ program unstruc_write
         call avm_set_intf(avmid, 'nTetCells', nTetCells, istat)
         call avm_set_intf(avmid, 'nPriCells', nPriCells, istat)
         call avm_set_intf(avmid, 'nPyrCells', nPyrCells, istat)
-        call avm_set_intf(avmid, 'nPolyCells', nPolyCells, istat)
         call avm_set_intf(avmid, 'nBndTriFaces', nBndTriFaces, istat)
         call avm_set_intf(avmid, 'nTriFaces', nTriFaces, istat)
         call avm_set_intf(avmid, 'nBndQuadFaces', nBndQuadFaces, istat)
         call avm_set_intf(avmid, 'nQuadFaces', nQuadFaces, istat)
-        call avm_set_intf(avmid, 'nBndPolyFaces', nBndPolyFaces, istat)
-        call avm_set_intf(avmid, 'nPolyFaces', nPolyFaces, istat)
-        call avm_set_intf(avmid, 'bndPolyFacesSize', bndPolyFacesSize, istat)
-        call avm_set_intf(avmid, 'polyFacesSize', polyFacesSize, istat)
         call avm_set_intf(avmid, 'nEdges', nEdges, istat)
         call avm_set_intf(avmid, 'nNodesOnGeometry', nNodesOnGeometry, istat)
         call avm_set_intf(avmid, 'nEdgesOnGeometry', nEdgesOnGeometry, istat)
@@ -120,7 +113,6 @@ program unstruc_write
     allocate(xyz(3,nNodes), &
              quadFaces(6,nQuadFaces), &
              triFaces(5,nTriFaces), &
-             polyFaces(polyFacesSize), &
              hexCells(8, nHexCells), &
              tetCells(4, nTetCells), &
              priCells(6, nPriCells), &
@@ -166,15 +158,6 @@ program unstruc_write
     quadFaces(:,7) = (/3, 10, 9, 8, 4, -1/)
     quadFaces(:,8) = (/2, 10, 9, 7, 4, -1/)
 
-    polyFaces(:) = (/4, 1, 4, 5, 6, 1, -1, &
-                     4, 3, 8, 5, 4, 1, -1, &
-                     4, 2, 3, 8, 7, 1, 4, &
-                     4, 1, 6, 7, 2, 1, -1, &
-                     4, 5, 6, 7, 8, 1, 2, &
-                     4, 1, 2, 3, 4, 1, -2, &
-                     4, 3, 10, 9, 8, 4, -1, &
-                     4, 2, 10, 9, 7, 4, -1/)
-
     hexCells(:,1) = (/1, 4, 5, 6, 3, 8, 5, 4/)
     tetCells(:,1) = (/5, 12, 11, 3/)
     tetCells(:,2) = (/6, 10, 9, 7/)
@@ -217,8 +200,8 @@ program unstruc_write
 
     edgesOnGeometry(:,1) = (/4, 1, 8/)
 
-    facesOnGeometry(:,1) = (/18, 2, 12/)
-    facesOnGeometry(:,2) = (/22, 2, 14/)
+    facesOnGeometry(:,1) = (/11, 2, 12/)
+    facesOnGeometry(:,2) = (/14, 2, 14/)
 
     hexGeomIds(1) = 1
     tetGeomIds(1) = 2
@@ -261,7 +244,6 @@ program unstruc_write
         call avm_unstruc_write_facesf(avmid, &
                triFaces,  5*nTriFaces, &
                quadFaces, 6*nQuadFaces, &
-               polyFaces, polyFacesSize, &
                istat)
         if (istat.ne.0) stop 'ERROR: avm_unstruc_write_faces'
         call avm_unstruc_write_nodes_r8f(avmid, xyz, 3*nNodes, istat)
@@ -271,7 +253,7 @@ program unstruc_write
     call avm_closef(avmid, istat)
     if (istat.ne.0) stop 'ERROR: avm_close'
 
-    deallocate(xyz, triFaces, quadFaces, polyFaces)
+    deallocate(xyz, triFaces, quadFaces)
     deallocate(hexCells, tetCells, priCells, pyrCells)
     deallocate(edges, nodesOnGeometry, edgesOnGeometry, facesOnGeometry)
     deallocate(hexGeomIds, tetGeomIds, priGeomIds, pyrGeomIds)

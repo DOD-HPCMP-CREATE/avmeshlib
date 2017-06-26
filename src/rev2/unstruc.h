@@ -30,15 +30,10 @@ namespace rev2 {
    nTetCells
    nPriCells
    nPyrCells
-   nPolyCells
    nBndTriFaces
    nTriFaces
    nBndQuadFaces
    nQuadFaces
-   nBndPolyFaces
-   nPolyFaces
-   bndPolyFacesSize
-   polyFacesSize
    nEdges
    nNodesOnGeometry
    nEdgesOnGeometry
@@ -66,7 +61,6 @@ namespace rev2 {
    write(ui) ((xyz(i,j),i=1,3),j=1,nNodes)
    write(ui) ((triFaces(i,j),i=1,5),j=1,nTriFaces)
    write(ui) ((quadFaces(i,j),i=1,6),j=1,nQuadFaces)
-   write(ui) (polyFaces(i,j),i=1,polyFacesSize)
    write(ui) ((hexCells(i,j),i=1,8),j=1,nHexCells)
    write(ui) ((tetCells(i,j),i=1,4),j=1,nTetCells)
    write(ui) ((priCells(i,j),i=1,6),j=1,nPriCells)
@@ -110,8 +104,6 @@ typedef struct unstruc_header_t {
    int nPriCells;
 /*! number of pryamid cells */
    int nPyrCells;
-/*! number of polyhedral cells */
-   int nPolyCells;
 /*! number of tri faces on boundaries */
    int nBndTriFaces;
 /*! total number of tri faces */
@@ -120,14 +112,6 @@ typedef struct unstruc_header_t {
    int nBndQuadFaces;
 /*! total number of quad faces */
    int nQuadFaces;
-/*! number of polyhedral faces on boundaries */
-   int nBndPolyFaces;
-/*! total number of polyhedral faces */
-   int nPolyFaces;
-/*! Number of elements in the boundary faces portion of the polyhedral faces array */
-   int bndPolyFacesSize;
-/*! Number of elements in the polyhedral faces array */
-   int polyFacesSize;
 /*! number of edges */
    int nEdges;
 /*! number of nodes classified against geometry */

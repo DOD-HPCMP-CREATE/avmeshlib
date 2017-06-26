@@ -19,8 +19,6 @@ program unstruc_read_out_of_order
    integer(4) :: nPyrCells
    integer(4) :: nTriFaces
    integer(4) :: nQuadFaces
-   integer(4) :: nPolyFaces
-   integer(4) :: polyFacesSize
    integer(4) :: nEdges
    integer(4) :: nNodesOnGeometry
    integer(4) :: nEdgesOnGeometry
@@ -34,7 +32,6 @@ program unstruc_read_out_of_order
    integer(4), allocatable :: partTriFaces2(:,:)
    integer(4), allocatable :: quadFaces(:,:)
    integer(4), allocatable :: partQuadFaces(:,:)
-   integer(4), allocatable :: polyFaces(:)
    integer(4), allocatable :: hexCells(:,:)
    integer(4), allocatable :: tetCells(:,:)
    integer(4), allocatable :: priCells(:,:)
@@ -79,8 +76,6 @@ program unstruc_read_out_of_order
    call avm_get_intf(avmid, 'nNodes', nNodes, istat)
    call avm_get_intf(avmid, 'nTriFaces', nTriFaces, istat)
    call avm_get_intf(avmid, 'nQuadFaces', nQuadFaces, istat)
-   call avm_get_intf(avmid, 'nPolyFaces', nPolyFaces, istat)
-   call avm_get_intf(avmid, 'polyFacesSize', polyFacesSize, istat)
    call avm_get_intf(avmid, 'nHexCells', nHexCells, istat)
    call avm_get_intf(avmid, 'nTetCells', nTetCells, istat)
    call avm_get_intf(avmid, 'nPriCells', nPriCells, istat)
@@ -97,7 +92,6 @@ program unstruc_read_out_of_order
             partTriFaces2(5,1), &
             quadFaces(6,nQuadFaces), &
             partQuadFaces(6,4), &
-            polyFaces(polyFacesSize), &
             hexCells(8,nHexCells), &
             tetCells(4,nTetCells), &
             priCells(6,nPriCells), &
@@ -120,7 +114,6 @@ program unstruc_read_out_of_order
    call avm_unstruc_read_facesf(avmid, &
           triFaces,  5*nTriFaces, &
           quadFaces, 6*nQuadFaces, &
-          polyFaces, polyFacesSize, &
           istat)
    if (istat.ne.0) stop 'ERROR: failed to read faces'
 
@@ -131,11 +124,6 @@ program unstruc_read_out_of_order
 
    if (quadFaces(6,8) /= 2) then
      print '(A)', 'quadFaces incorrect, exiting'
-     call exit(1)
-   end if
-
-   if (polyFaces(54) /= 8) then
-     print '(A)', 'polyFaces incorrect, exiting'
      call exit(1)
    end if
 
@@ -298,7 +286,6 @@ program unstruc_read_out_of_order
 
    ! test only reading one face type
    call avm_unstruc_read_partial_facesf(avmid, partTriFaces, 1*5, 4, 4, &
-                                              iNull, 0, -1, -1, &
                                               iNull, 0, -1, -1, istat)
    if (istat.ne.0) stop 'ERROR: failed to read partial faces only-tris'
 
@@ -312,7 +299,6 @@ program unstruc_read_out_of_order
    call printa("partialTriFaces",partTriFaces, 5, 4)
    call printa("triFaces", triFaces, 5, nTriFaces)
    call printa("quadFaces", quadFaces, 6, nQuadFaces)
-   call printb("polyFaces", polyFaces, polyFacesSize, nPolyFaces)
    call printa("hexCells", hexCells, 8, nHexCells)
    call printa("tetCells", tetCells, 4, nTetCells)
    call printa("priCells", priCells, 6, nPriCells)
@@ -330,7 +316,7 @@ program unstruc_read_out_of_order
    call printa("priGeomIds", priGeomIds, 1, nPriCells)
    call printa("pyrGeomIds", pyrGeomIds, 1, nPyrCells)
 
-   deallocate(xyz, triFaces, partTriFaces, partTriFaces2, quadFaces, partQuadFaces, polyFaces)
+   deallocate(xyz, triFaces, partTriFaces, partTriFaces2, quadFaces, partQuadFaces)
    deallocate(hexCells, partHexCells, tetCells, partTetCells, partTetCells2, priCells, partPriCells, pyrCells, partPyrCells)
    deallocate(edges, nodesOnGeometry, edgesOnGeometry, facesOnGeometry)
    deallocate(hexGeomIds, tetGeomIds, priGeomIds, pyrGeomIds)

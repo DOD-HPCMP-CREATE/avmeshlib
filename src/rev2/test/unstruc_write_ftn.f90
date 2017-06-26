@@ -40,15 +40,10 @@ program unstruc_write
    integer(4) :: nTetCells
    integer(4) :: nPriCells
    integer(4) :: nPyrCells
-   integer(4) :: nPolyCells
    integer(4) :: nBndTriFaces
    integer(4) :: nTriFaces
    integer(4) :: nBndQuadFaces
    integer(4) :: nQuadFaces
-   integer(4) :: nBndPolyFaces
-   integer(4) :: nPolyFaces
-   integer(4) :: bndPolyFacesSize
-   integer(4) :: polyFacesSize
    integer(4) :: nEdges
    integer(4) :: nNodesOnGeometry
    integer(4) :: nEdgesOnGeometry
@@ -65,7 +60,6 @@ program unstruc_write
    real(8), allocatable :: xyz(:,:)
    integer(4), allocatable :: triFaces(:,:)
    integer(4), allocatable :: quadFaces(:,:)
-   integer(4), allocatable :: polyFaces(:)
    integer(4), allocatable :: hexCells(:,:)
    integer(4), allocatable :: tetCells(:,:)
    integer(4), allocatable :: priCells(:,:)
@@ -138,15 +132,10 @@ program unstruc_write
        nTetCells = 2
        nPriCells = 1
        nPyrCells = 1
-       nPolyCells = 1
        nBndTriFaces = 8
        nTriFaces = 9
        nBndQuadFaces = 6
        nQuadFaces = 8
-       nBndPolyFaces = 6
-       nPolyFaces = 8
-       bndPolyFacesSize = 42
-       polyFacesSize = 56
        nEdges = 12
        nNodesOnGeometry = 4
        nEdgesOnGeometry = 1
@@ -178,15 +167,10 @@ program unstruc_write
                  nTetCells, &
                  nPriCells, &
                  nPyrCells, &
-                 nPolyCells, &
                  nBndTriFaces, &
                  nTriFaces, &
                  nBndQuadFaces, &
                  nQuadFaces, &
-                 nBndPolyFaces, &
-                 nPolyFaces, &
-                 bndPolyFacesSize, &
-                 polyFacesSize, &
                  nEdges, &
                  nNodesOnGeometry, &
                  nEdgesOnGeometry, &
@@ -211,7 +195,6 @@ program unstruc_write
     allocate(xyz(3,nNodes), &
              triFaces(5,nTriFaces), &
              quadFaces(6,nQuadFaces), &
-             polyFaces(polyFacesSize), &
              hexCells(8,nHexCells), &
              tetCells(4,ntetCells), &
              priCells(6,nPriCells), &
@@ -257,15 +240,6 @@ program unstruc_write
     quadFaces(:,6) = (/1, 2, 3, 4, 1, -2/)
     quadFaces(:,7) = (/3, 10, 9, 8, 4, -1/)
     quadFaces(:,8) = (/2, 10, 9, 7, 4, -1/)
-
-    polyFaces(:) = (/4, 1, 4, 5, 6, 1, -1, &
-                     4, 3, 8, 5, 4, 1, -1, &
-                     4, 2, 3, 8, 7, 1, 4, &
-                     4, 1, 6, 7, 2, 1, -1, &
-                     4, 5, 6, 7, 8, 1, 2, &
-                     4, 1, 2, 3, 4, 1, -2, &
-                     4, 3, 10, 9, 8, 4, -1, &
-                     4, 2, 10, 9, 7, 4, -1/)
 
     hexCells(:,1) = (/1, 4, 5, 6, 3, 8, 5, 4/)
     tetCells(:,1) = (/5, 12, 11, 3/)
@@ -316,10 +290,10 @@ program unstruc_write
     !Note: The face ordering changes when the faces are reordered to write the bnd faces first.
     !      A "real" native writer would need to keep track of this and update the face ID's in
     !      the facesOnGeometry section. For this test case, the values have been hardcoded to
-    !      their final values: face 18 stays the same, and face 22 becomes face 25.
+    !      their final values: face 11 stays the same, and face 14 becomes face 17.
     !      If you use the avmesh API to read/write, all of this is handled under the hood.
-    facesOnGeometry(:,1) = (/18, 2, 12/)
-    facesOnGeometry(:,2) = (/25, 2, 14/)
+    facesOnGeometry(:,1) = (/11, 2, 12/)
+    facesOnGeometry(:,2) = (/17, 2, 14/)
 
     hexGeomIds(1) = 1
     tetGeomIds(1) = 2
@@ -328,7 +302,6 @@ program unstruc_write
 
     call printa("triFaces", triFaces, 5, nTriFaces)
     call printa("quadFaces", quadFaces, 6, nQuadFaces)
-    call printb("polyFaces", polyFaces, polyFacesSize, nPolyFaces)
     call printa("hexCells", hexCells, 8, nHexCells)
     call printa("tetCells", tetCells, 4, nTetCells)
     call printa("priCells", priCells, 6, nPriCells)
@@ -367,16 +340,6 @@ program unstruc_write
                 write(10) (quadFaces(i,j),i=1,6)
             end if
         end do
-        ! Poly patch faces
-        k = 1;
-        do j = 1,nPolyFaces
-            nodesInFace = polyFaces(k)
-            rightCellIndex = k + nodesInFace + 2
-            if(polyFaces(rightCellIndex) < 0) then
-                write(10) (polyFaces(i),i=k,k+nodesInFace+2)
-            end if
-            k = k + nodesInFace + 3
-        end do
 
         ! Tri interior faces
         do j = 1,nTriFaces
@@ -389,16 +352,6 @@ program unstruc_write
             if(quadFaces(6,j) > 0) then
                 write(10) (quadFaces(i,j),i=1,6)
             end if
-        end do
-        ! Poly interior faces
-        k = 1;
-        do j = 1,nPolyFaces
-            nodesInFace = polyFaces(k)
-            rightCellIndex = k + nodesInFace + 2
-            if(polyFaces(rightCellIndex) > 0) then
-                write(10) (polyFaces(i),i=k,k+nodesInFace+2)
-            end if
-            k = k + nodesInFace + 3
         end do
 
         ! Hex cells
@@ -444,7 +397,7 @@ program unstruc_write
         end do
     end do
 
-    deallocate(xyz, triFaces, quadFaces, polyFaces)
+    deallocate(xyz, triFaces, quadFaces)
     deallocate(hexCells, tetCells, priCells, pyrCells)
     deallocate(edges, nodesOnGeometry, edgesOnGeometry, facesOnGeometry)
     deallocate(hexGeomIds, tetGeomIds, priGeomIds, pyrGeomIds)

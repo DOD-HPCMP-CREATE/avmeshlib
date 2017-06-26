@@ -46,8 +46,8 @@ class TestFileSize(unittest.TestCase):
 
         # Unstruc mesh header
         ###############################################################
-        #unstruc header: 4*25
-        size += 4*25
+        #unstruc header: 4*20
+        size += 4*20
         #2x unstruc patch_header: 32 + 16 + 4
         size += 2*(32 + 16 + 4)
 
@@ -88,8 +88,6 @@ class TestFileSize(unittest.TestCase):
         size += 5*4*9
         #6*4*quadFaces
         size += 6*4*8
-        #4*polyFacesSize
-        size += 4*56
         #8*4*nHexCells
         size += 8*4*1
         #4*4*nTetCells

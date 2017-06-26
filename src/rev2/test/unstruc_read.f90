@@ -41,15 +41,10 @@ program unstruc_read
    integer(4) :: nTetCells
    integer(4) :: nPriCells
    integer(4) :: nPyrCells
-   integer(4) :: nPolyCells
    integer(4) :: nBndTriFaces
    integer(4) :: nTriFaces
    integer(4) :: nBndQuadFaces
    integer(4) :: nQuadFaces
-   integer(4) :: nBndPolyFaces
-   integer(4) :: nPolyFaces
-   integer(4) :: bndPolyFacesSize
-   integer(4) :: polyFacesSize
    integer(4) :: nEdges
    integer(4) :: nNodesOnGeometry
    integer(4) :: nEdgesOnGeometry
@@ -65,7 +60,6 @@ program unstruc_read
    real(8), allocatable :: xyz(:,:)
    integer(4), allocatable :: triFaces(:,:)
    integer(4), allocatable :: quadFaces(:,:)
-   integer(4), allocatable :: polyFaces(:)
    integer(4), allocatable :: hexCells(:,:)
    integer(4), allocatable :: tetCells(:,:)
    integer(4), allocatable :: priCells(:,:)
@@ -136,15 +130,10 @@ program unstruc_read
                nTetCells, &
                nPriCells, &
                nPyrCells, &
-               nPolyCells, &
                nBndTriFaces, &
                nTriFaces, &
                nBndQuadFaces, &
                nQuadFaces, &
-               nBndPolyFaces, &
-               nPolyFaces, &
-               bndPolyFacesSize, &
-               polyFacesSize, &
                nEdges, &
                nNodesOnGeometry, &
                nEdgesOnGeometry, &
@@ -153,8 +142,6 @@ program unstruc_read
 
       print *, fileDescription
       print '(A,1X,I0)', 'nNodes is', nNodes
-      print '(A,1X,I0)', 'bndPolyFacesSize is', bndPolyFacesSize
-      print '(A,1X,I0)', 'polyFacesSize is', polyFacesSize
 
       if (fileDescription /= 'An example AVMesh file with some unstruc grids.') then
          print '(A)', 'fileDescription incorrect, exiting'
@@ -204,7 +191,6 @@ program unstruc_read
        allocate(xyz(3,nNodes), &
                 triFaces(5,nTriFaces), &
                 quadFaces(6,nQuadFaces), &
-                polyFaces(polyFacesSize), &
                 hexCells(8,nHexCells), &
                 tetCells(4,nTetCells), &
                 priCells(6,nPriCells), &
@@ -225,19 +211,11 @@ program unstruc_read
        read(10) ((triFaces(i,j),i=1,5),j=1,nBndTriFaces)
        ! Quad patch faces
        read(10) ((quadFaces(i,j),i=1,6),j=1,nBndQuadFaces)
-       ! Poly patch faces
-       if (bndPolyFacesSize>0) then
-         read(10) (polyFaces(i),i=1,bndPolyFacesSize)
-       end if
 
        ! Tri interior faces
        read(10) ((triFaces(i,j),i=1,5),j=nBndTriFaces+1,nTriFaces)
        ! Quad interior faces
        read(10) ((quadFaces(i,j),i=1,6),j=nBndQuadFaces+1,nQuadFaces)
-       ! Poly interior faces
-       if (polyFacesSize>0) then
-         read(10) (polyFaces(i),i=bndPolyFacesSize+1,polyFacesSize)
-       end if
 
        ! Hex cells
        read(10) ((hexCells(i,j),i=1,8),j=1,nHexCells)
@@ -276,7 +254,6 @@ program unstruc_read
 
        call printa("triFaces", triFaces, 5, nTriFaces)
        call printa("quadFaces", quadFaces, 6, nQuadFaces)
-       call printb("polyFaces", polyFaces, polyFacesSize, nPolyFaces)
        call printa("hexCells", hexCells, 8, nHexCells)
        call printa("tetCells", tetCells, 4, nTetCells)
        call printa("priCells", priCells, 6, nPriCells)
@@ -304,11 +281,6 @@ program unstruc_read
          call exit(1)
        end if
 
-       if (polyFaces(54) /= 8) then
-         print '(A)', 'polyFaces incorrect, exiting'
-         call exit(1)
-       end if
-
        if (pyrCells(5,1) /= 5) then
          print '(A)', 'pyrCells incorrect, exiting'
          call exit(1)
@@ -329,12 +301,12 @@ program unstruc_read
          call exit(1)
        end if
 
-       if (facesOnGeometry(1,1) /= 18) then
+       if (facesOnGeometry(1,1) /= 11) then
          print '(A)', 'facesOnGeometry incorrect, exiting'
          call exit(1)
        end if
 
-       if (facesOnGeometry(1,2) /= 25) then
+       if (facesOnGeometry(1,2) /= 17) then
          print '(A)', 'facesOnGeometry incorrect, exiting'
          call exit(1)
        end if
@@ -349,7 +321,7 @@ program unstruc_read
          call exit(1)
        end if
 
-       deallocate(xyz, triFaces, quadFaces, polyFaces)
+       deallocate(xyz, triFaces, quadFaces)
        deallocate(hexCells, tetCells, priCells, pyrCells)
        deallocate(edges, nodesOnGeometry, edgesOnGeometry, facesOnGeometry)
        deallocate(hexGeomIds, tetGeomIds, priGeomIds, pyrGeomIds)

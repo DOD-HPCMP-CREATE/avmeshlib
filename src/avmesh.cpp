@@ -1232,19 +1232,16 @@ int avm_unstruc_read_partial_nodes_r8(int fileid, double* xyz, int xyz_size, int
 
 int avm_unstruc_read_faces(int fileid,
    int* triFaces,  int triFaces_size,
-   int* quadFaces, int quadFaces_size,
-   int* polyFaces, int polyFaces_size
+   int* quadFaces, int quadFaces_size
 )
 {
    if (triFaces_size > 0 && triFaces==NULL) RETURN_ERROR("avm_unstruc_read_faces: triFaces is NULL");
    if (quadFaces_size > 0 && quadFaces==NULL) RETURN_ERROR("avm_unstruc_read_faces: quadFaces is NULL");
-   if (polyFaces_size > 0 && polyFaces==NULL) RETURN_ERROR("avm_unstruc_read_faces: polyFaces is NULL");
 
    avmesh_file *avf = file_list[fileid];
    if (!avf) RETURN_ERROR("avm_unstruc_read_faces: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      if(polyFaces_size>0) RETURN_ERROR("avm_unstruc_read_faces: polyFaces_size must be 0 in formatRevision 0");
       return rev0::avm_unstruc_read_faces(avf->rev0, 
                                triFaces,  triFaces_size,
                                quadFaces, quadFaces_size);
@@ -1253,13 +1250,12 @@ int avm_unstruc_read_faces(int fileid,
       return rev1::avm_unstruc_read_faces(avf->rev1, 
                                triFaces,  triFaces_size,
                                quadFaces, quadFaces_size,
-                               polyFaces, polyFaces_size);
+                               NULL, 0);
    }
    else if (avf->formatRevision == 2) {
       return rev2::avm_unstruc_read_faces(avf->rev2, 
                                triFaces,  triFaces_size,
-                               quadFaces, quadFaces_size,
-                               polyFaces, polyFaces_size);
+                               quadFaces, quadFaces_size);
    }
 
    RETURN_ERROR("avm_unstruc_read_faces: unsupported formatRevision in file");
@@ -1321,13 +1317,11 @@ int avm_unstruc_read_quad(int fileid,
 
 int avm_unstruc_read_partial_faces(int fileid,
    int* triFaces,  int triFaces_size,  int triStart,  int triEnd,
-   int* quadFaces, int quadFaces_size, int quadStart, int quadEnd,
-   int* polyFaces, int polyFaces_size, int polyStart, int polyEnd
+   int* quadFaces, int quadFaces_size, int quadStart, int quadEnd
 )
 {
    if (triFaces_size > 0 && triFaces==NULL) RETURN_ERROR("avm_unstruc_read_partial_faces: triFaces is NULL");
    if (quadFaces_size > 0 && quadFaces==NULL) RETURN_ERROR("avm_unstruc_read_partial_faces: quadFaces is NULL");
-   if (polyFaces_size > 0 && polyFaces==NULL) RETURN_ERROR("avm_unstruc_read_partial_faces: polyFaces is NULL");
 
    avmesh_file *avf = file_list[fileid];
    if (!avf) RETURN_ERROR("avm_unstruc_read_partial_faces: fileid invalid");
@@ -1339,13 +1333,12 @@ int avm_unstruc_read_partial_faces(int fileid,
       return rev1::avm_unstruc_read_partial_faces(avf->rev1,
                                triFaces,  triFaces_size, triStart, triEnd,
                                quadFaces, quadFaces_size, quadStart, quadEnd,
-                               polyFaces, polyFaces_size, polyStart, polyEnd);
+                               NULL, 0, 0, 0);
    }
    else if (avf->formatRevision == 2) {
       return rev2::avm_unstruc_read_partial_faces(avf->rev2,
                                triFaces,  triFaces_size, triStart, triEnd,
-                               quadFaces, quadFaces_size, quadStart, quadEnd,
-                               polyFaces, polyFaces_size, polyStart, polyEnd);
+                               quadFaces, quadFaces_size, quadStart, quadEnd);
    }
 
    RETURN_ERROR("avm_unstruc_read_partial_faces: unsupported formatRevision in file");
@@ -1353,13 +1346,11 @@ int avm_unstruc_read_partial_faces(int fileid,
 
 int avm_unstruc_read_bnd_faces(int fileid,
    int* bndTriFaces,  int bndTriFaces_size,
-   int* bndQuadFaces, int bndQuadFaces_size,
-   int* bndPolyFaces, int bndPolyFaces_size
+   int* bndQuadFaces, int bndQuadFaces_size
 )
 {
    if (bndTriFaces_size > 0 && bndTriFaces==NULL) RETURN_ERROR("avm_unstruc_read_bnd_faces: bndTriFaces is NULL");
    if (bndQuadFaces_size > 0 && bndQuadFaces==NULL) RETURN_ERROR("avm_unstruc_read_bnd_faces: bndQuadFaces is NULL");
-   if (bndPolyFaces_size > 0 && bndPolyFaces==NULL) RETURN_ERROR("avm_unstruc_read_bnd_faces: bndPolyFaces is NULL");
 
    avmesh_file *avf = file_list[fileid];
    if (!avf) RETURN_ERROR("avm_unstruc_read_bnd_faces: fileid invalid");
@@ -1371,13 +1362,12 @@ int avm_unstruc_read_bnd_faces(int fileid,
       return rev1::avm_unstruc_read_bnd_faces(avf->rev1, 
                                 bndTriFaces,  bndTriFaces_size,
                                 bndQuadFaces, bndQuadFaces_size,
-                                bndPolyFaces, bndPolyFaces_size);
+                                NULL, 0);
    }
    else if (avf->formatRevision == 2) {
       return rev2::avm_unstruc_read_bnd_faces(avf->rev2, 
                                 bndTriFaces,  bndTriFaces_size,
-                                bndQuadFaces, bndQuadFaces_size,
-                                bndPolyFaces, bndPolyFaces_size);
+                                bndQuadFaces, bndQuadFaces_size);
    }
 
    RETURN_ERROR("avm_unstruc_read_bnd_faces: unsupported formatRevision in file");
@@ -1581,19 +1571,16 @@ int avm_unstruc_write_nodes_r8(int fileid, double* xyz, int xyz_size)
 
 int avm_unstruc_write_faces(int fileid,
    int* triFaces,  int triFaces_size,
-   int* quadFaces, int quadFaces_size,
-   int* polyFaces, int polyFaces_size
+   int* quadFaces, int quadFaces_size
 )
 {
    if (triFaces_size > 0 && triFaces==NULL) RETURN_ERROR("avm_unstruc_write_faces: triFaces is NULL");
    if (quadFaces_size > 0 && quadFaces==NULL) RETURN_ERROR("avm_unstruc_write_faces: quadFaces is NULL");
-   if (polyFaces_size > 0 && polyFaces==NULL) RETURN_ERROR("avm_unstruc_write_faces: polyFaces is NULL");
 
    avmesh_file *avf = file_list[fileid];
    if (!avf) RETURN_ERROR("avm_unstruc_write_faces: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      if(polyFaces_size>0) RETURN_ERROR("avm_unstruc_read_faces: polyFaces_size must be 0 in formatRevision 0");
       return rev0::avm_unstruc_write_faces(avf->rev0, 
                                triFaces,  triFaces_size,
                                quadFaces, quadFaces_size);
@@ -1602,13 +1589,12 @@ int avm_unstruc_write_faces(int fileid,
       return rev1::avm_unstruc_write_faces(avf->rev1, 
                                triFaces,  triFaces_size,
                                quadFaces, quadFaces_size,
-                               polyFaces, polyFaces_size);
+                               NULL, 0);
    }
    else if (avf->formatRevision == 2) {
       return rev2::avm_unstruc_write_faces(avf->rev2, 
                                triFaces,  triFaces_size,
-                               quadFaces, quadFaces_size,
-                               polyFaces, polyFaces_size);
+                               quadFaces, quadFaces_size);
    }
 
    RETURN_ERROR("avm_unstruc_write_faces: unsupported formatRevision in file");
@@ -1616,13 +1602,11 @@ int avm_unstruc_write_faces(int fileid,
 
 int avm_unstruc_write_bnd_faces(int fileid,
    int* triFaces,  int triFaces_size,
-   int* quadFaces, int quadFaces_size,
-   int* polyFaces, int polyFaces_size
+   int* quadFaces, int quadFaces_size
 )
 {
    if (triFaces_size > 0 && triFaces==NULL) RETURN_ERROR("avm_unstruc_write_bnd_faces: triFaces is NULL");
    if (quadFaces_size > 0 && quadFaces==NULL) RETURN_ERROR("avm_unstruc_write_bnd_faces: quadFaces is NULL");
-   if (polyFaces_size > 0 && polyFaces==NULL) RETURN_ERROR("avm_unstruc_write_bnd_faces: polyFaces is NULL");
 
    avmesh_file *avf = file_list[fileid];
    if (!avf) RETURN_ERROR("avm_unstruc_write_bnd_faces: fileid invalid");
@@ -1634,13 +1618,12 @@ int avm_unstruc_write_bnd_faces(int fileid,
       return rev1::avm_unstruc_write_bnd_faces(avf->rev1, 
                                triFaces,  triFaces_size,
                                quadFaces, quadFaces_size,
-                               polyFaces, polyFaces_size);
+                               NULL, 0);
    }
    else if (avf->formatRevision == 2) {
       return rev2::avm_unstruc_write_bnd_faces(avf->rev2, 
                                triFaces,  triFaces_size,
-                               quadFaces, quadFaces_size,
-                               polyFaces, polyFaces_size);
+                               quadFaces, quadFaces_size);
    }
 
    RETURN_ERROR("avm_unstruc_write_bnd_faces: unsupported formatRevision in file");
@@ -2206,13 +2189,11 @@ void FTNFUNC(avm_unstruc_read_partial_nodes_r8)(int* fileid, double* xyz, int* x
 void FTNFUNC(avm_unstruc_read_faces)(int* fileid,
    int* triFaces,  int* triFaces_size,
    int* quadFaces, int* quadFaces_size,
-   int* polyFaces, int* polyFaces_size,
    int* status
 ) {
  *status = avm_unstruc_read_faces(*fileid,
                triFaces,  *triFaces_size,
-               quadFaces, *quadFaces_size,
-               polyFaces, *polyFaces_size);
+               quadFaces, *quadFaces_size);
 }
 
 void FTNFUNC(avm_unstruc_read_tri)(int* fileid,
@@ -2238,25 +2219,21 @@ void FTNFUNC(avm_unstruc_read_quad)(int* fileid,
 void FTNFUNC(avm_unstruc_read_partial_faces)(int* fileid,
    int* triFaces,  int* triFaces_size, int* triStart, int* triEnd,
    int* quadFaces, int* quadFaces_size, int* quadStart, int* quadEnd,
-   int* polyFaces, int* polyFaces_size, int* polyStart, int* polyEnd,
    int* status
 ) {
  *status = avm_unstruc_read_partial_faces(*fileid,
                triFaces,  *triFaces_size, *triStart, *triEnd,
-               quadFaces, *quadFaces_size, *quadStart, *quadEnd,
-               polyFaces, *polyFaces_size, *polyStart, *polyEnd);
+               quadFaces, *quadFaces_size, *quadStart, *quadEnd);
 }
 
 void FTNFUNC(avm_unstruc_read_bnd_faces)(int* fileid,
    int* bndTriFaces,  int* bndTriFaces_size,
    int* bndQuadFaces, int* bndQuadFaces_size,
-   int* bndPolyFaces, int* bndPolyFaces_size,
    int* status
 ) {
  *status = avm_unstruc_read_bnd_faces(*fileid,
                bndTriFaces,  *bndTriFaces_size,
-               bndQuadFaces, *bndQuadFaces_size,
-               bndPolyFaces, *bndPolyFaces_size);
+               bndQuadFaces, *bndQuadFaces_size);
 }
 void FTNFUNC(avm_unstruc_read_cells)(int* fileid,
    int* hexCells, int* hexCells_size,
@@ -2325,25 +2302,21 @@ void FTNFUNC(avm_unstruc_write_nodes_r8)(int* fileid, double* xyz, int* xyz_size
 void FTNFUNC(avm_unstruc_write_faces)(int* fileid,
    int* triFaces,  int* triFaces_size,
    int* quadFaces, int* quadFaces_size,
-   int* polyFaces, int* polyFaces_size,
    int* status
 ) {
  *status = avm_unstruc_write_faces(*fileid,
                triFaces,  *triFaces_size,
-               quadFaces, *quadFaces_size,
-               polyFaces, *polyFaces_size);
+               quadFaces, *quadFaces_size);
 }
 
 void FTNFUNC(avm_unstruc_write_bnd_faces)(int* fileid,
    int* triFaces,  int* triFaces_size,
    int* quadFaces, int* quadFaces_size,
-   int* polyFaces, int* polyFaces_size,
    int* status
 ) {
  *status = avm_unstruc_write_bnd_faces(*fileid,
                triFaces,  *triFaces_size,
-               quadFaces, *quadFaces_size,
-               polyFaces, *polyFaces_size);
+               quadFaces, *quadFaces_size);
 }
 
 void FTNFUNC(avm_unstruc_write_cells)(int* fileid,

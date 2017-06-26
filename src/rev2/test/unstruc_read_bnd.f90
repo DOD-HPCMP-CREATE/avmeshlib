@@ -8,14 +8,11 @@ program unstruc_read_bnd
 
    integer(4) :: nBndTriFaces
    integer(4) :: nBndQuadFaces
-   integer(4) :: nBndPolyFaces
-   integer(4) :: bndPolyFacesSize
 
    ! unstruc mesh data
    real(8), allocatable :: xyz(:,:)
    integer, allocatable :: bndTriFaces(:,:)
    integer, allocatable :: bndQuadFaces(:,:)
-   integer, allocatable :: bndPolyFaces(:)
 
    call avm_read_headersf(avmid, 'unstruc.avm', istat)
    if (istat.ne.0) stop 'ERROR: not an AVMesh file'
@@ -35,13 +32,10 @@ program unstruc_read_bnd
    call avm_get_intf(avmid, 'nNodes', nNodes, istat)
    call avm_get_intf(avmid, 'nBndTriFaces', nBndTriFaces, istat)
    call avm_get_intf(avmid, 'nBndQuadFaces', nBndQuadFaces, istat)
-   call avm_get_intf(avmid, 'nBndPolyFaces', nBndPolyFaces, istat)
-   call avm_get_intf(avmid, 'bndPolyFacesSize', bndPolyFacesSize, istat)
 
    allocate(xyz(3,nNodes), &
             bndTriFaces(5,nBndTriFaces), &
-            bndQuadFaces(6,nBndQuadFaces), &
-            bndPolyFaces(bndPolyFacesSize))
+            bndQuadFaces(6,nBndQuadFaces))
 
    call avm_unstruc_read_nodes_r8f(avmid, xyz, 3*nNodes, istat)
    if (istat.ne.0) stop 'ERROR: failed to read nodes'
@@ -54,24 +48,16 @@ program unstruc_read_bnd
    call avm_unstruc_read_bnd_facesf(avmid, &
           bndTriFaces,  5*nBndTriFaces, &
           bndQuadFaces, 6*nBndQuadFaces, &
-          bndPolyFaces, bndPolyFacesSize, &
           istat)
    if (istat.ne.0) stop 'ERROR: failed to read bnd faces'
 
    call printa("bndTriFaces", bndTriFaces, 5, nBndTriFaces)
    call printa("bndQuadFaces", bndQuadFaces, 6, nBndQuadFaces)
-   call printb("bndPolyFaces", bndPolyFaces, bndPolyFacesSize, nBndPolyFaces)
 
    if (bndTriFaces(4,4) /= 2) then
      print '(A)', 'bndTriFaces incorrect, exiting'
      call exit(1)
    end if
-
-   if (bndPolyFaces(40) /= 7) then
-     print '(A)', 'bndPolyFaces incorrect, exiting'
-     call exit(1)
-   end if
-
 
    call avm_closef(avmid, istat)
    write(6,'(A)')  'Successfully read: unstruc.avm'

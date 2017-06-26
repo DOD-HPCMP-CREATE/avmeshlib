@@ -851,18 +851,11 @@ int avm_unstruc_read_nodes_r8(int avmid, double* xyz, int xyz_size);
    Faces on the boundary should be listed before non-boundary faces.
    Length in bytes = 6 * nQuadFaces * 4
 @param[in] quadFaces_size - number of elements in quadFaces array
-@param[in] polyFaces - For each face: nNodesInFace, nNodesInFace indices into node array, left cell index, right cell index
-   If negative, the left/right cell index refers to a patch id instead of a cell index.
-   In this way, boundary faces can indicate which patch they are a part of.
-   Faces on the boundary should be listed before non-boundary faces.
-   Length in bytes = bndGeneralFacesSize + generalFacesSize
-@param[in] polyFaces_size - number of elements in polyFaces array
 @return 0 on success, >0 on failure
 */
 int avm_unstruc_read_faces(int avmid, 
    int* triFaces,  int triFaces_size,
-   int* quadFaces, int quadFaces_size,
-   int* polyFaces, int polyFaces_size
+   int* quadFaces, int quadFaces_size
 );
 
 /**
@@ -878,7 +871,7 @@ int avm_unstruc_read_faces(int avmid,
 @param[in] triFaces_size - number of elements in triFaces array
 @param[in] stride - Currently assumed to be 5. For future use: the number of elements in each triFace.
    This can be set to a value higher than the actual length of each triFace to pad the array. This may
-   be useful for reading the tri/quad/poly faces into one large array with a uniform stride between faces.
+   be useful for reading the tri/quad faces into one large array with a uniform stride between faces.
 @param[in] start - first index of triFaces to read
 @param[in] end - last index of triFaces to read
 @param[in] flags - A logically ORed set of AVM_Flags. Currently only two sets of flags are supported:
@@ -904,7 +897,7 @@ int avm_unstruc_read_tri(int avmid,
 @param[in] quadFaces_size - number of elements in quadFaces array
 @param[in] stride - Currently assumed to be 6. For future use: the number of elements in each quadFace.
    This can be set to a value higher than the actual length of each quadFace to pad the array. This may
-   be useful for reading the tri/quad/poly faces into one large array with a uniform stride between faces.
+   be useful for reading the tri/quad faces into one large array with a uniform stride between faces.
 @param[in] start - first index of quadFaces to read
 @param[in] end - last index of quadFaces to read
 @param[in] flags - A logically ORed set of AVM_Flags. Currently only two sets of flags are supported:
@@ -966,20 +959,11 @@ int avm_unstruc_read_partial_nodes_r8(int avmid, double* xyz, int xyz_size, int 
 @param[in] quadFaces_size - number of elements in quadFaces array
 @param[in] quadStart - first quadFace to read
 @param[in] quadEnd - last quadFace to read
-@param[in] polyFaces - For each face: nNodesInFace, nNodesInFace indices into node array, left cell index, right cell index
-   If negative, the left/right cell index refers to a patch id instead of a cell index.
-   In this way, boundary faces can indicate which patch they are a part of.
-   Faces on the boundary should be listed before non-boundary faces.
-   Length in bytes = bndGeneralFacesSize + generalFacesSize
-@param[in] polyFaces_size - number of elements in polyFaces array
-@param[in] polyStart - first polyFace to read
-@param[in] polyEnd - last polyFace to read
 @return 0 on success, >0 on failure
 */
 int avm_unstruc_read_partial_faces(int avmid,
    int* triFaces,  int triFaces_size,  int triStart,  int triEnd,
-   int* quadFaces, int quadFaces_size, int quadStart, int quadEnd,
-   int* polyFaces, int polyFaces_size, int polyStart, int polyEnd
+   int* quadFaces, int quadFaces_size, int quadStart, int quadEnd
 );
 
 /**
@@ -997,17 +981,11 @@ int avm_unstruc_read_partial_faces(int avmid,
    In this way, boundary faces can indicate which patch they are a part of.
    Length in bytes = 6 * nQuadFaces * 4
 @param[in] quadFaces_size - number of elements in quadFaces array
-@param[in] polyFaces - For each face: nNodesInFace, nNodesInFace indices into node array, left cell index, right cell index
-   If negative, the left/right cell index refers to a patch id instead of a cell index.
-   In this way, boundary faces can indicate which patch they are a part of.
-   Length in bytes = bndGeneralFacesSize + generalFacesSize
-@param[in] polyFaces_size - number of elements in polyFaces array
 @return 0 on success, >0 on failure
 */
 int avm_unstruc_read_bnd_faces(int avmid,
    int* bndTriFaces,  int bndTriFaces_size,
-   int* bndQuadFaces, int bndQuadFaces_size,
-   int* bndPolyFaces, int bndPolyFaces_size
+   int* bndQuadFaces, int bndQuadFaces_size
 );
 
 /**
@@ -1157,17 +1135,11 @@ int avm_unstruc_write_nodes_r8(int avmid, double* xyz, int xyz_size);
    Faces on the boundary should be listed before non-boundary faces.
    Length in bytes = 6 * nQuadFaces * 4
 @param[in] quadFaces_size - number of elements in quadFaces array
-@param[in] polyFaces - For each face: nNodesInFace, nNodesInFace indices into node array, left cell index, right cell index
-   If there is no left/right cell index, set to a negative number.
-   Faces on the boundary should be listed before non-boundary faces.
-   Length in bytes = bndGeneralFacesSize + generalFacesSize
-@param[in] polyFaces_size - number of elements in polyFaces array
 @return 0 on success, >0 on failure
 */
 int avm_unstruc_write_faces(int avmid, 
    int* triFaces,  int triFaces_size,
-   int* quadFaces, int quadFaces_size,
-   int* polyFaces, int polyFaces_size
+   int* quadFaces, int quadFaces_size
 );
 
 /**
@@ -1185,16 +1157,11 @@ int avm_unstruc_write_faces(int avmid,
    If there is no left/right cell index, set to a negative number.
    Length in bytes = 6 * nQuadFaces * 4
 @param[in] quadFaces_size - number of elements in quadFaces array
-@param[in] polyFaces - For each face: nNodesInFace, nNodesInFace indices into node array, left cell index, right cell index
-   If there is no left/right cell index, set to a negative number.
-   Length in bytes = bndGeneralFacesSize + generalFacesSize
-@param[in] polyFaces_size - number of elements in polyFaces array
 @return 0 on success, >0 on failure
 */
 int avm_unstruc_write_bnd_faces(int avmid, 
    int* triFaces,  int triFaces_size,
-   int* quadFaces, int quadFaces_size,
-   int* polyFaces, int polyFaces_size
+   int* quadFaces, int quadFaces_size
 );
 
 /**
