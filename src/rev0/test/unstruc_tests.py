@@ -253,8 +253,7 @@ class TestAVM(unittest.TestCase):
          err = AVM.unstruc_read_nodes_r4(self.avmid, xyz, 3*nNodes)
          self.assertEqual(0, err)
          err = AVM.unstruc_read_faces(self.avmid, triFaces, 5*nTriFaces,
-                                                  quadFaces, 6*nQuadFaces,
-                                                  None, 0) #polyhedral faces are not supported in rev0
+                                                  quadFaces, 6*nQuadFaces)
          self.assertEqual(0, err)
 
          # nodes

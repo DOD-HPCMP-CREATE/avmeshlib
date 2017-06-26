@@ -138,8 +138,7 @@ class TestAVM(unittest.TestCase):
       self.assertEqual(0, err)
 
       err = AVM.unstruc_read_faces(self.avmid, triFaces,  5*nTriFaces,
-                                               quadFaces, 6*nQuadFaces,
-                                               None, 0) #polyFaces not supported in avmesh rev0
+                                               quadFaces, 6*nQuadFaces)
       self.assertEqual(0, err)
 
    def test_cart(self):

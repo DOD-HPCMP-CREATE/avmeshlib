@@ -610,7 +610,6 @@ TEST_F(TestFixture, data_reads) {
       float* xyz = new (nothrow) float[3*nNodes];
       int* triFaces = new (nothrow) int[5*nTriFaces];
       int* quadFaces = new (nothrow) int[6*nQuadFaces];
-      int* polyFaces = new (nothrow) int[polyFacesSize];
       int* hexCells = new (nothrow) int[8*nHexCells];
       int* tetCells = new (nothrow) int[4*nTetCells];
       int* priCells = new (nothrow) int[6*nPriCells];
@@ -630,8 +629,7 @@ TEST_F(TestFixture, data_reads) {
 
       EXPECT_EQ(0, avm_unstruc_read_nodes_r4(fileid, xyz, 3*nNodes));
       EXPECT_EQ(0, avm_unstruc_read_faces(fileid, triFaces,  5*nTriFaces,
-                                                  quadFaces, 6*nQuadFaces,
-                                                  polyFaces, polyFacesSize));
+                                                  quadFaces, 6*nQuadFaces));
       EXPECT_EQ(0, avm_unstruc_read_cells(fileid, hexCells,  8*nHexCells,
                                                   tetCells, 4*nTetCells,
                                                   priCells, 6*nPriCells,
@@ -874,17 +872,14 @@ TEST_F(TestFixture, data_reads_in_opposite_order) {
       float* xyz = new (nothrow) float[3*nNodes];
       int* triFaces = new (nothrow) int[5*nTriFaces];
       int* quadFaces = new (nothrow) int[6*nQuadFaces];
-      int* polyFaces = new (nothrow) int[polyFacesSize];
 
       EXPECT_TRUE(0!=xyz);
       EXPECT_TRUE(0!=triFaces);
       EXPECT_TRUE(0!=quadFaces);
-      EXPECT_TRUE(0!=polyFaces);
 
       EXPECT_EQ(0, avm_unstruc_read_nodes_r4(fileid, xyz, 3*nNodes));
       EXPECT_EQ(0, avm_unstruc_read_faces(fileid, triFaces,  5*nTriFaces,
-                                                  quadFaces, 6*nQuadFaces,
-                                                  polyFaces, polyFacesSize));
+                                                  quadFaces, 6*nQuadFaces));
 
       // nodes
       if (0) {
