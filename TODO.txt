@@ -5,22 +5,11 @@ Remove cell neighbor connectivity info (boundary faces will track their adjacent
 Update the following unstruc metadata fields from 32-bit to 64-bit integers: nNodes, nFaces, nCells, n[Hex|Tet|Pri|Pyr]Cells, n[Bnd]TriFaces, n[Bnd]QuadFaces, n[Bnd]PolyFaces, nEdges, n[Nodes|Edges|Faces]OnGeometry
 
 Higher order mesh support
-* Remove polyFaces
-    nPolyFaces
-    nBndPolyFaces
-    nPolyCells
-    polyFacesSize
-    bndPolyFacesSize
-    avm_unstruc_read_faces
-                read_bnd_faces
-                read_partial_faces
-                write_faces
-                write_bnd_faces
 
 * Add polynomialOrder (name?) metadata, defaults to 1
 * If polynomialOrder > 1, use formulae to determine nNodes for each face/cell type
 * Surface/volume can be at different order (tri/quad only higher order is possible)
-* surfacePolyOrder, volumePolyOrder
+* bndFacePolyOrder, cellPolyOrder
 
 Modify/extend geometry definition for AMR (this could entail the removal of the existing AMR heavy data fields)
 (Looks like the existing AMR fields are OK, at least for Capstone. We could also potentially support Pointwise’s nmb format by interrogating the meshGenerator field)

@@ -36,6 +36,8 @@ program unstruc_read
    integer(4) :: nMaxNodesPerFace
    integer(4) :: nMaxNodesPerCell
    integer(4) :: nMaxFacesPerCell
+   integer(4) :: bndFacePolyOrder
+   integer(4) :: cellPolyOrder
    integer(4) :: nPatches
    integer(4) :: nHexCells
    integer(4) :: nTetCells
@@ -125,6 +127,8 @@ program unstruc_read
                nMaxNodesPerFace, &
                nMaxNodesPerCell, &
                nMaxFacesPerCell, &
+               bndFacePolyOrder, &
+               cellPolyOrder, &
                nPatches, &
                nHexCells, &
                nTetCells, &
@@ -155,6 +159,11 @@ program unstruc_read
 
       if (nNodes /= 12) then
          print '(A)', 'nNodes incorrect, exiting'
+         call exit(1)
+      end if
+
+      if (cellPolyOrder /= 1) then
+         print '(A)', 'cellPolyOrder incorrect, exiting'
          call exit(1)
       end if
 

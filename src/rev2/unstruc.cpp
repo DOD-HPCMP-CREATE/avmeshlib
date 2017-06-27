@@ -23,6 +23,8 @@ unstruc_header_t::unstruc_header_t()
    nMaxNodesPerFace = 0;
    nMaxNodesPerCell = 0;
    nMaxFacesPerCell = 0;
+   bndFacePolyOrder = 1;
+   cellPolyOrder = 1;
    nPatches = 0;
    nHexCells = 0;
    nTetCells = 0;
@@ -47,6 +49,8 @@ int unstruc_header_t::size() const
           sizeof(nMaxNodesPerFace) +
           sizeof(nMaxNodesPerCell) +
           sizeof(nMaxFacesPerCell) +
+          sizeof(bndFacePolyOrder) +
+          sizeof(cellPolyOrder) +
           sizeof(nPatches) +
           sizeof(nHexCells) +
           sizeof(nTetCells) +
@@ -71,6 +75,8 @@ void unstruc_byte_swap_header(unstruc_header_t* p)
    byte_swap_int(&p->nMaxNodesPerFace);
    byte_swap_int(&p->nMaxNodesPerCell);
    byte_swap_int(&p->nMaxFacesPerCell);
+   byte_swap_int(&p->bndFacePolyOrder);
+   byte_swap_int(&p->cellPolyOrder);
    byte_swap_int(&p->nPatches);
    byte_swap_int(&p->nHexCells);
    byte_swap_int(&p->nTetCells);
@@ -97,6 +103,8 @@ int unstruc_header_t::write(FILE* fp, bool swap, unstruc_header_t* p)
    if (!fwrite(&p->nMaxNodesPerFace, sizeof(p->nMaxNodesPerFace), 1, fp)) return 0;
    if (!fwrite(&p->nMaxNodesPerCell, sizeof(p->nMaxNodesPerCell), 1, fp)) return 0;
    if (!fwrite(&p->nMaxFacesPerCell, sizeof(p->nMaxFacesPerCell), 1, fp)) return 0;
+   if (!fwrite(&p->bndFacePolyOrder, sizeof(p->bndFacePolyOrder), 1, fp)) return 0;
+   if (!fwrite(&p->cellPolyOrder, sizeof(p->cellPolyOrder), 1, fp)) return 0;
    if (!fwrite(&p->nPatches, sizeof(p->nPatches), 1, fp)) return 0;
    if (!fwrite(&p->nHexCells, sizeof(p->nHexCells), 1, fp)) return 0;
    if (!fwrite(&p->nTetCells, sizeof(p->nTetCells), 1, fp)) return 0;
@@ -125,6 +133,8 @@ int unstruc_header_t::read(FILE* fp, bool swap, unstruc_header_t* p)
    if (!fread(&p->nMaxNodesPerFace, sizeof(p->nMaxNodesPerFace), 1, fp)) return 0;
    if (!fread(&p->nMaxNodesPerCell, sizeof(p->nMaxNodesPerCell), 1, fp)) return 0;
    if (!fread(&p->nMaxFacesPerCell, sizeof(p->nMaxFacesPerCell), 1, fp)) return 0;
+   if (!fread(&p->bndFacePolyOrder, sizeof(p->bndFacePolyOrder), 1, fp)) return 0;
+   if (!fread(&p->cellPolyOrder, sizeof(p->cellPolyOrder), 1, fp)) return 0;
    if (!fread(&p->nPatches, sizeof(p->nPatches), 1, fp)) return 0;
    if (!fread(&p->nHexCells, sizeof(p->nHexCells), 1, fp)) return 0;
    if (!fread(&p->nTetCells, sizeof(p->nTetCells), 1, fp)) return 0;
