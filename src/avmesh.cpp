@@ -494,6 +494,78 @@ int avm_seek_to_mesh(int fileid, int mesh)
    RETURN_ERROR("avm_seek_to_mesh: unsupported formatRevision in file");
 }
 
+int avm_nodes_per_tri(int fileid, int p)
+{
+   avmesh_file *avf = file_list[fileid];
+   if (!avf) RETURN_ERROR("avm_nodes_per_tri: fileid invalid");
+
+   if (avf->formatRevision == 2) {
+      return rev2::avm_nodes_per_tri(p);
+   }
+
+   RETURN_ERROR("avm_nodes_per_tri: unsupported formatRevision in file");
+}
+
+int avm_nodes_per_quad(int fileid, int p)
+{
+   avmesh_file *avf = file_list[fileid];
+   if (!avf) RETURN_ERROR("avm_nodes_per_quad: fileid invalid");
+
+   if (avf->formatRevision == 2) {
+      return rev2::avm_nodes_per_quad(p);
+   }
+
+   RETURN_ERROR("avm_nodes_per_quad: unsupported formatRevision in file");
+}
+
+int avm_nodes_per_tet(int fileid, int p)
+{
+   avmesh_file *avf = file_list[fileid];
+   if (!avf) RETURN_ERROR("avm_nodes_per_tet: fileid invalid");
+
+   if (avf->formatRevision == 2) {
+      return rev2::avm_nodes_per_tet(p);
+   }
+
+   RETURN_ERROR("avm_nodes_per_tet: unsupported formatRevision in file");
+}
+
+int avm_nodes_per_pyr(int fileid, int p)
+{
+   avmesh_file *avf = file_list[fileid];
+   if (!avf) RETURN_ERROR("avm_nodes_per_pyr: fileid invalid");
+
+   if (avf->formatRevision == 2) {
+      return rev2::avm_nodes_per_pyr(p);
+   }
+
+   RETURN_ERROR("avm_nodes_per_pyr: unsupported formatRevision in file");
+}
+
+int avm_nodes_per_pri(int fileid, int p)
+{
+   avmesh_file *avf = file_list[fileid];
+   if (!avf) RETURN_ERROR("avm_nodes_per_pri: fileid invalid");
+
+   if (avf->formatRevision == 2) {
+      return rev2::avm_nodes_per_pri(p);
+   }
+
+   RETURN_ERROR("avm_nodes_per_pri: unsupported formatRevision in file");
+}
+
+int avm_nodes_per_hex(int fileid, int p)
+{
+   avmesh_file *avf = file_list[fileid];
+   if (!avf) RETURN_ERROR("avm_nodes_per_hex: fileid invalid");
+
+   if (avf->formatRevision == 2) {
+      return rev2::avm_nodes_per_hex(p);
+   }
+
+   RETURN_ERROR("avm_nodes_per_hex: unsupported formatRevision in file");
+}
+
 //
 // bfstruc functions 
 //
@@ -1903,6 +1975,24 @@ void FTNFUNC(avm_mesh_data_offset)(int* fileid, int* mesh, off_t* offset, int* s
 
 void FTNFUNC(avm_seek_to_mesh)(int* fileid, int* mesh, int* status)
 { *status = avm_seek_to_mesh(*fileid, *mesh); }
+
+void FTNFUNC(avm_nodes_per_tri)(int* fileid, int* p)
+{ avm_nodes_per_tri(*fileid, *p); }
+
+void FTNFUNC(avm_nodes_per_quad)(int* fileid, int* p)
+{ avm_nodes_per_quad(*fileid, *p); }
+
+void FTNFUNC(avm_nodes_per_tet)(int* fileid, int* p)
+{ avm_nodes_per_tet(*fileid, *p); }
+
+void FTNFUNC(avm_nodes_per_pyr)(int* fileid, int* p)
+{ avm_nodes_per_pyr(*fileid, *p); }
+
+void FTNFUNC(avm_nodes_per_pri)(int* fileid, int* p)
+{ avm_nodes_per_pri(*fileid, *p); }
+
+void FTNFUNC(avm_nodes_per_hex)(int* fileid, int* p)
+{ avm_nodes_per_hex(*fileid, *p); }
 
 //
 // bfstruc specific functions 

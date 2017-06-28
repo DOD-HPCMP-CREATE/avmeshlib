@@ -20,6 +20,30 @@ extern "C" void avm_set_error_str(char*);
 
 using namespace rev2;
 
+int rev2::avm_nodes_per_tri(int p) {
+   return ((p+1)*(p+2)) / 2;
+}
+
+int rev2::avm_nodes_per_quad(int p) {
+   return (p+1)*(p+1);
+}
+
+int rev2::avm_nodes_per_tet(int p) {
+   return ((p+1)*(p+2)*(p+3))/6;
+}
+
+int rev2::avm_nodes_per_pyr(int p) {
+   return ((p+1)*(p+2)*(2*p+3))/6;
+}
+
+int rev2::avm_nodes_per_pri(int p) {
+   return ((p+1)*(p+1)*(p+2))/2;
+}
+
+int rev2::avm_nodes_per_hex(int p) {
+   return (p+1)*(p+1)*(p+1);
+}
+
 int rev2::avm_open(rev2_avmesh_file* avf, int* id)
 {
 #define CHECK_RETURN(v) if(v) { return 1; }

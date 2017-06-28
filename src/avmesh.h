@@ -502,6 +502,20 @@ subroutine avm_seek_to_meshf(avmid, mesh, offset, istatus)
 */
 int avm_seek_to_mesh(int avmid, int mesh);
 
+
+/** 
+@} 
+@name Higher order node count functions
+@brief Routines to determine the number of nodes at different polynomial orders
+@{ 
+*/
+int avm_nodes_per_tri(int avmid, int p);
+int avm_nodes_per_quad(int avmid, int p);
+int avm_nodes_per_tet(int avmid, int p);
+int avm_nodes_per_pyr(int avmid, int p);
+int avm_nodes_per_pri(int avmid, int p);
+int avm_nodes_per_hex(int avmid, int p);
+
 /** 
 @} 
 @name Body-Fitted Structured Mesh Data Functions 

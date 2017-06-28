@@ -24,6 +24,12 @@
 %rename(mesh_data_offset)           avm_mesh_data_offset;
 %rename(seek_to_mesh)               avm_seek_to_mesh;
 %rename(get_error_str)              avm_get_error_str;
+%rename(nodes_per_tri)              avm_nodes_per_tri;
+%rename(nodes_per_quad)             avm_nodes_per_quad;
+%rename(nodes_per_tet)              avm_nodes_per_tet;
+%rename(nodes_per_pyr)              avm_nodes_per_pyr;
+%rename(nodes_per_pri)              avm_nodes_per_pri;
+%rename(nodes_per_hex)              avm_nodes_per_hex;
 %rename(bfstruc_read_xyz_r4)        avm_bfstruc_read_xyz_r4;
 %rename(bfstruc_read_xyz_r8)        avm_bfstruc_read_xyz_r8;
 %rename(bfstruc_read_iblank)        avm_bfstruc_read_iblank;
@@ -114,6 +120,12 @@ extern int avm_mesh_data_offset(int, int, off_t* OUTPUT);
 extern int avm_mesh_data_offset(int, int, long* OUTPUT);
 #endif
 extern int avm_seek_to_mesh(int, int);
+extern int avm_nodes_per_tri(int, int);
+extern int avm_nodes_per_quad(int, int);
+extern int avm_nodes_per_tet(int, int);
+extern int avm_nodes_per_pyr(int, int);
+extern int avm_nodes_per_pri(int, int);
+extern int avm_nodes_per_hex(int, int);
 extern char* avm_get_error_str();
 extern int avm_bfstruc_read_xyz_r4(int, float*, float*, float*, int);
 extern int avm_bfstruc_read_xyz_r8(int, double*, double*, double*, int);

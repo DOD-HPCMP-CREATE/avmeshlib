@@ -45,6 +45,18 @@ int avm_seek_to_mesh(rev2_avmesh_file* avf, int mesh);
 
 int avm_unstruc_seek_to(rev2_avmesh_file* avf, char* section, off_t start);
 
+int avm_nodes_per_tri(int p);
+
+int avm_nodes_per_quad(int p);
+
+int avm_nodes_per_tet(int p);
+
+int avm_nodes_per_pyr(int p);
+
+int avm_nodes_per_pri(int p);
+
+int avm_nodes_per_hex(int p);
+
 int seek(FILE* fp, off_t offset);
 
 /**
