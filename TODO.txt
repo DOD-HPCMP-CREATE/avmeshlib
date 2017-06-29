@@ -10,6 +10,8 @@ Higher order mesh support
 * If polynomialOrder > 1, use formulae to determine nNodes for each face/cell type
 * Surface/volume can be at different order (tri/quad only higher order is possible)
 * bndFacePolyOrder, cellPolyOrder
+FIXME: what about higher order edges??
+FIXME: change bndFacePolyOrder to FacePolyOrder?
 
 Modify/extend geometry definition for AMR (this could entail the removal of the existing AMR heavy data fields)
 (Looks like the existing AMR fields are OK, at least for Capstone. We could also potentially support Pointwise’s nmb format by interrogating the meshGenerator field)

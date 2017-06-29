@@ -1547,11 +1547,41 @@ int rev2::avm_unstruc_seek_to(rev2_avmesh_file* avf, char* section, off_t start=
    if (meshid < 0 || meshid >= avf->file_hdr.meshCount) {
       RETURN_ERROR("avm_unstruc_seek_to: invalid meshid");
    }
+
+   const unstruc_header& hdr = avf->unstruc[meshid].header;
+
    if (0!=strncmp("unstruc", avf->mesh_hdrs[meshid].meshType, strlen("unstruc"))) {
       RETURN_ERROR("avm_unstruc_seek_to: selected mesh is not an unstruc mesh");
    }
 
-   const unstruc_header& hdr = avf->unstruc[meshid].header;
+   //FIXME: eventually we won't be adding 2 here
+   //FIXME: we're assuming that all explicit faces are bnd faces, is that ok?
+   int nodesPerTri = avm_nodes_per_tri(hdr.bndFacePolyOrder) + 2;
+   int nodesPerQuad = avm_nodes_per_quad(hdr.bndFacePolyOrder) + 2;
+   int nodesPerHex = avm_nodes_per_hex(hdr.cellPolyOrder);
+   int nodesPerTet = avm_nodes_per_tet(hdr.cellPolyOrder);
+   int nodesPerPri = avm_nodes_per_pri(hdr.cellPolyOrder);
+   int nodesPerPyr = avm_nodes_per_pyr(hdr.cellPolyOrder);
+
+   if (nodesPerTri < 3) {
+      RETURN_ERROR("avm_unstruc_seek_to: invalid nodesPerTri (check bndFacePolyOrder >= 1)");
+   }
+   if (nodesPerQuad < 4) {
+      RETURN_ERROR("avm_unstruc_seek_to: invalid nodesPerQuad (check bndFacePolyOrder >= 1)");
+   }
+   if (nodesPerHex < 8) {
+      RETURN_ERROR("avm_unstruc_seek_to: invalid nodesPerHex (check cellPolyOrder >= 1)");
+   }
+   if (nodesPerTet < 4) {
+      RETURN_ERROR("avm_unstruc_seek_to: invalid nodesPerTet (check cellPolyOrder >= 1)");
+   }
+   if (nodesPerPri < 6) {
+      RETURN_ERROR("avm_unstruc_seek_to: invalid nodesPerPri (check cellPolyOrder >= 1)");
+   }
+   if (nodesPerPyr < 5) {
+      RETURN_ERROR("avm_unstruc_seek_to: invalid nodesPerPyr (check cellPolyOrder >= 1)");
+   }
+
    off_t offset;
    if (avm_mesh_data_offset(avf, meshid+1, &offset)) return 1;
 
@@ -1575,64 +1605,64 @@ int rev2::avm_unstruc_seek_to(rev2_avmesh_file* avf, char* section, off_t start=
       return seek(avf->fp,offset);
    }
    if(0==strncmp("bndTris",section,strlen("bndTris"))) {
-      offset += 5 * start * 4;
+      offset += nodesPerTri * start * 4;
       return seek(avf->fp,offset);
    }
 
-   offset += 5 * (off_t)hdr.nBndTriFaces * 4;
+   offset += nodesPerTri * (off_t)hdr.nBndTriFaces * 4;
 
    if(0==strncmp("bndQuads",section,strlen("bndQuads"))) {
-      offset += 6 * start * 4;
+      offset += nodesPerQuad * start * 4;
       return seek(avf->fp,offset);
    }
 
-   offset += 6 * (off_t)hdr.nBndQuadFaces * 4;
+   offset += nodesPerQuad * (off_t)hdr.nBndQuadFaces * 4;
 
    if(0==strncmp("faces",section,strlen("faces")))
       return seek(avf->fp,offset);
    if(0==strncmp("intTris",section,strlen("intTris"))) {
-      offset += 5 * start * 4;
+      offset += nodesPerTri * start * 4;
       return seek(avf->fp,offset);
    }
 
-   offset += 5 * ((off_t)hdr.nTriFaces-(off_t)hdr.nBndTriFaces) * 4;
+   offset += nodesPerTri * ((off_t)hdr.nTriFaces-(off_t)hdr.nBndTriFaces) * 4;
 
    if(0==strncmp("intQuads",section,strlen("intQuads"))) {
-      offset += 6 * start * 4;
+      offset += nodesPerQuad * start * 4;
       return seek(avf->fp,offset);
    }
 
-   offset += 6 * ((off_t)hdr.nQuadFaces-(off_t)hdr.nBndQuadFaces) * 4;
+   offset += nodesPerQuad * ((off_t)hdr.nQuadFaces-(off_t)hdr.nBndQuadFaces) * 4;
 
    if(0==strncmp("cells",section,strlen("cells")))
       return seek(avf->fp,offset);
    if(0==strncmp("hexes",section,strlen("hexes"))) {
-      offset += 8 * start * 4;
+      offset += nodesPerHex * start * 4;
       return seek(avf->fp,offset);
    }
 
-   offset += 8 * (off_t)hdr.nHexCells * 4;
+   offset += nodesPerHex * (off_t)hdr.nHexCells * 4;
 
    if(0==strncmp("tets",section,strlen("tets"))) {
-      offset += 4 * start * 4;
+      offset += nodesPerTet * start * 4;
       return seek(avf->fp,offset);
    }
 
-   offset += 4 * (off_t)hdr.nTetCells * 4;
+   offset += nodesPerTet * (off_t)hdr.nTetCells * 4;
 
    if(0==strncmp("pris",section,strlen("prisms"))) {
-      offset += 6 * (off_t)start * 4;
+      offset += nodesPerPri * (off_t)start * 4;
       return seek(avf->fp,offset);
    }
 
-   offset += 6 * (off_t)hdr.nPriCells * 4;
+   offset += nodesPerPri * (off_t)hdr.nPriCells * 4;
 
    if(0==strncmp("pyrs",section,strlen("pyramids"))) {
-      offset += 5 * (off_t)start * 4;
+      offset += nodesPerPyr * (off_t)start * 4;
       return seek(avf->fp,offset);
    }
 
-   offset += 5 * (off_t)hdr.nPyrCells * 4;
+   offset += nodesPerPyr * (off_t)hdr.nPyrCells * 4;
 
    if(0==strncmp("edges",section,strlen("edges")))
       return seek(avf->fp,offset);
@@ -2570,12 +2600,23 @@ int rev2::avm_unstruc_write_bnd_faces(rev2_avmesh_file* avf,
    int triFacesIndex = 0;
    int quadFacesIndex = 0;
 
+   //FIXME: eventually we won't be adding 2 here, we just need 1 extra value for the adjacent patch storage
+   int nodesPerTri = avm_nodes_per_tri(hdr.bndFacePolyOrder) + 2;
+   int nodesPerQuad = avm_nodes_per_quad(hdr.bndFacePolyOrder) + 2;
+
+   if (nodesPerTri < 3) {
+      RETURN_ERROR("avm_unstruc_write_bnd_faces: invalid nodesPerTri (check bndFacePolyOrder >= 1)");
+   }
+   if (nodesPerQuad < 4) {
+      RETURN_ERROR("avm_unstruc_write_bnd_faces: invalid nodesPerQuad (check bndFacePolyOrder >= 1)");
+   }
+
 // validate size of face buffers
 // (this is unstruc format revision 1)
-   if (triFaces_size != 5*hdr.nTriFaces) {
+   if (triFaces_size != nodesPerTri*hdr.nTriFaces) {
       RETURN_ERROR("avm_unstruc_write_bnd_faces: triFaces_size does not match header");
    }
-   if (quadFaces_size != 6*hdr.nQuadFaces) {
+   if (quadFaces_size != nodesPerQuad*hdr.nQuadFaces) {
       RETURN_ERROR("avm_unstruc_write_bnd_faces: quadFaces_size does not match header");
    }
 
@@ -2589,9 +2630,9 @@ int rev2::avm_unstruc_write_bnd_faces(rev2_avmesh_file* avf,
 
 // Tri patch faces
    for (int i=0; i<hdr.nTriFaces; ++i) {
-      if (triFaces[(i*5)+4] < 0) {
+      if (triFaces[(i*nodesPerTri)+(nodesPerTri-1)] < 0) {
          avf->unstruc[meshid].faces_reordering[i] = triFacesIndex++;
-         if (!fwrite(triFaces+(i*5), sizeof(int)*5, 1, avf->fp)) {
+         if (!fwrite(triFaces+(i*nodesPerTri), sizeof(int)*nodesPerTri, 1, avf->fp)) {
             RETURN_ERROR("avm_unstruc_write_bnd_faces: failed writing triFaces array");
          }
       }
@@ -2599,9 +2640,9 @@ int rev2::avm_unstruc_write_bnd_faces(rev2_avmesh_file* avf,
 
 // Quad patch faces
    for (int i=0; i<hdr.nQuadFaces; ++i) {
-      if (quadFaces[(i*6)+5] < 0) {
+      if (quadFaces[(i*nodesPerQuad)+(nodesPerQuad-1)] < 0) {
          avf->unstruc[meshid].faces_reordering[hdr.nTriFaces+i] = hdr.nTriFaces + quadFacesIndex++;
-         if (!fwrite(quadFaces+(i*6), sizeof(int)*6, 1, avf->fp)) {
+         if (!fwrite(quadFaces+(i*nodesPerQuad), sizeof(int)*nodesPerQuad, 1, avf->fp)) {
             RETURN_ERROR("avm_unstruc_write_bnd_faces: failed writing quadFaces array");
          }
       }
@@ -2640,12 +2681,24 @@ int rev2::avm_unstruc_write_faces(rev2_avmesh_file* avf,
    int triFacesIndex = 0;
    int quadFacesIndex = 0;
 
+   //FIXME: eventually we won't be adding 2 here
+   //FIXME: we're assuming that all explicit faces are bnd faces, is that ok?
+   int nodesPerTri = avm_nodes_per_tri(hdr.bndFacePolyOrder) + 2;
+   int nodesPerQuad = avm_nodes_per_quad(hdr.bndFacePolyOrder) + 2;
+
+   if (nodesPerTri < 3) {
+      RETURN_ERROR("avm_unstruc_write_faces: invalid nodesPerTri (check bndFacePolyOrder >= 1)");
+   }
+   if (nodesPerQuad < 4) {
+      RETURN_ERROR("avm_unstruc_write_faces: invalid nodesPerQuad (check bndFacePolyOrder >= 1)");
+   }
+
 // validate size of face buffers
 // (this is unstruc format revision 1)
-   if (triFaces_size != 5*hdr.nTriFaces) {
+   if (triFaces_size != nodesPerTri*hdr.nTriFaces) {
       RETURN_ERROR("avm_unstruc_write_faces: triFaces_size does not match header");
    }
-   if (quadFaces_size != 6*hdr.nQuadFaces) {
+   if (quadFaces_size != nodesPerQuad*hdr.nQuadFaces) {
       RETURN_ERROR("avm_unstruc_write_faces: quadFaces_size does not match header");
    }
 
@@ -2659,9 +2712,9 @@ int rev2::avm_unstruc_write_faces(rev2_avmesh_file* avf,
 
 // Tri patch faces
    for (int i=0; i<hdr.nTriFaces; ++i) {
-      if (triFaces[(i*5)+4] < 0) {
+      if (triFaces[(i*nodesPerTri)+(nodesPerTri-1)] < 0) {
          avf->unstruc[meshid].faces_reordering[i] = triFacesIndex++;
-         if (!fwrite(triFaces+(i*5), sizeof(int)*5, 1, avf->fp)) {
+         if (!fwrite(triFaces+(i*nodesPerTri), sizeof(int)*nodesPerTri, 1, avf->fp)) {
             RETURN_ERROR("avm_unstruc_write_faces: failed writing patch triFaces array");
          }
       }
@@ -2669,9 +2722,9 @@ int rev2::avm_unstruc_write_faces(rev2_avmesh_file* avf,
 
 // Quad patch faces
    for (int i=0; i<hdr.nQuadFaces; ++i) {
-      if (quadFaces[(i*6)+5] < 0) {
+      if (quadFaces[(i*nodesPerQuad)+(nodesPerQuad-1)] < 0) {
          avf->unstruc[meshid].faces_reordering[hdr.nTriFaces+i] = hdr.nTriFaces + quadFacesIndex++;
-         if (!fwrite(quadFaces+(i*6), sizeof(int)*6, 1, avf->fp)) {
+         if (!fwrite(quadFaces+(i*nodesPerQuad), sizeof(int)*nodesPerQuad, 1, avf->fp)) {
             RETURN_ERROR("avm_unstruc_write_faces: failed writing patch quadFaces array");
          }
       }
@@ -2679,9 +2732,9 @@ int rev2::avm_unstruc_write_faces(rev2_avmesh_file* avf,
 
 // Tri interior faces
    for (int i=0; i<hdr.nTriFaces; ++i) {
-      if (triFaces[(i*5)+4] > 0) {
+      if (triFaces[(i*nodesPerTri)+(nodesPerTri-1)] > 0) {
          avf->unstruc[meshid].faces_reordering[i] = triFacesIndex++;
-         if (!fwrite(triFaces+(i*5), sizeof(int)*5, 1, avf->fp)) {
+         if (!fwrite(triFaces+(i*nodesPerTri), sizeof(int)*nodesPerTri, 1, avf->fp)) {
             RETURN_ERROR("avm_unstruc_write_faces: failed writing interior triFaces array");
          }
       }
@@ -2689,9 +2742,9 @@ int rev2::avm_unstruc_write_faces(rev2_avmesh_file* avf,
 
 // Quad interior faces
    for (int i=0; i<hdr.nQuadFaces; ++i) {
-      if (quadFaces[(i*6)+5] > 0) {
+      if (quadFaces[(i*nodesPerQuad)+(nodesPerQuad-1)] > 0) {
          avf->unstruc[meshid].faces_reordering[hdr.nTriFaces+i] = hdr.nTriFaces + quadFacesIndex++;
-         if (!fwrite(quadFaces+(i*6), sizeof(int)*6, 1, avf->fp)) {
+         if (!fwrite(quadFaces+(i*nodesPerQuad), sizeof(int)*nodesPerQuad, 1, avf->fp)) {
             RETURN_ERROR("avm_unstruc_write_faces: failed writing interior quadFaces array");
          }
       }
@@ -2729,18 +2782,36 @@ int rev2::avm_unstruc_write_cells(rev2_avmesh_file* avf,
 
    const unstruc_header& hdr = avf->unstruc[meshid].header;
 
+   int nodesPerHex = avm_nodes_per_hex(hdr.cellPolyOrder);
+   int nodesPerTet = avm_nodes_per_tet(hdr.cellPolyOrder);
+   int nodesPerPri = avm_nodes_per_pri(hdr.cellPolyOrder);
+   int nodesPerPyr = avm_nodes_per_pyr(hdr.cellPolyOrder);
+
+   if (nodesPerHex < 8) {
+      RETURN_ERROR("avm_unstruc_write_cells: invalid nodesPerHex (check cellPolyOrder >= 1)");
+   }
+   if (nodesPerTet < 4) {
+      RETURN_ERROR("avm_unstruc_write_cells: invalid nodesPerTet (check cellPolyOrder >= 1)");
+   }
+   if (nodesPerPri < 6) {
+      RETURN_ERROR("avm_unstruc_write_cells: invalid nodesPerPri (check cellPolyOrder >= 1)");
+   }
+   if (nodesPerPyr < 5) {
+      RETURN_ERROR("avm_unstruc_write_cells: invalid nodesPerPyr (check cellPolyOrder >= 1)");
+   }
+
 // validate size of cell buffers
 // (this is unstruc format revision 1)
-   if (hexCells_size != 8*hdr.nHexCells) {
+   if (hexCells_size != nodesPerHex*hdr.nHexCells) {
       RETURN_ERROR("avm_unstruc_write_cells: hexCells_size does not match header");
    }
-   if (tetCells_size != 4*hdr.nTetCells) {
+   if (tetCells_size != nodesPerTet*hdr.nTetCells) {
       RETURN_ERROR("avm_unstruc_write_cells: tetCells_size does not match header");
    }
-   if (priCells_size != 6*hdr.nPriCells) {
+   if (priCells_size != nodesPerPri*hdr.nPriCells) {
       RETURN_ERROR("avm_unstruc_write_cells: priCells_size does not match header");
    }
-   if (pyrCells_size != 5*hdr.nPyrCells) {
+   if (pyrCells_size != nodesPerPyr*hdr.nPyrCells) {
       RETURN_ERROR("avm_unstruc_write_cells: pyrCells_size does not match header");
    }
 
