@@ -23,7 +23,7 @@ program unstruc_write
     type AMR_Node_Data
        sequence
        real*8  :: u, v
-       integer :: nodeIndex, geomType, geomTopoId
+       integer :: nodeIndex, geomType, geomTopoId, dummy
     end type AMR_Node_Data
     type(AMR_Node_Data), allocatable :: nodesOnGeometry(:)
     integer, allocatable :: edgesOnGeometry(:,:)

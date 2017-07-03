@@ -1,8 +1,11 @@
 /** @page todo
 
+Make a stronger connection between test order to ensure both styles of writers are being tested. "DEPENDS" still leaves ambiguity where both writers can run before either of the readers. Easiest way to do this would be to just have the two writers output files with different names. Could also make a test that diffs the two files at that point. Don't run all the tests twice... jus do the diff and call it a day. Have to figure out why description is being written slightly differently first. (Extra byte for a null terminator or something?)
+
 Remove cell neighbor connectivity info (boundary faces will track their adjacent boundary patch ID, but internal cells will no longer track their adjacent cell IDs)
 
 Update the following unstruc metadata fields from 32-bit to 64-bit integers: nNodes, nFaces, nCells, n[Hex|Tet|Pri|Pyr]Cells, n[Bnd]TriFaces, n[Bnd]QuadFaces, n[Bnd]PolyFaces, nEdges, n[Nodes|Edges|Faces]OnGeometry
+* Initially just change on disk format to 64 bit and cast up/down. Later plumb the API itself
 
 Higher order mesh support
 
