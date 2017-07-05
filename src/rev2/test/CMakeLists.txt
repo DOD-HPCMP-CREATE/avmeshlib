@@ -129,6 +129,10 @@ set_tests_properties (rev2_unstruc_read_out_of_order
 PROPERTIES PASS_REGULAR_EXPRESSION "Successfully read"
 DEPENDS rev2_unstruc_write_out_of_order)
 
+if (ENABLE_PYTHON)
+   add_test (rev2_higher_order_python_tests python higherOrder.py)
+endif (ENABLE_PYTHON)
+
 ####
 # strand tests
 ####
