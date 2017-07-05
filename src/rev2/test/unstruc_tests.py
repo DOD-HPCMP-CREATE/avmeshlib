@@ -360,5 +360,26 @@ class TestAVM(unittest.TestCase):
          self.assertEqual(1, quadFaces[4])
          self.assertEqual(2, quadFaces[5])
 
+   def test_higherOrderSizes(self):
+      triOrder =  { 1:3, 2:6, 3:10, 4:15 }
+      quadOrder = { 1:4, 2:9, 3:16, 4:25 }
+      tetOrder = { 1:4, 2:10, 3:20, 4:35 }
+      pyrOrder = { 1:5, 2:14, 3:30, 4:55 }
+      priOrder = { 1:6, 2:18, 3:40, 4:75 }
+      hexOrder = { 1:8, 2:27, 3:64, 4:125 }
+      for p in range(1,5):
+          i = AVM.nodes_per_tri(self.avmid, p)
+          self.assertEqual(triOrder[p], i)
+          i = AVM.nodes_per_quad(self.avmid, p)
+          self.assertEqual(quadOrder[p], i)
+          i = AVM.nodes_per_tet(self.avmid, p)
+          self.assertEqual(tetOrder[p], i)
+          i = AVM.nodes_per_pyr(self.avmid, p)
+          self.assertEqual(pyrOrder[p], i)
+          i = AVM.nodes_per_pri(self.avmid, p)
+          self.assertEqual(priOrder[p], i)
+          i = AVM.nodes_per_hex(self.avmid, p)
+          self.assertEqual(hexOrder[p], i)
+
 if __name__ == '__main__':
    unittest.main()
