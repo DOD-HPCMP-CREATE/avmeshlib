@@ -36,7 +36,7 @@ program unstruc_write
    integer(4) :: nMaxNodesPerFace
    integer(4) :: nMaxNodesPerCell
    integer(4) :: nMaxFacesPerCell
-   integer(4) :: bndFacePolyOrder
+   integer(4) :: facePolyOrder
    integer(4) :: cellPolyOrder
    integer(4) :: nPatches
    integer(4) :: nHexCells
@@ -131,7 +131,7 @@ program unstruc_write
        nMaxNodesPerFace = 4
        nMaxNodesPerCell = 8
        nMaxFacesPerCell = 6
-       bndFacePolyOrder = 1
+       facePolyOrder = 1
        cellPolyOrder = 1
        nPatches = 2
        nHexCells = 1
@@ -169,7 +169,7 @@ program unstruc_write
                  nMaxNodesPerFace, &
                  nMaxNodesPerCell, &
                  nMaxFacesPerCell, &
-                 bndFacePolyOrder, &
+                 facePolyOrder, &
                  cellPolyOrder, &
                  nPatches, &
                  nHexCells, &

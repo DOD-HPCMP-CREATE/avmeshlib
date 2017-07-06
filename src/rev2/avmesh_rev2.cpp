@@ -262,7 +262,7 @@ int rev2::avm_get_int(rev2_avmesh_file* avf, const char* field, int* value)
       if (FIELD_EQ("nMaxNodesPerFace")) RETURN_ANSWER(avf->unstruc[meshid].header.nMaxNodesPerFace)
       if (FIELD_EQ("nMaxNodesPerCell")) RETURN_ANSWER(avf->unstruc[meshid].header.nMaxNodesPerCell)
       if (FIELD_EQ("nMaxFacesPerCell")) RETURN_ANSWER(avf->unstruc[meshid].header.nMaxFacesPerCell)
-      if (FIELD_EQ("bndFacePolyOrder")) RETURN_ANSWER(avf->unstruc[meshid].header.bndFacePolyOrder)
+      if (FIELD_EQ("facePolyOrder")) RETURN_ANSWER(avf->unstruc[meshid].header.facePolyOrder)
       if (FIELD_EQ("cellPolyOrder")) RETURN_ANSWER(avf->unstruc[meshid].header.cellPolyOrder)
       if (FIELD_EQ("nPatches")) RETURN_ANSWER(avf->unstruc[meshid].header.nPatches)
       if (FIELD_EQ("nHexCells")) RETURN_ANSWER(avf->unstruc[meshid].header.nHexCells)
@@ -545,7 +545,7 @@ int rev2::avm_set_int(rev2_avmesh_file* avf, const char* field, int value)
       if (FIELD_EQ("nMaxNodesPerFace")) SET_AND_RETURN(avf->unstruc[meshid].header.nMaxNodesPerFace)
       if (FIELD_EQ("nMaxNodesPerCell")) SET_AND_RETURN(avf->unstruc[meshid].header.nMaxNodesPerCell)
       if (FIELD_EQ("nMaxFacesPerCell")) SET_AND_RETURN(avf->unstruc[meshid].header.nMaxFacesPerCell)
-      if (FIELD_EQ("bndFacePolyOrder")) SET_AND_RETURN(avf->unstruc[meshid].header.bndFacePolyOrder)
+      if (FIELD_EQ("facePolyOrder")) SET_AND_RETURN(avf->unstruc[meshid].header.facePolyOrder)
       if (FIELD_EQ("cellPolyOrder")) SET_AND_RETURN(avf->unstruc[meshid].header.cellPolyOrder)
       if (FIELD_EQ("nPatches")) {
          avf->unstruc[meshid].patches.resize(value);
@@ -1560,18 +1560,18 @@ int rev2::avm_unstruc_seek_to(rev2_avmesh_file* avf, char* section, off_t start=
 
    //FIXME: eventually we won't be adding 2 here
    //FIXME: we're assuming that all explicit faces are bnd faces, is that ok?
-   int nodesPerTri = avm_nodes_per_tri(hdr.bndFacePolyOrder) + 2;
-   int nodesPerQuad = avm_nodes_per_quad(hdr.bndFacePolyOrder) + 2;
+   int nodesPerTri = avm_nodes_per_tri(hdr.facePolyOrder) + 2;
+   int nodesPerQuad = avm_nodes_per_quad(hdr.facePolyOrder) + 2;
    int nodesPerHex = avm_nodes_per_hex(hdr.cellPolyOrder);
    int nodesPerTet = avm_nodes_per_tet(hdr.cellPolyOrder);
    int nodesPerPri = avm_nodes_per_pri(hdr.cellPolyOrder);
    int nodesPerPyr = avm_nodes_per_pyr(hdr.cellPolyOrder);
 
    if (nodesPerTri < 3) {
-      RETURN_ERROR("avm_unstruc_seek_to: invalid nodesPerTri (check bndFacePolyOrder >= 1)");
+      RETURN_ERROR("avm_unstruc_seek_to: invalid nodesPerTri (check facePolyOrder >= 1)");
    }
    if (nodesPerQuad < 4) {
-      RETURN_ERROR("avm_unstruc_seek_to: invalid nodesPerQuad (check bndFacePolyOrder >= 1)");
+      RETURN_ERROR("avm_unstruc_seek_to: invalid nodesPerQuad (check facePolyOrder >= 1)");
    }
    if (nodesPerHex < 8) {
       RETURN_ERROR("avm_unstruc_seek_to: invalid nodesPerHex (check cellPolyOrder >= 1)");
@@ -2605,14 +2605,14 @@ int rev2::avm_unstruc_write_bnd_faces(rev2_avmesh_file* avf,
    int quadFacesIndex = 0;
 
    //FIXME: eventually we won't be adding 2 here, we just need 1 extra value for the adjacent patch storage
-   int nodesPerTri = avm_nodes_per_tri(hdr.bndFacePolyOrder) + 2;
-   int nodesPerQuad = avm_nodes_per_quad(hdr.bndFacePolyOrder) + 2;
+   int nodesPerTri = avm_nodes_per_tri(hdr.facePolyOrder) + 2;
+   int nodesPerQuad = avm_nodes_per_quad(hdr.facePolyOrder) + 2;
 
    if (nodesPerTri < 3) {
-      RETURN_ERROR("avm_unstruc_write_bnd_faces: invalid nodesPerTri (check bndFacePolyOrder >= 1)");
+      RETURN_ERROR("avm_unstruc_write_bnd_faces: invalid nodesPerTri (check facePolyOrder >= 1)");
    }
    if (nodesPerQuad < 4) {
-      RETURN_ERROR("avm_unstruc_write_bnd_faces: invalid nodesPerQuad (check bndFacePolyOrder >= 1)");
+      RETURN_ERROR("avm_unstruc_write_bnd_faces: invalid nodesPerQuad (check facePolyOrder >= 1)");
    }
 
 // validate size of face buffers
@@ -2687,14 +2687,14 @@ int rev2::avm_unstruc_write_faces(rev2_avmesh_file* avf,
 
    //FIXME: eventually we won't be adding 2 here
    //FIXME: we're assuming that all explicit faces are bnd faces, is that ok?
-   int nodesPerTri = avm_nodes_per_tri(hdr.bndFacePolyOrder) + 2;
-   int nodesPerQuad = avm_nodes_per_quad(hdr.bndFacePolyOrder) + 2;
+   int nodesPerTri = avm_nodes_per_tri(hdr.facePolyOrder) + 2;
+   int nodesPerQuad = avm_nodes_per_quad(hdr.facePolyOrder) + 2;
 
    if (nodesPerTri < 3) {
-      RETURN_ERROR("avm_unstruc_write_faces: invalid nodesPerTri (check bndFacePolyOrder >= 1)");
+      RETURN_ERROR("avm_unstruc_write_faces: invalid nodesPerTri (check facePolyOrder >= 1)");
    }
    if (nodesPerQuad < 4) {
-      RETURN_ERROR("avm_unstruc_write_faces: invalid nodesPerQuad (check bndFacePolyOrder >= 1)");
+      RETURN_ERROR("avm_unstruc_write_faces: invalid nodesPerQuad (check facePolyOrder >= 1)");
    }
 
 // validate size of face buffers

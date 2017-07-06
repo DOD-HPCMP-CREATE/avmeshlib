@@ -37,7 +37,7 @@ program unstruc_read
    integer(4) :: nMaxNodesPerFace
    integer(4) :: nMaxNodesPerCell
    integer(4) :: nMaxFacesPerCell
-   integer(4) :: bndFacePolyOrder
+   integer(4) :: facePolyOrder
    integer(4) :: cellPolyOrder
    integer(4) :: nPatches
    integer(4) :: nHexCells
@@ -129,7 +129,7 @@ program unstruc_read
                nMaxNodesPerFace, &
                nMaxNodesPerCell, &
                nMaxFacesPerCell, &
-               bndFacePolyOrder, &
+               facePolyOrder, &
                cellPolyOrder, &
                nPatches, &
                nHexCells, &

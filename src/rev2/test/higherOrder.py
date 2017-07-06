@@ -78,7 +78,7 @@ class TestAVM(unittest.TestCase):
         self.assertEqual(AVM.set_int(self.avmid, 'nMaxNodesPerFace', nMaxNodesPerFace), 0)
         self.assertEqual(AVM.set_int(self.avmid, 'nMaxNodesPerCell', nMaxNodesPerCell), 0)
         self.assertEqual(AVM.set_int(self.avmid, 'nMaxFacesPerCell', nMaxFacesPerCell), 0)
-        self.assertEqual(AVM.set_int(self.avmid, 'bndFacePolyOrder', p), 0)
+        self.assertEqual(AVM.set_int(self.avmid, 'facePolyOrder', p), 0)
         self.assertEqual(AVM.set_int(self.avmid, 'cellPolyOrder', p), 0)
         self.assertEqual(AVM.set_int(self.avmid, 'nPatches', 1), 0)
         self.assertEqual(AVM.set_int(self.avmid, 'nHexCells', nHexCells), 0)
@@ -187,9 +187,9 @@ class TestAVM(unittest.TestCase):
         nTriFaces = 5
         nBndQuadFaces = 5
         nQuadFaces = 5
-        err, bndFacePolyOrder = AVM.get_int(self.avmid, 'bndFacePolyOrder')
+        err, facePolyOrder = AVM.get_int(self.avmid, 'facePolyOrder')
         self.assertEqual(0,err)
-        self.assertEqual(p,bndFacePolyOrder)
+        self.assertEqual(p,facePolyOrder)
         err, cellPolyOrder = AVM.get_int(self.avmid, 'cellPolyOrder')
         self.assertEqual(0,err)
         self.assertEqual(p,cellPolyOrder)

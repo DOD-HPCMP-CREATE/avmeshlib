@@ -25,7 +25,7 @@ namespace rev2 {
    nMaxNodesPerFace
    nMaxNodesPerCell
    nMaxFacesPerCell
-   bndFacePolyOrder
+   facePolyOrder
    cellPolyOrder
    nPatches
    nHexCells
@@ -96,8 +96,8 @@ typedef struct unstruc_header_t {
    int nMaxNodesPerCell;
 /*! max number of faces in any cell */
    int nMaxFacesPerCell;
-/*! polynomial order of the faces on boundaries */
-   int bndFacePolyOrder;
+/*! polynomial order of faces */
+   int facePolyOrder;
 /*! polynomial order of the cells in the volume mesh */
    int cellPolyOrder;
 /*! number of domain boundary patches */

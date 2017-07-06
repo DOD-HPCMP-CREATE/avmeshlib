@@ -8,20 +8,12 @@ Update the following unstruc metadata fields from 32-bit to 64-bit integers: nNo
 * Initially just change on disk format to 64 bit and cast up/down. Later plumb the API itself
 
 Higher order mesh support
-
-* Add polynomialOrder (name?) metadata, defaults to 1
-* If polynomialOrder > 1, use formulae to determine nNodes for each face/cell type
-* Surface/volume can be at different order (tri/quad only higher order is possible)
-* bndFacePolyOrder, cellPolyOrder
 FIXME: what about higher order edges??
-FIXME: change bndFacePolyOrder to FacePolyOrder?
 
 Modify/extend geometry definition for AMR (this could entail the removal of the existing AMR heavy data fields)
 (Looks like the existing AMR fields are OK, at least for Capstone. We could also potentially support Pointwise’s nmb format by interrogating the meshGenerator field)
 
 Do we need to actually store mesh data on the surface in avm? This would fix some “edge” cases in AMR where you cannot determine which topology edge a mesh edge is on strictly by examining the topology edge that each mesh node is on
-
-Todd suggested a “refined” metadata item that is only set on meshes that kestrel has refined. These meshes would not be user-visible/created. If flag is set we could read the rest of the mesh differently, using a new API with extra data somewhere to store refinement levels.
 
 Jettison rev0 from repo, kestrel will use a handwritten reader to upconvert
 
