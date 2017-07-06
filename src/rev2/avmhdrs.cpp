@@ -81,6 +81,7 @@ mesh_header_t::mesh_header_t()
    referencePoint[0]    = 0.0;
    referencePoint[1]    = 0.0;
    referencePoint[2]    = 0.0;
+   refined = 0;
 
    strncpy(meshName, "", sizeof(meshName));
    strncpy(meshType, "", sizeof(meshType));
@@ -103,6 +104,7 @@ int mesh_header_t::size() const
           sizeof(referenceArea) +
           sizeof(referencePoint) +
           sizeof(referencePointDescription) +
+          sizeof(refined) +
           sizeof(meshDescription);
 }
 
@@ -117,6 +119,7 @@ int mesh_header_t::write(FILE* fp, bool swap, mesh_header_t* p)
       byte_swap_double(&p->referencePoint[0]);
       byte_swap_double(&p->referencePoint[1]);
       byte_swap_double(&p->referencePoint[2]);
+      byte_swap_int(&p->refined);
    }
 
    if (!fwrite(p->meshName, sizeof(p->meshName), 1, fp)) return 0;
@@ -129,6 +132,7 @@ int mesh_header_t::write(FILE* fp, bool swap, mesh_header_t* p)
    if (!fwrite(&p->referenceArea, sizeof(p->referenceArea), 1, fp)) return 0;
    if (!fwrite(p->referencePoint, sizeof(p->referencePoint), 1, fp)) return 0;
    if (!fwrite(p->referencePointDescription, sizeof(p->referencePointDescription), 1, fp)) return 0;
+   if (!fwrite(&p->refined, sizeof(p->refined), 1, fp)) return 0;
    if (!fwrite(&p->meshDescription, sizeof(p->meshDescription), 1, fp)) return 0;
 
    if (swap) {
@@ -140,6 +144,7 @@ int mesh_header_t::write(FILE* fp, bool swap, mesh_header_t* p)
       byte_swap_double(&p->referencePoint[0]);
       byte_swap_double(&p->referencePoint[1]);
       byte_swap_double(&p->referencePoint[2]);
+      byte_swap_int(&p->refined);
    }
 
    return 1;
@@ -157,6 +162,7 @@ int mesh_header_t::read(FILE* fp, bool swap, mesh_header_t* p)
    if (!fread(&p->referenceArea, sizeof(p->referenceArea), 1, fp)) return 0;
    if (!fread(p->referencePoint, sizeof(p->referencePoint), 1, fp)) return 0;
    if (!fread(p->referencePointDescription, sizeof(p->referencePointDescription), 1, fp)) return 0;
+   if (!fread(&p->refined, sizeof(p->refined), 1, fp)) return 0;
    if (!fread(&p->meshDescription, sizeof(p->meshDescription), 1, fp)) return 0;
 
    if (swap) {
@@ -168,6 +174,7 @@ int mesh_header_t::read(FILE* fp, bool swap, mesh_header_t* p)
       byte_swap_double(&p->referencePoint[0]);
       byte_swap_double(&p->referencePoint[1]);
       byte_swap_double(&p->referencePoint[2]);
+      byte_swap_int(&p->refined);
    }
 
    return 1;

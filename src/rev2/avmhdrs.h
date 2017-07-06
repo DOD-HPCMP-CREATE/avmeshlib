@@ -50,6 +50,7 @@ Here is the generic mesh header:
    referenceArea
    referencePoint(3)        
    referencePointDescription
+   refined
    description (128)
 </pre>
 
@@ -116,6 +117,8 @@ xFyRzD --- traditional S&C system
    double referencePoint[3];
 /*! Description of the reference point */
    char referencePointDescription[128];
+/*! Reserved for future use, always set to 0 */
+   int refined;
 /*! Description of the mesh */
    char meshDescription[128];
 #ifdef __cplusplus

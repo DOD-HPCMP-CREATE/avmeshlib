@@ -25,8 +25,8 @@ class TestFileSize(unittest.TestCase):
 
         # Generic mesh header
         ###############################################################
-        #mesh header: 128*7 + 8*8
-        size += 128*7 + 8*8
+        #mesh header: 128*7 + 8*8 + 4*1
+        size += 128*7 + 8*8 + 4*1
 
         # Strand mesh header
         ###############################################################
@@ -41,8 +41,8 @@ class TestFileSize(unittest.TestCase):
 
         # Generic mesh header
         ###############################################################
-        #mesh header: 128*7 + 8*8
-        size += 128*7 + 8*8
+        #mesh header: 128*7 + 8*8 + 4*1
+        size += 128*7 + 8*8 + 4*1
 
         # Unstruc mesh header
         ###############################################################

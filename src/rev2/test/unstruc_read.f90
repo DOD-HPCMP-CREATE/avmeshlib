@@ -26,6 +26,7 @@ program unstruc_read
    real(8)        :: referenceArea
    real(8)        :: referencePoint(3)
    character(128) :: referencePointDescription
+   integer(4)     :: refined
    character(128) :: meshDescription
    character(len=:), allocatable :: fileDescription
 
@@ -118,6 +119,7 @@ program unstruc_read
                referenceArea, &
                referencePoint, &
                referencePointDescription, &
+               refined, &
                meshDescription
 
       ! read unstruct specific mesh header
@@ -159,6 +161,11 @@ program unstruc_read
 
       if (nNodes /= 12) then
          print '(A)', 'nNodes incorrect, exiting'
+         call exit(1)
+      end if
+
+      if (refined /= 0) then
+         print '(A)', 'refined incorrect, exiting'
          call exit(1)
       end if
 

@@ -25,6 +25,7 @@ program strand_read
    real(8)        :: referenceArea
    real(8)        :: referencePoint(3)
    character(128) :: referencePointDescription
+   integer(4)     :: refined
    character(128) :: meshDescription
 
    ! strand specific mesh header
@@ -115,7 +116,13 @@ program strand_read
                referenceArea, &
                referencePoint, &
                referencePointDescription, &
+               refined, &
                meshDescription
+
+      if (refined /= 0) then
+         print '(A)', 'refined incorrect, exiting'
+         call exit(1)
+      end if
 
       ! read strand specific mesh header
       read(10) surfaceOnly, &

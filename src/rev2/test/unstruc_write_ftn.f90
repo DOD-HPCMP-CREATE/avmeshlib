@@ -26,6 +26,7 @@ program unstruc_write
    real(8)        :: referenceArea
    real(8)        :: referencePoint(3)
    character(128) :: referencePointDescription
+   integer(4)     :: refined
    character(128) :: meshDescription
 
    ! unstruc specific mesh header
@@ -120,6 +121,7 @@ program unstruc_write
        referenceArea = 1.0d0
        referencePoint = (/0.0,0.0,0.0/)
        referencePointDescription = 'origin'
+       refined = 0
        meshDescription = 'A nonsensical unstruc mesh that just demonstrates the format.'
 
        ! unstruc mesh fields
@@ -157,6 +159,7 @@ program unstruc_write
                  referenceArea, &
                  referencePoint, &
                  referencePointDescription, &
+                 refined, &
                  meshDescription
 
        ! write unstruct specific mesh header

@@ -218,6 +218,8 @@ int rev2::avm_get_int(rev2_avmesh_file* avf, const char* field, int* value)
       RETURN_ERROR("avm_get_int: invalid meshId");
    }
 
+   if (FIELD_EQ("refined")) RETURN_ANSWER(avf->mesh_hdrs[meshid].refined)
+
    bool strand_mesh  = 0==strncmp("strand", avf->mesh_hdrs[meshid].meshType, strlen("strand"));
    bool unstruc_mesh = 0==strncmp("unstruc", avf->mesh_hdrs[meshid].meshType, strlen("unstruc"));
 
@@ -492,6 +494,8 @@ int rev2::avm_set_int(rev2_avmesh_file* avf, const char* field, int value)
    if (meshid < 0 || meshid >= avf->file_hdr.meshCount) { // mesh_header
       RETURN_ERROR("avm_set_int: invalid meshid");
    }
+
+   if (FIELD_EQ("refined")) SET_AND_RETURN(avf->mesh_hdrs[meshid].refined)
 
    bool strand_mesh  = 0==strncmp("strand", avf->mesh_hdrs[meshid].meshType, strlen("strand"));
    bool unstruc_mesh = 0==strncmp("unstruc", avf->mesh_hdrs[meshid].meshType, strlen("unstruc"));

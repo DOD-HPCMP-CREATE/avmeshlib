@@ -28,6 +28,7 @@ module avmesh_mod
       real(8)        :: referenceArea
       real(8)        :: referencePoint(3)
       character(128) :: referencePointDescription
+      integer(4)     :: refined
       character(128) :: meshDescription
    end type mesh_header
 
@@ -144,6 +145,7 @@ contains
                   mesh_hdr%referenceArea, &
                   mesh_hdr%referencePoint, &
                   mesh_hdr%referencePointDescription, &
+                  mesh_hdr%refined, &
                   mesh_hdr%meshDescription
 
    end subroutine avm_write_mesh_header
@@ -493,6 +495,7 @@ subroutine init_strand_mesh
    mesh_hdrs(1)%referenceArea            = 1.0
    mesh_hdrs(1)%referencePoint(:)          = (/4.0,5.0,6.0/)
    mesh_hdrs(1)%referencePointDescription = 'origin'
+   mesh_hdrs(1)%refined = 0
    mesh_hdrs(1)%meshDescription = 'A nonsensical strand mesh that just demonstrates the format.'
 
    strandHeader%surfaceOnly        = 0 ! FALSE
@@ -544,6 +547,7 @@ subroutine init_unstruc_mesh
    mesh_hdrs(2)%referenceArea = 1.0
    mesh_hdrs(2)%referencePoint(:) = (/7.0,8.0,9.0/)
    mesh_hdrs(2)%referencePointDescription = 'origin'
+   mesh_hdrs(2)%refined = 1
    mesh_hdrs(2)%meshDescription = 'A nonsensical unstruc mesh that just demonstrates the format.'
 
    unstruc_hdr%nNodes = 12
