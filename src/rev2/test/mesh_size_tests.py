@@ -84,10 +84,10 @@ class TestFileSize(unittest.TestCase):
         ###############################################################
         #3*4*nNodes (because single-precision mesh)
         size += 3*4*12
-        #5*4*triFaces
-        size += 5*4*9
-        #6*4*quadFaces
-        size += 6*4*8
+        #4*4*triFaces
+        size += 4*4*9
+        #5*4*quadFaces
+        size += 5*4*8
         #8*4*nHexCells
         size += 8*4*1
         #4*4*nTetCells

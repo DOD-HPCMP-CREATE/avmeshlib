@@ -223,13 +223,13 @@ class TestAVM(unittest.TestCase):
          err, nBndQuadFaces = AVM.get_int(self.avmid, 'nBndQuadFaces')
 
          xyz = AVM.r8Array(3*nNodes)
-         triFaces = AVM.intArray(5*nTriFaces)
-         quadFaces = AVM.intArray(6*nQuadFaces)
+         triFaces = AVM.intArray(4*nTriFaces)
+         quadFaces = AVM.intArray(5*nQuadFaces)
 
          err = AVM.unstruc_read_nodes_r8(self.avmid, xyz, 3*nNodes)
          self.assertEqual(0, err)
-         err = AVM.unstruc_read_faces(self.avmid, triFaces, 5*nTriFaces,
-                                                  quadFaces, 6*nQuadFaces)
+         err = AVM.unstruc_read_faces(self.avmid, triFaces, 4*nTriFaces,
+                                                  quadFaces, 5*nQuadFaces)
          self.assertEqual(0, err)
 
          # nodes
@@ -254,36 +254,32 @@ class TestAVM(unittest.TestCase):
          self.assertAlmostEqual(6.0,xyz[p+2])
 
          # check the first and last triFace 
-         BUFF_LEN=5; FIRST_POINT=0; LAST_POINT=8
+         BUFF_LEN=4; FIRST_POINT=0; LAST_POINT=8
          p = FIRST_POINT * BUFF_LEN
          self.assertEqual(5, triFaces[p+0])
          self.assertEqual(12, triFaces[p+1])
          self.assertEqual(6, triFaces[p+2])
-         self.assertEqual(3, triFaces[p+3])
-         self.assertEqual(-1, triFaces[p+4])
+         self.assertEqual(-1, triFaces[p+3])
          p = LAST_POINT * BUFF_LEN
          self.assertEqual(5, triFaces[p+0])
          self.assertEqual(6, triFaces[p+1])
          self.assertEqual(11, triFaces[p+2])
-         self.assertEqual(3, triFaces[p+3])
-         self.assertEqual(2, triFaces[p+4])
+         self.assertEqual(1, triFaces[p+3])
 
          # check the first and last quadFace 
-         BUFF_LEN=6; FIRST_POINT=0; LAST_POINT=7
+         BUFF_LEN=5; FIRST_POINT=0; LAST_POINT=7
          p = FIRST_POINT * BUFF_LEN
          self.assertEqual(1, quadFaces[p+0])
          self.assertEqual(4, quadFaces[p+1])
          self.assertEqual(5, quadFaces[p+2])
          self.assertEqual(6, quadFaces[p+3])
-         self.assertEqual(1, quadFaces[p+4])
-         self.assertEqual(-1, quadFaces[p+5])
+         self.assertEqual(-1, quadFaces[p+4])
          p = LAST_POINT * BUFF_LEN
          self.assertEqual(5, quadFaces[p+0])
          self.assertEqual(6, quadFaces[p+1])
          self.assertEqual(7, quadFaces[p+2])
          self.assertEqual(8, quadFaces[p+3])
          self.assertEqual(1, quadFaces[p+4])
-         self.assertEqual(2, quadFaces[p+5])
 
    def test_partialDataReads(self):
       err, meshCount = AVM.get_int(self.avmid, 'meshCount')
@@ -298,58 +294,53 @@ class TestAVM(unittest.TestCase):
          err, nBndTriFaces = AVM.get_int(self.avmid, 'nBndTriFaces')
          err, nBndQuadFaces = AVM.get_int(self.avmid, 'nBndQuadFaces')
 
-         triFaces = AVM.intArray(5*4)
-         quadFaces = AVM.intArray(6*4)
+         triFaces = AVM.intArray(4*4)
+         quadFaces = AVM.intArray(5*4)
 
-         err = AVM.unstruc_read_tri(self.avmid, triFaces, 5*4, 5, 2, 5, AVM.AVM_NODESCELLS | AVM.AVM_BOUNDARY)
+         err = AVM.unstruc_read_tri(self.avmid, triFaces, 4*4, 4, 2, 5, AVM.AVM_NODESCELLS | AVM.AVM_BOUNDARY)
          self.assertEqual(0, err)
 
          # check the first and last triFace
-         BUFF_LEN=5; FIRST_POINT=0; LAST_POINT=3
+         BUFF_LEN=4; FIRST_POINT=0; LAST_POINT=3
          p = FIRST_POINT * BUFF_LEN
          self.assertEqual(5, triFaces[p+0])
          self.assertEqual(12, triFaces[p+1])
          self.assertEqual(11, triFaces[p+2])
-         self.assertEqual(3, triFaces[p+3])
-         self.assertEqual(-1, triFaces[p+4])
+         self.assertEqual(-1, triFaces[p+3])
          p = LAST_POINT * BUFF_LEN
          self.assertEqual(7, triFaces[p+0])
          self.assertEqual(8, triFaces[p+1])
          self.assertEqual(11, triFaces[p+2])
-         self.assertEqual(2, triFaces[p+3])
-         self.assertEqual(-1, triFaces[p+4])
+         self.assertEqual(-1, triFaces[p+3])
 
-         err = AVM.unstruc_read_tri(self.avmid, triFaces, 5*1, 5, 1, 1, AVM.AVM_NODESCELLS | AVM.AVM_INTERIOR)
+         err = AVM.unstruc_read_tri(self.avmid, triFaces, 4*1, 4, 1, 1, AVM.AVM_NODESCELLS | AVM.AVM_INTERIOR)
 
          # check the first triFace
          self.assertEqual(0, err)
          self.assertEqual(5, triFaces[0])
          self.assertEqual(6, triFaces[1])
          self.assertEqual(11, triFaces[2])
-         self.assertEqual(3, triFaces[3])
-         self.assertEqual(2, triFaces[4])
+         self.assertEqual(1, triFaces[3])
 
-         err = AVM.unstruc_read_quad(self.avmid, quadFaces, 6*4, 5, 2, 5, AVM.AVM_NODESCELLS | AVM.AVM_BOUNDARY)
+         err = AVM.unstruc_read_quad(self.avmid, quadFaces, 5*4, 5, 2, 5, AVM.AVM_NODESCELLS | AVM.AVM_BOUNDARY)
          self.assertEqual(0, err)
 
          # check the first and last quadFace
-         BUFF_LEN=6; FIRST_POINT=0; LAST_POINT=3
+         BUFF_LEN=5; FIRST_POINT=0; LAST_POINT=3
          p = FIRST_POINT * BUFF_LEN
          self.assertEqual(3, quadFaces[p+0])
          self.assertEqual(8, quadFaces[p+1])
          self.assertEqual(5, quadFaces[p+2])
          self.assertEqual(4, quadFaces[p+3])
-         self.assertEqual(1, quadFaces[p+4])
-         self.assertEqual(-1, quadFaces[p+5])
+         self.assertEqual(-1, quadFaces[p+4])
          p = LAST_POINT * BUFF_LEN
          self.assertEqual(3, quadFaces[p+0])
          self.assertEqual(10, quadFaces[p+1])
          self.assertEqual(9, quadFaces[p+2])
          self.assertEqual(8, quadFaces[p+3])
-         self.assertEqual(4, quadFaces[p+4])
-         self.assertEqual(-1, quadFaces[p+5])
+         self.assertEqual(-1, quadFaces[p+4])
 
-         err = AVM.unstruc_read_quad(self.avmid, quadFaces, 6*1, 6, 2, 2, AVM.AVM_NODESCELLS | AVM.AVM_INTERIOR)
+         err = AVM.unstruc_read_quad(self.avmid, quadFaces, 5*1, 5, 2, 2, AVM.AVM_NODESCELLS | AVM.AVM_INTERIOR)
          self.assertEqual(0, err)
 
          # check the first quadFace
@@ -358,7 +349,6 @@ class TestAVM(unittest.TestCase):
          self.assertEqual(7, quadFaces[2])
          self.assertEqual(8, quadFaces[3])
          self.assertEqual(1, quadFaces[4])
-         self.assertEqual(2, quadFaces[5])
 
    def test_higherOrderSizes(self):
       triOrder =  { 1:3, 2:6, 3:10, 4:15 }

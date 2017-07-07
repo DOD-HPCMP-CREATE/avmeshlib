@@ -205,8 +205,8 @@ program unstruc_read
        nQuadFaces = dims(m,3)
 
        allocate(xyz(3,nNodes), &
-                triFaces(5,nTriFaces), &
-                quadFaces(6,nQuadFaces), &
+                triFaces(4,nTriFaces), &
+                quadFaces(5,nQuadFaces), &
                 hexCells(8,nHexCells), &
                 tetCells(4,nTetCells), &
                 priCells(6,nPriCells), &
@@ -224,14 +224,14 @@ program unstruc_read
        ! nodes
        read(10) ((xyz(i,j),i=1,3),j=1,nNodes)
        ! Tri patch faces
-       read(10) ((triFaces(i,j),i=1,5),j=1,nBndTriFaces)
+       read(10) ((triFaces(i,j),i=1,4),j=1,nBndTriFaces)
        ! Quad patch faces
-       read(10) ((quadFaces(i,j),i=1,6),j=1,nBndQuadFaces)
+       read(10) ((quadFaces(i,j),i=1,5),j=1,nBndQuadFaces)
 
        ! Tri interior faces
-       read(10) ((triFaces(i,j),i=1,5),j=nBndTriFaces+1,nTriFaces)
+       read(10) ((triFaces(i,j),i=1,4),j=nBndTriFaces+1,nTriFaces)
        ! Quad interior faces
-       read(10) ((quadFaces(i,j),i=1,6),j=nBndQuadFaces+1,nQuadFaces)
+       read(10) ((quadFaces(i,j),i=1,5),j=nBndQuadFaces+1,nQuadFaces)
 
        ! Hex cells
        read(10) ((hexCells(i,j),i=1,8),j=1,nHexCells)
@@ -268,8 +268,8 @@ program unstruc_read
        read(10) (priGeomIds(i),i=1,nPriCells)
        read(10) (pyrGeomIds(i),i=1,nPyrCells)
 
-       call printa("triFaces", triFaces, 5, nTriFaces)
-       call printa("quadFaces", quadFaces, 6, nQuadFaces)
+       call printa("triFaces", triFaces, 4, nTriFaces)
+       call printa("quadFaces", quadFaces, 5, nQuadFaces)
        call printa("hexCells", hexCells, 8, nHexCells)
        call printa("tetCells", tetCells, 4, nTetCells)
        call printa("priCells", priCells, 6, nPriCells)
@@ -292,7 +292,7 @@ program unstruc_read
          call exit(1)
        end if
 
-       if (quadFaces(6,8) /= 2) then
+       if (quadFaces(4,8) /= 8) then
          print '(A)', 'quadFaces incorrect, exiting'
          call exit(1)
        end if

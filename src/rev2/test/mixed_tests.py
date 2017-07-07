@@ -135,8 +135,8 @@ class TestAVM(unittest.TestCase):
       self.assertEqual(0, err)
 
       xyz = AVM.r4Array(3*nNodes)
-      triFaces = AVM.intArray(5*nTriFaces)
-      quadFaces = AVM.intArray(6*nQuadFaces)
+      triFaces = AVM.intArray(4*nTriFaces)
+      quadFaces = AVM.intArray(5*nQuadFaces)
       hexCells = AVM.intArray(8*nHexCells)
       tetCells = AVM.intArray(4*nTetCells)
       priCells = AVM.intArray(6*nPriCells)
@@ -153,8 +153,8 @@ class TestAVM(unittest.TestCase):
       err = AVM.unstruc_read_nodes_r4(self.avmid, xyz, 3*nNodes)
       self.assertEqual(0, err)
 
-      err = AVM.unstruc_read_faces(self.avmid, triFaces,  5*nTriFaces,
-                                               quadFaces, 6*nQuadFaces)
+      err = AVM.unstruc_read_faces(self.avmid, triFaces,  4*nTriFaces,
+                                               quadFaces, 5*nQuadFaces)
       self.assertEqual(0, err)
 
       err = AVM.unstruc_read_cells(self.avmid, hexCells, 8*nHexCells,

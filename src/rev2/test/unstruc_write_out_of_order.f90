@@ -111,8 +111,8 @@ program unstruc_write
     ! unstruc mesh data initialization
     !
     allocate(xyz(3,nNodes), &
-             quadFaces(6,nQuadFaces), &
-             triFaces(5,nTriFaces), &
+             quadFaces(5,nQuadFaces), &
+             triFaces(4,nTriFaces), &
              hexCells(8, nHexCells), &
              tetCells(4, nTetCells), &
              priCells(6, nPriCells), &
@@ -139,24 +139,24 @@ program unstruc_write
     xyz(:,11) = (/6.0,18.0,6.0/)
     xyz(:,12) = (/-6.0,15.0,6.0/)
 
-    triFaces(:,1) = (/5, 12, 6, 3, -1/)
-    triFaces(:,2) = (/5, 12, 11, 3, -1/)
-    triFaces(:,3) = (/6, 11, 12, 3, -1/)
-    triFaces(:,4) = (/5, 6, 11, 3, 2/)
-    triFaces(:,5) = (/6, 7, 11, 2, -1/)
-    triFaces(:,6) = (/7, 8, 11, 2, -1/)
-    triFaces(:,7) = (/5, 8, 11, 2, -1/)
-    triFaces(:,8) = (/7, 8, 9, 4, -1/)
-    triFaces(:,9) = (/2, 3, 10, 4, -2/)
+    triFaces(:,1) = (/5, 12, 6, -1/)
+    triFaces(:,2) = (/5, 12, 11, -1/)
+    triFaces(:,3) = (/6, 11, 12, -1/)
+    triFaces(:,4) = (/5, 6, 11, 1/)
+    triFaces(:,5) = (/6, 7, 11, -1/)
+    triFaces(:,6) = (/7, 8, 11, -1/)
+    triFaces(:,7) = (/5, 8, 11, -1/)
+    triFaces(:,8) = (/7, 8, 9, -1/)
+    triFaces(:,9) = (/2, 3, 10, -2/)
 
-    quadFaces(:,1) = (/1, 4, 5, 6, 1, -1/)
-    quadFaces(:,2) = (/3, 8, 5, 4, 1, -1/)
-    quadFaces(:,3) = (/2, 3, 8, 7, 1, 4/)
-    quadFaces(:,4) = (/1, 6, 7, 2, 1, -1/)
-    quadFaces(:,5) = (/5, 6, 7, 8, 1, 2/)
-    quadFaces(:,6) = (/1, 2, 3, 4, 1, -2/)
-    quadFaces(:,7) = (/3, 10, 9, 8, 4, -1/)
-    quadFaces(:,8) = (/2, 10, 9, 7, 4, -1/)
+    quadFaces(:,1) = (/1, 4, 5, 6, -1/)
+    quadFaces(:,2) = (/3, 8, 5, 4, -1/)
+    quadFaces(:,3) = (/2, 3, 8, 7, 1/)
+    quadFaces(:,4) = (/1, 6, 7, 2, -1/)
+    quadFaces(:,5) = (/5, 6, 7, 8, 1/)
+    quadFaces(:,6) = (/1, 2, 3, 4, -2/)
+    quadFaces(:,7) = (/3, 10, 9, 8, -1/)
+    quadFaces(:,8) = (/2, 10, 9, 7, -1/)
 
     hexCells(:,1) = (/1, 4, 5, 6, 3, 8, 5, 4/)
     tetCells(:,1) = (/5, 12, 11, 3/)
@@ -224,6 +224,12 @@ program unstruc_write
                pyrGeomIds, nPyrCells, &
                istat)
         if (istat.ne.0) stop 'ERROR: avm_unstruc_write_amr_volumeids'
+        ! faces MUST be written before amr so face reordering happens
+        call avm_unstruc_write_facesf(avmid, &
+               triFaces,  4*nTriFaces, &
+               quadFaces, 5*nQuadFaces, &
+               istat)
+        if (istat.ne.0) stop 'ERROR: avm_unstruc_write_faces'
         call avm_unstruc_write_amrf(avmid, &
                nodesOnGeometry, nNodesOnGeometry, &
                edgesOnGeometry, 3*nEdgesOnGeometry, &
@@ -241,11 +247,6 @@ program unstruc_write
                pyrCells, 5*nPyrCells, &
                istat)
         if (istat.ne.0) stop 'ERROR: avm_unstruc_write_cells'
-        call avm_unstruc_write_facesf(avmid, &
-               triFaces,  5*nTriFaces, &
-               quadFaces, 6*nQuadFaces, &
-               istat)
-        if (istat.ne.0) stop 'ERROR: avm_unstruc_write_faces'
         call avm_unstruc_write_nodes_r8f(avmid, xyz, 3*nNodes, istat)
         if (istat.ne.0) stop 'ERROR: avm_unstruc_write_r8'
     end do

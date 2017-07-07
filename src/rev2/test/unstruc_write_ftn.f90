@@ -202,8 +202,8 @@ program unstruc_write
     ! unstruc mesh data initialization
     !
     allocate(xyz(3,nNodes), &
-             triFaces(5,nTriFaces), &
-             quadFaces(6,nQuadFaces), &
+             triFaces(4,nTriFaces), &
+             quadFaces(5,nQuadFaces), &
              hexCells(8,nHexCells), &
              tetCells(4,ntetCells), &
              priCells(6,nPriCells), &
@@ -231,24 +231,24 @@ program unstruc_write
     xyz(:,11) = (/6.0,18.0,6.0/)
     xyz(:,12) = (/-6.0,15.0,6.0/)
 
-    triFaces(:,1) = (/5, 12, 6, 3, -1/)
-    triFaces(:,2) = (/5, 12, 11, 3, -1/)
-    triFaces(:,3) = (/6, 11, 12, 3, -1/)
-    triFaces(:,4) = (/5, 6, 11, 3, 2/)
-    triFaces(:,5) = (/6, 7, 11, 2, -1/)
-    triFaces(:,6) = (/7, 8, 11, 2, -1/)
-    triFaces(:,7) = (/5, 8, 11, 2, -1/)
-    triFaces(:,8) = (/7, 8, 9, 4, -1/)
-    triFaces(:,9) = (/2, 3, 10, 4, -2/)
+    triFaces(:,1) = (/5, 12, 6, -1/)
+    triFaces(:,2) = (/5, 12, 11, -1/)
+    triFaces(:,3) = (/6, 11, 12, -1/)
+    triFaces(:,4) = (/5, 6, 11, 1/)
+    triFaces(:,5) = (/6, 7, 11, -1/)
+    triFaces(:,6) = (/7, 8, 11, -1/)
+    triFaces(:,7) = (/5, 8, 11, -1/)
+    triFaces(:,8) = (/7, 8, 9, -1/)
+    triFaces(:,9) = (/2, 3, 10, -2/)
 
-    quadFaces(:,1) = (/1, 4, 5, 6, 1, -1/)
-    quadFaces(:,2) = (/3, 8, 5, 4, 1, -1/)
-    quadFaces(:,3) = (/2, 3, 8, 7, 1, 4/)
-    quadFaces(:,4) = (/1, 6, 7, 2, 1, -1/)
-    quadFaces(:,5) = (/5, 6, 7, 8, 1, 2/)
-    quadFaces(:,6) = (/1, 2, 3, 4, 1, -2/)
-    quadFaces(:,7) = (/3, 10, 9, 8, 4, -1/)
-    quadFaces(:,8) = (/2, 10, 9, 7, 4, -1/)
+    quadFaces(:,1) = (/1, 4, 5, 6, -1/)
+    quadFaces(:,2) = (/3, 8, 5, 4, -1/)
+    quadFaces(:,3) = (/2, 3, 8, 7, 1/)
+    quadFaces(:,4) = (/1, 6, 7, 2, -1/)
+    quadFaces(:,5) = (/5, 6, 7, 8, 1/)
+    quadFaces(:,6) = (/1, 2, 3, 4, -2/)
+    quadFaces(:,7) = (/3, 10, 9, 8, -1/)
+    quadFaces(:,8) = (/2, 10, 9, 7, -1/)
 
     hexCells(:,1) = (/1, 4, 5, 6, 3, 8, 5, 4/)
     tetCells(:,1) = (/5, 12, 11, 3/)
@@ -309,8 +309,8 @@ program unstruc_write
     priGeomIds(1) = 7
     pyrGeomIds(1) = 8
 
-    call printa("triFaces", triFaces, 5, nTriFaces)
-    call printa("quadFaces", quadFaces, 6, nQuadFaces)
+    call printa("triFaces", triFaces, 4, nTriFaces)
+    call printa("quadFaces", quadFaces, 5, nQuadFaces)
     call printa("hexCells", hexCells, 8, nHexCells)
     call printa("tetCells", tetCells, 4, nTetCells)
     call printa("priCells", priCells, 6, nPriCells)
@@ -339,27 +339,27 @@ program unstruc_write
         write(10) ((xyz(i,j),i=1,3),j=1,nNodes)
         ! Tri patch faces
         do j = 1,nTriFaces
-            if(triFaces(5,j) < 0) then
-                write(10) (triFaces(i,j),i=1,5)
+            if(triFaces(4,j) < 0) then
+                write(10) (triFaces(i,j),i=1,4)
             end if
         end do
         ! Quad patch faces
         do j = 1,nQuadFaces
-            if(quadFaces(6,j) < 0) then
-                write(10) (quadFaces(i,j),i=1,6)
+            if(quadFaces(5,j) < 0) then
+                write(10) (quadFaces(i,j),i=1,5)
             end if
         end do
 
         ! Tri interior faces
         do j = 1,nTriFaces
-            if(triFaces(5,j) > 0) then
-                write(10) (triFaces(i,j),i=1,5)
+            if(triFaces(4,j) >= 0) then
+                write(10) (triFaces(i,j),i=1,4)
             end if
         end do
         ! Quad interior faces
         do j = 1,nQuadFaces
-            if(quadFaces(6,j) > 0) then
-                write(10) (quadFaces(i,j),i=1,6)
+            if(quadFaces(5,j) >= 0) then
+                write(10) (quadFaces(i,j),i=1,5)
             end if
         end do
 

@@ -116,8 +116,8 @@ class TestAVM(unittest.TestCase):
         nodesPerPyr = AVM.nodes_per_pyr(self.avmid, p)
 
         xyz = AVM.r8Array(20*3)
-        triFaces = AVM.intArray(nTriFaces*(nodesPerTri+2))
-        quadFaces = AVM.intArray(nQuadFaces*(nodesPerQuad+2))
+        triFaces = AVM.intArray(nTriFaces*(nodesPerTri+1))
+        quadFaces = AVM.intArray(nQuadFaces*(nodesPerQuad+1))
         hexCells = AVM.intArray(nHexCells*nodesPerHex)
         tetCells = AVM.intArray(nTetCells*nodesPerTet)
         priCells = AVM.intArray(nPriCells*nodesPerPri)
@@ -129,22 +129,20 @@ class TestAVM(unittest.TestCase):
         self.assertEqual(AVM.unstruc_write_nodes_r8(self.avmid, xyz, 20*3),0)
 
         for i in range(0,nTriFaces):
-            base = i*(nodesPerTri+2)
+            base = i*(nodesPerTri+1)
             for j in range(0,nodesPerTri):
                 triFaces[base+j] = p*(i+j)
             triFaces[base+nodesPerTri] = -1
-            triFaces[base+nodesPerTri+1] = 1
 
         for i in range(0,nQuadFaces):
-            base = i*(nodesPerQuad+2)
+            base = i*(nodesPerQuad+1)
             for j in range(0,nodesPerQuad):
                 quadFaces[base+j] = p*(i+j)
             quadFaces[base+nodesPerQuad] = -1
-            quadFaces[base+nodesPerQuad+1] = 1
 
         self.assertEqual(AVM.unstruc_write_faces(self.avmid,
-                                                 triFaces, nTriFaces*(nodesPerTri+2), \
-                                                 quadFaces, nQuadFaces*(nodesPerQuad+2)),0)
+                                                 triFaces, nTriFaces*(nodesPerTri+1), \
+                                                 quadFaces, nQuadFaces*(nodesPerQuad+1)),0)
 
         for i in range(0,nHexCells):
             for j in range(0,nodesPerHex):
@@ -207,8 +205,8 @@ class TestAVM(unittest.TestCase):
         nodesPerPyr = AVM.nodes_per_pyr(self.avmid, p)
 
         xyz = AVM.r8Array(20*3)
-        triFaces = AVM.intArray(nTriFaces*(nodesPerTri+2))
-        quadFaces = AVM.intArray(nQuadFaces*(nodesPerQuad+2))
+        triFaces = AVM.intArray(nTriFaces*(nodesPerTri+1))
+        quadFaces = AVM.intArray(nQuadFaces*(nodesPerQuad+1))
         hexCells = AVM.intArray(nHexCells*nodesPerHex)
         tetCells = AVM.intArray(nTetCells*nodesPerTet)
         priCells = AVM.intArray(nPriCells*nodesPerPri)
@@ -220,22 +218,20 @@ class TestAVM(unittest.TestCase):
             self.assertEqual(xyz[i], i)
 
         self.assertEqual(AVM.unstruc_read_faces(self.avmid,
-                                                 triFaces, nTriFaces*(nodesPerTri+2), \
-                                                 quadFaces, nQuadFaces*(nodesPerQuad+2)),0)
+                                                 triFaces, nTriFaces*(nodesPerTri+1), \
+                                                 quadFaces, nQuadFaces*(nodesPerQuad+1)),0)
 
         for i in range(0,nTriFaces):
-            base = i*(nodesPerTri+2)
+            base = i*(nodesPerTri+1)
             for j in range(0,nodesPerTri):
                 self.assertEqual(triFaces[base+j], p*(i+j))
             self.assertEqual(triFaces[base+nodesPerTri], -1)
-            self.assertEqual(triFaces[base+nodesPerTri+1], 1)
 
         for i in range(0,nQuadFaces):
-            base = i*(nodesPerQuad+2)
+            base = i*(nodesPerQuad+1)
             for j in range(0,nodesPerQuad):
                 self.assertEqual(quadFaces[base+j], p*(i+j))
             self.assertEqual(quadFaces[base+nodesPerQuad], -1)
-            self.assertEqual(quadFaces[base+nodesPerQuad+1], 1)
 
         self.assertEqual(AVM.unstruc_read_cells(self.avmid,
                                                  hexCells, nHexCells*nodesPerHex, \

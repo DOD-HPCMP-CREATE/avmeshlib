@@ -87,11 +87,11 @@ program unstruc_read_out_of_order
 
    allocate(xyz(3,nNodes), &
             partXyz(3,3), &
-            triFaces(5,nTriFaces), &
-            partTriFaces(5,4), &
-            partTriFaces2(5,1), &
-            quadFaces(6,nQuadFaces), &
-            partQuadFaces(6,4), &
+            triFaces(4,nTriFaces), &
+            partTriFaces(4,4), &
+            partTriFaces2(4,1), &
+            quadFaces(5,nQuadFaces), &
+            partQuadFaces(5,4), &
             hexCells(8,nHexCells), &
             tetCells(4,nTetCells), &
             priCells(6,nPriCells), &
@@ -112,8 +112,8 @@ program unstruc_read_out_of_order
             iNull(0,0) )
 
    call avm_unstruc_read_facesf(avmid, &
-          triFaces,  5*nTriFaces, &
-          quadFaces, 6*nQuadFaces, &
+          triFaces,  4*nTriFaces, &
+          quadFaces, 5*nQuadFaces, &
           istat)
    if (istat.ne.0) stop 'ERROR: failed to read faces'
 
@@ -122,7 +122,7 @@ program unstruc_read_out_of_order
      call exit(1)
    end if
 
-   if (quadFaces(6,8) /= 2) then
+   if (quadFaces(5,8) /= 1) then
      print '(A)', 'quadFaces incorrect, exiting'
      call exit(1)
    end if
@@ -216,39 +216,39 @@ program unstruc_read_out_of_order
      call exit(1)
    end if
 
-   call avm_unstruc_read_trif(avmid, partTriFaces, 4*5, 5, 2, 5, OR(AVM_NODESCELLS,AVM_BOUNDARY), istat)
+   call avm_unstruc_read_trif(avmid, partTriFaces, 4*4, 4, 2, 5, OR(AVM_NODESCELLS,AVM_BOUNDARY), istat)
    if (istat.ne.0) stop 'ERROR: failed to read partial boundary tris'
 
    print '(A)', 'finished partial boundary tris'
 
-   if ((partTriFaces(1,1) /= 5) .or. (partTriFaces(1,4)) /= 7 .or. (partTriFaces(4,4) /= 2)) then
+   if ((partTriFaces(1,1) /= 5) .or. (partTriFaces(1,4)) /= 7 .or. (partTriFaces(2,4) /= 8)) then
      print '(A)', 'partial boundary triFaces incorrect, exiting'
      call exit(1)
    end if
 
-   call avm_unstruc_read_trif(avmid, partTriFaces, 1*5, 5, 1, 1, OR(AVM_NODESCELLS,AVM_INTERIOR), istat)
+   call avm_unstruc_read_trif(avmid, partTriFaces, 1*4, 4, 1, 1, OR(AVM_NODESCELLS,AVM_INTERIOR), istat)
    if (istat.ne.0) stop 'ERROR: failed to read partial interior tris'
 
    print '(A)', 'finished partial interior tris'
 
-   if ((partTriFaces(1,1) /= 5) .or. (partTriFaces(4,1)) /= 3 .or. (partTriFaces(5,1) /= 2)) then
+   if ((partTriFaces(1,1) /= 5) .or. (partTriFaces(3,1)) /= 11 .or. (partTriFaces(4,1) /= 1)) then
      print '(A)', 'partial interior triFaces incorrect, exiting'
      call exit(1)
    end if
 
-   call avm_unstruc_read_quadf(avmid, partQuadFaces, 4*6, 6, 2, 5, OR(AVM_NODESCELLS,AVM_BOUNDARY), istat)
+   call avm_unstruc_read_quadf(avmid, partQuadFaces, 4*5, 5, 2, 5, OR(AVM_NODESCELLS,AVM_BOUNDARY), istat)
    !call avm_get_error_strf(errorMsg)
    !print *, errorMsg
    if (istat.ne.0) stop 'ERROR: failed to read partial boundary quads'
 
    print '(A)', 'finished partial boundary quads'
 
-   if ((partQuadFaces(1,1) /= 3) .or. (partQuadFaces(3,4)) /= 9 .or. (partQuadFaces(6,4) /= -1)) then
+   if ((partQuadFaces(1,1) /= 3) .or. (partQuadFaces(3,4)) /= 9 .or. (partQuadFaces(5,4) /= -1)) then
      print '(A)', 'partial boundary quadFaces incorrect, exiting'
      call exit(1)
    end if
 
-   call avm_unstruc_read_quadf(avmid, partQuadFaces, 2*6, 6, 1, 2, OR(AVM_NODESCELLS,AVM_INTERIOR), istat)
+   call avm_unstruc_read_quadf(avmid, partQuadFaces, 2*5, 5, 1, 2, OR(AVM_NODESCELLS,AVM_INTERIOR), istat)
    if (istat.ne.0) stop 'ERROR: failed to read partial interior quads'
 
    print '(A)', 'finished partial interior quads'
@@ -285,7 +285,7 @@ program unstruc_read_out_of_order
    end if
 
    ! test only reading one face type
-   call avm_unstruc_read_partial_facesf(avmid, partTriFaces, 1*5, 4, 4, &
+   call avm_unstruc_read_partial_facesf(avmid, partTriFaces, 1*4, 4, 4, &
                                               iNull, 0, -1, -1, istat)
    if (istat.ne.0) stop 'ERROR: failed to read partial faces only-tris'
 
@@ -296,9 +296,9 @@ program unstruc_read_out_of_order
      call exit(1)
    end if
 
-   call printa("partialTriFaces",partTriFaces, 5, 4)
-   call printa("triFaces", triFaces, 5, nTriFaces)
-   call printa("quadFaces", quadFaces, 6, nQuadFaces)
+   call printa("partialTriFaces",partTriFaces, 4, 4)
+   call printa("triFaces", triFaces, 4, nTriFaces)
+   call printa("quadFaces", quadFaces, 5, nQuadFaces)
    call printa("hexCells", hexCells, 8, nHexCells)
    call printa("tetCells", tetCells, 4, nTetCells)
    call printa("priCells", priCells, 6, nPriCells)

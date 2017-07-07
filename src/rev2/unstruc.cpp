@@ -238,10 +238,8 @@ off_t unstruc_info::datasize(const file_header_t& filehdr,
 {
    int precision = filehdr.precision;
 
-   //FIXME: eventually we won't be adding 2 here
-   //FIXME: we're assuming that all explicit faces are bnd faces, is that ok?
-   int nodesPerTri = rev2::avm_nodes_per_tri(header.facePolyOrder) + 2;
-   int nodesPerQuad = rev2::avm_nodes_per_quad(header.facePolyOrder) + 2;
+   int nodesPerTri = rev2::avm_nodes_per_tri(header.facePolyOrder) + 1;
+   int nodesPerQuad = rev2::avm_nodes_per_quad(header.facePolyOrder) + 1;
    int nodesPerHex = rev2::avm_nodes_per_hex(header.cellPolyOrder);
    int nodesPerTet = rev2::avm_nodes_per_tet(header.cellPolyOrder);
    int nodesPerPri = rev2::avm_nodes_per_pri(header.cellPolyOrder);

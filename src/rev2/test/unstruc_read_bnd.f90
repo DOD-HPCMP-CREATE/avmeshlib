@@ -34,8 +34,8 @@ program unstruc_read_bnd
    call avm_get_intf(avmid, 'nBndQuadFaces', nBndQuadFaces, istat)
 
    allocate(xyz(3,nNodes), &
-            bndTriFaces(5,nBndTriFaces), &
-            bndQuadFaces(6,nBndQuadFaces))
+            bndTriFaces(4,nBndTriFaces), &
+            bndQuadFaces(5,nBndQuadFaces))
 
    call avm_unstruc_read_nodes_r8f(avmid, xyz, 3*nNodes, istat)
    if (istat.ne.0) stop 'ERROR: failed to read nodes'
@@ -46,15 +46,15 @@ program unstruc_read_bnd
    end if
 
    call avm_unstruc_read_bnd_facesf(avmid, &
-          bndTriFaces,  5*nBndTriFaces, &
-          bndQuadFaces, 6*nBndQuadFaces, &
+          bndTriFaces,  4*nBndTriFaces, &
+          bndQuadFaces, 5*nBndQuadFaces, &
           istat)
    if (istat.ne.0) stop 'ERROR: failed to read bnd faces'
 
-   call printa("bndTriFaces", bndTriFaces, 5, nBndTriFaces)
-   call printa("bndQuadFaces", bndQuadFaces, 6, nBndQuadFaces)
+   call printa("bndTriFaces", bndTriFaces, 4, nBndTriFaces)
+   call printa("bndQuadFaces", bndQuadFaces, 5, nBndQuadFaces)
 
-   if (bndTriFaces(4,4) /= 2) then
+   if (bndTriFaces(2,4) /= 7) then
      print '(A)', 'bndTriFaces incorrect, exiting'
      call exit(1)
    end if

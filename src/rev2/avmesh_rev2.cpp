@@ -1558,10 +1558,8 @@ int rev2::avm_unstruc_seek_to(rev2_avmesh_file* avf, char* section, off_t start=
       RETURN_ERROR("avm_unstruc_seek_to: selected mesh is not an unstruc mesh");
    }
 
-   //FIXME: eventually we won't be adding 2 here
-   //FIXME: we're assuming that all explicit faces are bnd faces, is that ok?
-   int nodesPerTri = avm_nodes_per_tri(hdr.facePolyOrder) + 2;
-   int nodesPerQuad = avm_nodes_per_quad(hdr.facePolyOrder) + 2;
+   int nodesPerTri = avm_nodes_per_tri(hdr.facePolyOrder) + 1;
+   int nodesPerQuad = avm_nodes_per_quad(hdr.facePolyOrder) + 1;
    int nodesPerHex = avm_nodes_per_hex(hdr.cellPolyOrder);
    int nodesPerTet = avm_nodes_per_tet(hdr.cellPolyOrder);
    int nodesPerPri = avm_nodes_per_pri(hdr.cellPolyOrder);
@@ -1821,10 +1819,8 @@ int rev2::avm_unstruc_read_faces(rev2_avmesh_file* avf,
 
    const unstruc_header& hdr = avf->unstruc[meshid].header;
 
-   //FIXME: eventually we won't be adding 2 here
-   //FIXME: we're assuming that all explicit faces are bnd faces, is that ok?
-   int nodesPerTri = avm_nodes_per_tri(hdr.facePolyOrder) + 2;
-   int nodesPerQuad = avm_nodes_per_quad(hdr.facePolyOrder) + 2;
+   int nodesPerTri = avm_nodes_per_tri(hdr.facePolyOrder) + 1;
+   int nodesPerQuad = avm_nodes_per_quad(hdr.facePolyOrder) + 1;
 
    if (nodesPerTri < 3) {
       RETURN_ERROR("avm_unstruc_read_faces: invalid nodesPerTri (check facePolyOrder >= 1)");
@@ -1926,9 +1922,7 @@ int rev2::avm_unstruc_read_tri(rev2_avmesh_file* avf,
    //handle the zero tri case gracefully
    if((start < 0 && end < 0) || triFaces_size == 0) trisToRead = 0;
 
-   //FIXME: eventually we won't be adding 2 here
-   //FIXME: we're assuming that all explicit faces are bnd faces, is that ok?
-   int nodesPerTri = avm_nodes_per_tri(hdr.facePolyOrder) + 2;
+   int nodesPerTri = avm_nodes_per_tri(hdr.facePolyOrder) + 1;
 
    if (nodesPerTri < 3) {
       RETURN_ERROR("avm_unstruc_read_tri: invalid nodesPerTri (check facePolyOrder >= 1)");
@@ -2012,9 +2006,7 @@ int rev2::avm_unstruc_read_quad(rev2_avmesh_file* avf,
    //handle the zero quad case gracefully
    if((start < 0 && end < 0) || quadFaces_size == 0) quadsToRead = 0;
 
-   //FIXME: eventually we won't be adding 2 here
-   //FIXME: we're assuming that all explicit faces are bnd faces, is that ok?
-   int nodesPerQuad = avm_nodes_per_quad(hdr.facePolyOrder) + 2;
+   int nodesPerQuad = avm_nodes_per_quad(hdr.facePolyOrder) + 1;
 
    if (nodesPerQuad < 4) {
       RETURN_ERROR("avm_unstruc_read_quad: invalid nodesPerQuad (check facePolyOrder >= 1)");
@@ -2084,24 +2076,24 @@ int rev2::avm_unstruc_read_partial_faces(rev2_avmesh_file* avf,
    bndTriStart = triStart - 1;
    bndTriEnd = triEnd - 1;
    if (bndTriEnd >= hdr.nBndTriFaces) bndTriEnd = hdr.nBndTriFaces - 1;
-   bndTriSize = (bndTriEnd - bndTriStart + 1) * 5;
+   bndTriSize = (bndTriEnd - bndTriStart + 1) * 4;
    intTriStart = triStart - hdr.nBndTriFaces - 1;
    if (intTriStart < 0) intTriStart = 0;
    intTriEnd = triEnd - hdr.nBndTriFaces - 1;
    if (intTriEnd >= hdr.nTriFaces - hdr.nBndTriFaces) bndTriEnd = hdr.nTriFaces - hdr.nBndTriFaces - 1;
-   intTriSize = (intTriEnd - intTriStart + 1) * 5;
+   intTriSize = (intTriEnd - intTriStart + 1) * 4;
    if (bndTriSize < 0) bndTriSize = 0;
    if (intTriSize < 0) intTriSize = 0;
 
    bndQuadStart = quadStart - 1;
    bndQuadEnd = quadEnd - 1;
    if (bndQuadEnd >= hdr.nBndQuadFaces) bndQuadEnd = hdr.nBndQuadFaces - 1;
-   bndQuadSize = (bndQuadEnd - bndQuadStart + 1) * 6;
+   bndQuadSize = (bndQuadEnd - bndQuadStart + 1) * 5;
    intQuadStart = quadStart - hdr.nBndQuadFaces - 1;
    if (intQuadStart < 0) intQuadStart = 0;
    intQuadEnd = quadEnd - hdr.nBndQuadFaces - 1;
    if (intQuadEnd >= hdr.nQuadFaces - hdr.nBndQuadFaces) bndQuadEnd = hdr.nQuadFaces - hdr.nBndQuadFaces - 1;
-   intQuadSize = (intQuadEnd - intQuadStart + 1) * 6;
+   intQuadSize = (intQuadEnd - intQuadStart + 1) * 5;
    if (bndQuadSize < 0) bndQuadSize = 0;
    if (intQuadSize < 0) intQuadSize = 0;
 
@@ -2129,7 +2121,7 @@ int rev2::avm_unstruc_read_partial_faces(rev2_avmesh_file* avf,
 // Quad patch faces
    if(hdr.nBndQuadFaces > 0 && bndQuadStart <= hdr.nBndQuadFaces && bndQuadSize > 0) {
       if (avm_unstruc_seek_to(avf,"bndTris",bndQuadStart)) return 1;
-      if (!fread(quadFaces, bndQuadSize*4, 1, avf->fp)) {
+      if (!fread(quadFaces, bndQuadSize*5, 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_faces: failed reading boundary quadFaces array");
       }
    }
@@ -2145,7 +2137,7 @@ int rev2::avm_unstruc_read_partial_faces(rev2_avmesh_file* avf,
 // Quad interior faces
    if(hdr.nQuadFaces-hdr.nBndQuadFaces > 0 && intQuadStart <= hdr.nQuadFaces-hdr.nBndQuadFaces && intQuadSize > 0) {
       if (avm_unstruc_seek_to(avf,"intQuads",intQuadStart)) return 1;
-      if (!fread(quadFaces+bndQuadSize, intQuadSize*4, 1, avf->fp)) {
+      if (!fread(quadFaces+bndQuadSize, intQuadSize*5, 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_faces: failed reading volume quadFaces array");
       }
    }
@@ -2179,10 +2171,10 @@ int rev2::avm_unstruc_read_bnd_faces(rev2_avmesh_file* avf,
 
 // validate size of face buffers
 // (this is unstruc format revision 1)
-   if (bndTriFaces_size != 5*hdr.nBndTriFaces) {
+   if (bndTriFaces_size != 4*hdr.nBndTriFaces) {
       RETURN_ERROR("avm_unstruc_read_bnd_faces: bndTriFaces_size does not match header");
    }
-   if (bndQuadFaces_size != 6*hdr.nBndQuadFaces) {
+   if (bndQuadFaces_size != 5*hdr.nBndQuadFaces) {
       RETURN_ERROR("avm_unstruc_read_bnd_faces: bndQuadFaces_size does not match header");
    }
 
@@ -2190,14 +2182,14 @@ int rev2::avm_unstruc_read_bnd_faces(rev2_avmesh_file* avf,
 
 // Tri patch faces
    if(hdr.nBndTriFaces > 0) {
-      if (!fread(bndTriFaces, sizeof(int)*5*hdr.nBndTriFaces, 1, avf->fp)) {
+      if (!fread(bndTriFaces, sizeof(int)*4*hdr.nBndTriFaces, 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_bnd_faces: failed reading bndTriFaces array");
       }
    }
 
 // Quad patch faces
    if(hdr.nBndQuadFaces > 0) {
-      if (!fread(bndQuadFaces, sizeof(int)*6*hdr.nBndQuadFaces, 1, avf->fp)) {
+      if (!fread(bndQuadFaces, sizeof(int)*5*hdr.nBndQuadFaces, 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_bnd_faces: failed reading bndQuadFaces array");
       }
    }
@@ -2651,9 +2643,8 @@ int rev2::avm_unstruc_write_bnd_faces(rev2_avmesh_file* avf,
    int triFacesIndex = 0;
    int quadFacesIndex = 0;
 
-   //FIXME: eventually we won't be adding 2 here, we just need 1 extra value for the adjacent patch storage
-   int nodesPerTri = avm_nodes_per_tri(hdr.facePolyOrder) + 2;
-   int nodesPerQuad = avm_nodes_per_quad(hdr.facePolyOrder) + 2;
+   int nodesPerTri = avm_nodes_per_tri(hdr.facePolyOrder) + 1;
+   int nodesPerQuad = avm_nodes_per_quad(hdr.facePolyOrder) + 1;
 
    if (nodesPerTri < 3) {
       RETURN_ERROR("avm_unstruc_write_bnd_faces: invalid nodesPerTri (check facePolyOrder >= 1)");
@@ -2732,10 +2723,8 @@ int rev2::avm_unstruc_write_faces(rev2_avmesh_file* avf,
    int triFacesIndex = 0;
    int quadFacesIndex = 0;
 
-   //FIXME: eventually we won't be adding 2 here
-   //FIXME: we're assuming that all explicit faces are bnd faces, is that ok?
-   int nodesPerTri = avm_nodes_per_tri(hdr.facePolyOrder) + 2;
-   int nodesPerQuad = avm_nodes_per_quad(hdr.facePolyOrder) + 2;
+   int nodesPerTri = avm_nodes_per_tri(hdr.facePolyOrder) + 1;
+   int nodesPerQuad = avm_nodes_per_quad(hdr.facePolyOrder) + 1;
 
    if (nodesPerTri < 3) {
       RETURN_ERROR("avm_unstruc_write_faces: invalid nodesPerTri (check facePolyOrder >= 1)");
@@ -2783,7 +2772,7 @@ int rev2::avm_unstruc_write_faces(rev2_avmesh_file* avf,
 
 // Tri interior faces
    for (int i=0; i<hdr.nTriFaces; ++i) {
-      if (triFaces[(i*nodesPerTri)+(nodesPerTri-1)] > 0) {
+      if (triFaces[(i*nodesPerTri)+(nodesPerTri-1)] >= 0) {
          avf->unstruc[meshid].faces_reordering[i] = triFacesIndex++;
          if (!fwrite(triFaces+(i*nodesPerTri), sizeof(int)*nodesPerTri, 1, avf->fp)) {
             RETURN_ERROR("avm_unstruc_write_faces: failed writing interior triFaces array");
@@ -2793,7 +2782,7 @@ int rev2::avm_unstruc_write_faces(rev2_avmesh_file* avf,
 
 // Quad interior faces
    for (int i=0; i<hdr.nQuadFaces; ++i) {
-      if (quadFaces[(i*nodesPerQuad)+(nodesPerQuad-1)] > 0) {
+      if (quadFaces[(i*nodesPerQuad)+(nodesPerQuad-1)] >= 0) {
          avf->unstruc[meshid].faces_reordering[hdr.nTriFaces+i] = hdr.nTriFaces + quadFacesIndex++;
          if (!fwrite(quadFaces+(i*nodesPerQuad), sizeof(int)*nodesPerQuad, 1, avf->fp)) {
             RETURN_ERROR("avm_unstruc_write_faces: failed writing interior quadFaces array");
