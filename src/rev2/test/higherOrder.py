@@ -10,6 +10,10 @@ class TestAVM(unittest.TestCase):
         self.filename = "higherOrder.avm"
         err, self.avmid = AVM.new_file(self.filename, 2)
 
+    def test_p1(self):
+        self.writeMesh(1)
+        self.readMesh(1)
+
     def test_p2(self):
         self.writeMesh(2)
         self.readMesh(2)
@@ -23,7 +27,6 @@ class TestAVM(unittest.TestCase):
         self.readMesh(4)
 
     def tearDown(self):
-        self.assertEqual(0, AVM.close(self.avmid))
         os.remove(self.filename)
 
     def writeMesh(self, p):
@@ -145,25 +148,26 @@ class TestAVM(unittest.TestCase):
 
         for i in range(0,nHexCells):
             for j in range(0,nodesPerHex):
-                hexCells[i*nHexCells+j] = p*(i+j)
+                hexCells[i*nodesPerHex+j] = p*(i+j)
 
         for i in range(0,nTetCells):
             for j in range(0,nodesPerTet):
-                tetCells[i*nTetCells+j] = p*(i+j)
+                tetCells[i*nodesPerTet+j] = p*(i+j)
 
         for i in range(0,nPriCells):
             for j in range(0,nodesPerPri):
-                priCells[i*nPriCells+j] = p*(i+j)
+                priCells[i*nodesPerPri+j] = p*(i+j)
 
         for i in range(0,nPyrCells):
             for j in range(0,nodesPerPyr):
-                pyrCells[i*nPyrCells+j] = p*(i+j)
+                pyrCells[i*nodesPerPyr+j] = p*(i+j)
 
         self.assertEqual(AVM.unstruc_write_cells(self.avmid,
                                                  hexCells, nHexCells*nodesPerHex, \
                                                  tetCells, nTetCells*nodesPerTet, \
                                                  priCells, nPriCells*nodesPerPri, \
                                                  pyrCells, nPyrCells*nodesPerPyr),0)
+        self.assertEqual(AVM.close(self.avmid),0)
 
     def readMesh(self, p):
         #file header
@@ -210,12 +214,10 @@ class TestAVM(unittest.TestCase):
         priCells = AVM.intArray(nPriCells*nodesPerPri)
         pyrCells = AVM.intArray(nPyrCells*nodesPerPyr)
 
-
         self.assertEqual(AVM.unstruc_read_nodes_r8(self.avmid, xyz, 20*3),0)
 
         for i in range(0,20*3):
             self.assertEqual(xyz[i], i)
-        return
 
         self.assertEqual(AVM.unstruc_read_faces(self.avmid,
                                                  triFaces, nTriFaces*(nodesPerTri+2), \
@@ -243,19 +245,21 @@ class TestAVM(unittest.TestCase):
 
         for i in range(0,nHexCells):
             for j in range(0,nodesPerHex):
-                self.assertEqual(hexCells[i*nHexCells+j], p*(i+j))
+                self.assertEqual(hexCells[i*nodesPerHex+j], p*(i+j))
 
         for i in range(0,nTetCells):
             for j in range(0,nodesPerTet):
-                self.assertEqual(tetCells[i*nTetCells+j], p*(i+j))
+                self.assertEqual(tetCells[i*nodesPerTet+j], p*(i+j))
 
         for i in range(0,nPriCells):
             for j in range(0,nodesPerPri):
-                self.assertEqual(priCells[i*nPriCells+j], p*(i+j))
+                self.assertEqual(priCells[i*nodesPerPri+j], p*(i+j))
 
         for i in range(0,nPyrCells):
             for j in range(0,nodesPerPyr):
-                self.assertEqual(pyrCells[i*nPyrCells+j], p*(i+j))
+                self.assertEqual(pyrCells[i*nodesPerPyr+j], p*(i+j))
+
+        self.assertEqual(AVM.close(self.avmid),0)
 
 if __name__ == '__main__':
    unittest.main()

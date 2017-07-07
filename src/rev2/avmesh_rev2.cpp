@@ -1821,12 +1821,24 @@ int rev2::avm_unstruc_read_faces(rev2_avmesh_file* avf,
 
    const unstruc_header& hdr = avf->unstruc[meshid].header;
 
+   //FIXME: eventually we won't be adding 2 here
+   //FIXME: we're assuming that all explicit faces are bnd faces, is that ok?
+   int nodesPerTri = avm_nodes_per_tri(hdr.facePolyOrder) + 2;
+   int nodesPerQuad = avm_nodes_per_quad(hdr.facePolyOrder) + 2;
+
+   if (nodesPerTri < 3) {
+      RETURN_ERROR("avm_unstruc_read_faces: invalid nodesPerTri (check facePolyOrder >= 1)");
+   }
+   if (nodesPerQuad < 4) {
+      RETURN_ERROR("avm_unstruc_read_faces: invalid nodesPerQuad (check facePolyOrder >= 1)");
+   }
+
 // validate size of face buffers
 // (this is unstruc format revision 1)
-   if (triFaces && triFaces_size != 5*hdr.nTriFaces) {
+   if (triFaces && triFaces_size != nodesPerTri*hdr.nTriFaces) {
       RETURN_ERROR("avm_unstruc_read_faces: triFaces_size does not match header");
    }
-   if (quadFaces && quadFaces_size != 6*hdr.nQuadFaces) {
+   if (quadFaces && quadFaces_size != nodesPerQuad*hdr.nQuadFaces) {
       RETURN_ERROR("avm_unstruc_read_faces: quadFaces_size does not match header");
    }
 
@@ -1835,7 +1847,7 @@ int rev2::avm_unstruc_read_faces(rev2_avmesh_file* avf,
 // Tri patch faces
    if(triFaces && hdr.nBndTriFaces > 0) {
       if (avm_unstruc_seek_to(avf,"bndTris")) return 1;
-      if (!fread(triFaces, sizeof(int)*5*hdr.nBndTriFaces, 1, avf->fp)) {
+      if (!fread(triFaces, sizeof(int)*nodesPerTri*hdr.nBndTriFaces, 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_faces: failed reading boundary triFaces array");
       }
    }
@@ -1843,7 +1855,7 @@ int rev2::avm_unstruc_read_faces(rev2_avmesh_file* avf,
 // Quad patch faces
    if(quadFaces && hdr.nBndQuadFaces > 0) {
       if (avm_unstruc_seek_to(avf,"bndQuads")) return 1;
-      if (!fread(quadFaces, sizeof(int)*6*hdr.nBndQuadFaces, 1, avf->fp)) {
+      if (!fread(quadFaces, sizeof(int)*nodesPerQuad*hdr.nBndQuadFaces, 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_faces: failed reading boundary quadFaces array");
       }
    }
@@ -1851,7 +1863,8 @@ int rev2::avm_unstruc_read_faces(rev2_avmesh_file* avf,
 // Tri interior faces
    if(triFaces && hdr.nTriFaces-hdr.nBndTriFaces > 0) {
       if (avm_unstruc_seek_to(avf,"intTris")) return 1;
-      if (!fread(triFaces+(5*hdr.nBndTriFaces), sizeof(int)*5*(hdr.nTriFaces-hdr.nBndTriFaces), 1, avf->fp)) {
+      if (!fread(triFaces+(nodesPerTri*hdr.nBndTriFaces),
+                 sizeof(int)*nodesPerTri*(hdr.nTriFaces-hdr.nBndTriFaces), 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_faces: failed reading volume triFaces array");
       }
    }
@@ -1859,7 +1872,8 @@ int rev2::avm_unstruc_read_faces(rev2_avmesh_file* avf,
 // Quad interior faces
    if(quadFaces && hdr.nQuadFaces-hdr.nBndQuadFaces > 0) {
       if (avm_unstruc_seek_to(avf,"intQuads")) return 1;
-      if (!fread(quadFaces+(6*hdr.nBndQuadFaces), sizeof(int)*6*(hdr.nQuadFaces-hdr.nBndQuadFaces), 1, avf->fp)) {
+      if (!fread(quadFaces+(nodesPerQuad*hdr.nBndQuadFaces),
+                 sizeof(int)*nodesPerQuad*(hdr.nQuadFaces-hdr.nBndQuadFaces), 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_faces: failed reading volume quadFaces array");
       }
    }
@@ -1912,7 +1926,15 @@ int rev2::avm_unstruc_read_tri(rev2_avmesh_file* avf,
    //handle the zero tri case gracefully
    if((start < 0 && end < 0) || triFaces_size == 0) trisToRead = 0;
 
-   if (triFaces_size != 5*trisToRead) {
+   //FIXME: eventually we won't be adding 2 here
+   //FIXME: we're assuming that all explicit faces are bnd faces, is that ok?
+   int nodesPerTri = avm_nodes_per_tri(hdr.facePolyOrder) + 2;
+
+   if (nodesPerTri < 3) {
+      RETURN_ERROR("avm_unstruc_read_tri: invalid nodesPerTri (check facePolyOrder >= 1)");
+   }
+
+   if (triFaces_size != nodesPerTri*trisToRead) {
       RETURN_ERROR("avm_unstruc_read_tri: triFaces_size does not match requested number of tris");
    }
 
@@ -1924,7 +1946,7 @@ int rev2::avm_unstruc_read_tri(rev2_avmesh_file* avf,
 
       if (hdr.nBndTriFaces > 0 && trisToRead > 0) {
          if (avm_unstruc_seek_to(avf,"bndTris",start-1)) return 1;
-         if (!fread(triFaces, sizeof(int)*5*trisToRead, 1, avf->fp)) {
+         if (!fread(triFaces, sizeof(int)*nodesPerTri*trisToRead, 1, avf->fp)) {
             RETURN_ERROR("avm_unstruc_read_tri: failed reading boundary triFaces array");
          }
       }
@@ -1937,7 +1959,7 @@ int rev2::avm_unstruc_read_tri(rev2_avmesh_file* avf,
 
       if (nInteriorFaces > 0 && trisToRead > 0) {
          if (avm_unstruc_seek_to(avf,"intTris",start-1)) return 1;
-         if (!fread(triFaces, sizeof(int)*5*trisToRead, 1, avf->fp)) {
+         if (!fread(triFaces, sizeof(int)*nodesPerTri*trisToRead, 1, avf->fp)) {
             RETURN_ERROR("avm_unstruc_read_tri: failed reading interior triFaces array");
          }
       }
@@ -1990,7 +2012,14 @@ int rev2::avm_unstruc_read_quad(rev2_avmesh_file* avf,
    //handle the zero quad case gracefully
    if((start < 0 && end < 0) || quadFaces_size == 0) quadsToRead = 0;
 
-   if (quadFaces_size != 6*quadsToRead) {
+   //FIXME: eventually we won't be adding 2 here
+   //FIXME: we're assuming that all explicit faces are bnd faces, is that ok?
+   int nodesPerQuad = avm_nodes_per_quad(hdr.facePolyOrder) + 2;
+
+   if (nodesPerQuad < 4) {
+      RETURN_ERROR("avm_unstruc_read_quad: invalid nodesPerQuad (check facePolyOrder >= 1)");
+   }
+   if (quadFaces_size != nodesPerQuad*quadsToRead) {
       RETURN_ERROR("avm_unstruc_read_quad: quadFaces_size does not match requested number of quads");
    }
 
@@ -2002,7 +2031,7 @@ int rev2::avm_unstruc_read_quad(rev2_avmesh_file* avf,
 
       if (hdr.nBndQuadFaces > 0 && quadsToRead > 0) {
          if (avm_unstruc_seek_to(avf,"bndQuads",start-1)) return 1;
-         if (!fread(quadFaces, sizeof(int)*6*quadsToRead, 1, avf->fp)) {
+         if (!fread(quadFaces, sizeof(int)*nodesPerQuad*quadsToRead, 1, avf->fp)) {
             RETURN_ERROR("avm_unstruc_read_quad: failed reading boundary quadFaces array");
          }
       }
@@ -2015,7 +2044,7 @@ int rev2::avm_unstruc_read_quad(rev2_avmesh_file* avf,
 
       if (nInteriorFaces > 0 && quadsToRead > 0) {
          if (avm_unstruc_seek_to(avf,"intQuads",start-1)) return 1;
-         if (!fread(quadFaces, sizeof(int)*6*quadsToRead, 1, avf->fp)) {
+         if (!fread(quadFaces, sizeof(int)*nodesPerQuad*quadsToRead, 1, avf->fp)) {
             RETURN_ERROR("avm_unstruc_read_quad: failed reading interior quadFaces array");
          }
       }
@@ -2241,16 +2270,34 @@ int rev2::avm_unstruc_read_partial_cells(rev2_avmesh_file* avf,
    if((priStart < 0 && priEnd < 0) || priCells_size == 0) prisToRead = 0;
    if((pyrStart < 0 && pyrEnd < 0) || pyrCells_size == 0) pyrsToRead = 0;
 
-   if (hexCells_size != 8*hexesToRead) {
+   int nodesPerHex = avm_nodes_per_hex(hdr.cellPolyOrder);
+   int nodesPerTet = avm_nodes_per_tet(hdr.cellPolyOrder);
+   int nodesPerPri = avm_nodes_per_pri(hdr.cellPolyOrder);
+   int nodesPerPyr = avm_nodes_per_pyr(hdr.cellPolyOrder);
+
+   if (nodesPerHex < 8) {
+      RETURN_ERROR("avm_unstruc_read_partial_cells: invalid nodesPerHex (check cellPolyOrder >= 1)");
+   }
+   if (nodesPerTet < 4) {
+      RETURN_ERROR("avm_unstruc_read_partial_cells: invalid nodesPerTet (check cellPolyOrder >= 1)");
+   }
+   if (nodesPerPri < 6) {
+      RETURN_ERROR("avm_unstruc_read_partial_cells: invalid nodesPerPri (check cellPolyOrder >= 1)");
+   }
+   if (nodesPerPyr < 5) {
+      RETURN_ERROR("avm_unstruc_read_partial_cells: invalid nodesPerPyr (check cellPolyOrder >= 1)");
+   }
+
+   if (hexCells_size != nodesPerHex*hexesToRead) {
       RETURN_ERROR("avm_unstruc_read_partial_cells: hexCells_size does not match requested number of hexes");
    }
-   if (tetCells_size != 4*tetsToRead) {
+   if (tetCells_size != nodesPerTet*tetsToRead) {
       RETURN_ERROR("avm_unstruc_read_partial_cells: tetCells_size does not match requested number of tets");
    }
-   if (priCells_size != 6*prisToRead) {
+   if (priCells_size != nodesPerPri*prisToRead) {
       RETURN_ERROR("avm_unstruc_read_partial_cells: priCells_size does not match requested number of pris");
    }
-   if (pyrCells_size != 5*pyrsToRead) {
+   if (pyrCells_size != nodesPerPyr*pyrsToRead) {
       RETURN_ERROR("avm_unstruc_read_partial_cells: pyrCells_size does not match requested number of pyrs");
    }
 
@@ -2274,7 +2321,7 @@ int rev2::avm_unstruc_read_partial_cells(rev2_avmesh_file* avf,
 
 // Hex cells
    if (hdr.nHexCells > 0 && hexesToRead > 0) {
-      if (!fread(hexCells, sizeof(int)*8*hexesToRead, 1, avf->fp)) {
+      if (!fread(hexCells, sizeof(int)*nodesPerHex*hexesToRead, 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_partial_cells: failed reading hexCells array");
       }
    }
@@ -2283,7 +2330,7 @@ int rev2::avm_unstruc_read_partial_cells(rev2_avmesh_file* avf,
 
 // Tet cells
    if (hdr.nTetCells > 0 && tetsToRead > 0) {
-      if (!fread(tetCells, sizeof(int)*4*tetsToRead, 1, avf->fp)) {
+      if (!fread(tetCells, sizeof(int)*nodesPerTet*tetsToRead, 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_partial_cells: failed reading tetCells array");
       }
    }
@@ -2292,7 +2339,7 @@ int rev2::avm_unstruc_read_partial_cells(rev2_avmesh_file* avf,
 
 // Prism cells
    if (hdr.nPriCells > 0 && prisToRead > 0) {
-      if (!fread(priCells, sizeof(int)*6*prisToRead, 1, avf->fp)) {
+      if (!fread(priCells, sizeof(int)*nodesPerPri*prisToRead, 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_partial_cells: failed reading priCells array");
       }
    }
@@ -2301,7 +2348,7 @@ int rev2::avm_unstruc_read_partial_cells(rev2_avmesh_file* avf,
 
 // Pyramid cells
    if (hdr.nPyrCells > 0 && pyrsToRead > 0) {
-      if (!fread(pyrCells, sizeof(int)*5*pyrsToRead, 1, avf->fp)) {
+      if (!fread(pyrCells, sizeof(int)*nodesPerPyr*pyrsToRead, 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_partial_cells: failed reading pyrCells array");
       }
    }

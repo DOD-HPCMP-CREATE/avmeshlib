@@ -9,6 +9,9 @@ Update the following unstruc metadata fields from 32-bit to 64-bit integers: nNo
 
 Higher order mesh support
 FIXME: what about higher order edges??
+Update read_partial_faces
+Update read_bnd_faces
+Need better test coverage of read_tri, read_quad, read_bnd_faces, read_partial_faces, etc
 
 Modify/extend geometry definition for AMR (this could entail the removal of the existing AMR heavy data fields)
 (Looks like the existing AMR fields are OK, at least for Capstone. We could also potentially support Pointwise’s nmb format by interrogating the meshGenerator field)

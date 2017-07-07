@@ -8,6 +8,9 @@
 #include "unstruc.h"
 #include "../avmesh.h"
 
+#include "../avmesh_file.h"
+#include "avmesh_rev2.h"
+
 using namespace std;
 using namespace rev2;
 
@@ -235,17 +238,26 @@ off_t unstruc_info::datasize(const file_header_t& filehdr,
 {
    int precision = filehdr.precision;
 
+   //FIXME: eventually we won't be adding 2 here
+   //FIXME: we're assuming that all explicit faces are bnd faces, is that ok?
+   int nodesPerTri = rev2::avm_nodes_per_tri(header.facePolyOrder) + 2;
+   int nodesPerQuad = rev2::avm_nodes_per_quad(header.facePolyOrder) + 2;
+   int nodesPerHex = rev2::avm_nodes_per_hex(header.cellPolyOrder);
+   int nodesPerTet = rev2::avm_nodes_per_tet(header.cellPolyOrder);
+   int nodesPerPri = rev2::avm_nodes_per_pri(header.cellPolyOrder);
+   int nodesPerPyr = rev2::avm_nodes_per_pyr(header.cellPolyOrder);
+
    off_t offset = 0;
    offset += 3 * header.nNodes * 
              (1==precision ? sizeof(float) : sizeof(double));
-   offset += 5 * header.nBndTriFaces * sizeof(int);
-   offset += 6 * header.nBndQuadFaces * sizeof(int);
-   offset += 5 * (header.nTriFaces - header.nBndTriFaces) * sizeof(int);
-   offset += 6 * (header.nQuadFaces - header.nBndQuadFaces) * sizeof(int);
-   offset += 8 * header.nHexCells * sizeof(int);
-   offset += 4 * header.nTetCells * sizeof(int);
-   offset += 6 * header.nPriCells * sizeof(int);
-   offset += 5 * header.nPyrCells * sizeof(int);
+   offset += nodesPerTri * header.nBndTriFaces * sizeof(int);
+   offset += nodesPerQuad * header.nBndQuadFaces * sizeof(int);
+   offset += nodesPerTri * (header.nTriFaces - header.nBndTriFaces) * sizeof(int);
+   offset += nodesPerQuad * (header.nQuadFaces - header.nBndQuadFaces) * sizeof(int);
+   offset += nodesPerHex * header.nHexCells * sizeof(int);
+   offset += nodesPerTet * header.nTetCells * sizeof(int);
+   offset += nodesPerPri * header.nPriCells * sizeof(int);
+   offset += nodesPerPyr * header.nPyrCells * sizeof(int);
    offset += 2 * header.nEdges * sizeof(int);
    offset += sizeof(AMR_Node_Data) * header.nNodesOnGeometry;
    offset += 3 * header.nEdgesOnGeometry * sizeof(int);
