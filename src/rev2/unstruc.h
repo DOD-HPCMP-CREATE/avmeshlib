@@ -4,6 +4,7 @@
 #ifdef __cplusplus
 #include <string>
 #include <vector> 
+#include <stdint.h>
 #endif
 
 #include <sys/types.h>
@@ -85,7 +86,7 @@ namespace rev2 {
  */
 typedef struct unstruc_header_t {
 /*! number of nodes */
-   int nNodes;
+   int64_t nNodes;
 /*! number of faces */
    int nFaces;
 /*! total number of cells */

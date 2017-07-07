@@ -12,6 +12,7 @@ using namespace std;
 #include "avmesh_rev2.h"
 
 extern "C" void byte_swap_int(int*);
+extern "C" void byte_swap_int64(int64_t*);
 extern "C" void byte_swap_float(float*);
 extern "C" void byte_swap_double(double*);
 extern "C" void avm_set_error_str(char*);

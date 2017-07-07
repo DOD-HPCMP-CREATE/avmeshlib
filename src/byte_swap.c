@@ -1,5 +1,6 @@
 
 #include <string.h>
+#include <stdint.h>
 
 void byte_swap_int(int *v)
 {
@@ -11,6 +12,22 @@ void byte_swap_int(int *v)
     out[2] = in[1];
     out[3] = in[0];
     memcpy(in, out, 4);
+}
+
+void byte_swap_int64(int64_t *v)
+{
+    int64_t new_val;
+    char *in = (char*)v;
+    char *out = (char*)&new_val;
+    out[0] = in[7];
+    out[1] = in[6];
+    out[2] = in[5];
+    out[3] = in[4];
+    out[4] = in[3];
+    out[5] = in[2];
+    out[6] = in[1];
+    out[7] = in[0];
+    memcpy(in, out, 8);
 }
 
 void byte_swap_float(float *v)

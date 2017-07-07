@@ -15,6 +15,7 @@ using namespace std;
 using namespace rev2;
 
 extern "C" void byte_swap_int(int*);
+extern "C" void byte_swap_int64(int64_t*);
 extern "C" void byte_swap_float(float*);
 extern "C" void byte_swap_double(double*);
 
@@ -72,7 +73,7 @@ int unstruc_header_t::size() const
 
 void unstruc_byte_swap_header(unstruc_header_t* p)
 {
-   byte_swap_int(&p->nNodes);
+   byte_swap_int64(&p->nNodes);
    byte_swap_int(&p->nFaces);
    byte_swap_int(&p->nCells);
    byte_swap_int(&p->nMaxNodesPerFace);
