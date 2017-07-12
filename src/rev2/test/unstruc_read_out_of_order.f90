@@ -137,6 +137,13 @@ program unstruc_read_out_of_order
      call exit(1)
    end if
 
+   if (xyz(2,12) /= xyz(2,12) ) then
+     print '(A)', 'xyz incorrect, exiting'
+     call exit(1)
+   end if
+
+   call printc("nodes", xyz, 3, nNodes)
+
    call avm_unstruc_read_cellsf(avmid, &
           hexCells,  8*nHexCells, &
           tetCells,  4*nTetCells, &
@@ -296,7 +303,7 @@ program unstruc_read_out_of_order
      call exit(1)
    end if
 
-   call printa("partialTriFaces",partTriFaces, 4, 4)
+   call printa("partialTriFaces", partTriFaces, 4, 4)
    call printa("triFaces", triFaces, 4, nTriFaces)
    call printa("quadFaces", quadFaces, 5, nQuadFaces)
    call printa("hexCells", hexCells, 8, nHexCells)
@@ -347,5 +354,16 @@ subroutine printb(n, a, sizeA, nI)
       nodesInFace = a(k)
       print *, (a(j),j=k,k+nodesInFace+2)
       k = k + nodesInFace + 3
+   end do
+end subroutine
+
+subroutine printc(n, a, nI, nJ)
+   implicit none
+   character(*) :: n
+   integer :: i,j,nI,nJ
+   real(8) :: a(nI,nJ)
+   print *, n
+   do j = 1,nJ
+      print *, (a(i,j),i=1,nI)
    end do
 end subroutine

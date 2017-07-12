@@ -13,7 +13,7 @@ program unstruc_write
     character*256 :: str
     real*8 :: refPt(3)
     real*8 :: refLength(3)
-    real, allocatable :: xyz(:,:)
+    real*8, allocatable :: xyz(:,:)
     integer, allocatable :: triFaces(:,:)
     integer, allocatable :: quadFaces(:,:)
     integer, allocatable :: hexCells(:,:)
