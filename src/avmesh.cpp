@@ -29,7 +29,7 @@ extern "C" void byte_swap_double(double*);
 extern "C"
 {
 
-void avm_set_error_str(char* str);
+void avm_set_error_str(const char* str);
 
 int avm_open(const char* filename, int* id)
 {
@@ -433,7 +433,7 @@ char* avm_get_error_str()
    return error_msg;
 }
 
-void avm_set_error_str(char* str)
+void avm_set_error_str(const char* str)
 {
    strncpy(error_msg,str,AVM_STD_STRING_LENGTH);
 }

@@ -14,7 +14,7 @@ using namespace std;
 extern "C" void byte_swap_int(int*);
 extern "C" void byte_swap_float(float*);
 extern "C" void byte_swap_double(double*);
-extern "C" void avm_set_error_str(char*);
+extern "C" void avm_set_error_str(const char*);
 
 #define RETURN_ERROR(str) { avm_set_error_str(str); return 1; }
 
@@ -2077,7 +2077,7 @@ int rev1::avm_strand_write_amr(rev1_avmesh_file* avf,
    return 0;
 }
 
-int rev1::avm_unstruc_seek_to(rev1_avmesh_file* avf, char* section, off_t start=0)
+int rev1::avm_unstruc_seek_to(rev1_avmesh_file* avf, const char* section, off_t start=0)
 {
    if (section==NULL) RETURN_ERROR("avm_unstruc_seek_to: section is NULL");
 

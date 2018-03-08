@@ -43,7 +43,7 @@ int avm_mesh_data_offset(rev2_avmesh_file* avf, int mesh, off_t* offset);
 
 int avm_seek_to_mesh(rev2_avmesh_file* avf, int mesh);
 
-int avm_unstruc_seek_to(rev2_avmesh_file* avf, char* section, off_t start);
+int avm_unstruc_seek_to(rev2_avmesh_file* avf, const char* section, off_t start);
 
 int avm_nodes_per_tri(int p);
 
