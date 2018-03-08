@@ -21,6 +21,7 @@ if (ENABLE_PYTHON)
                       COMMAND ${PYTHON_EXECUTABLE} -O -m compileall -f -q ${CMAKE_CURRENT_BINARY_DIR}/avmeshlib.py)
    add_custom_command(TARGET avmesh_shared
                       COMMAND ${PYTHON_EXECUTABLE} -m compileall -f -q ${CMAKE_CURRENT_BINARY_DIR}/avmeshlib.py)
-   install (FILES avmeshlib.py avmeshlib.pyc avmeshlib.pyo _avmeshlib.so DESTINATION python)
+   install (FILES avmeshlib.py _avmeshlib.so DESTINATION python)
+   install (FILES avmeshlib.pyc avmeshlib.pyo DESTINATION python OPTIONAL)
 endif (ENABLE_PYTHON)
 
