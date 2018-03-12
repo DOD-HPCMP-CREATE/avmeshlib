@@ -18,8 +18,9 @@ test_bigendian=FALSE
 gtest_dir=""
 help=FALSE
 verbose=FALSE
-shared=FALSE
-python=FALSE
+shared="OFF"
+python="OFF"
+fortran="OFF"
 ac_prev=
 for ac_option
 do
@@ -38,15 +39,6 @@ do
 CC="gcc"
 CXX="g++"
 FC="gfortran"
-CCFLAGS=""
-CXXFLAGS=""
-FCFLAGS=""
-;;
-
-  --with-pg)
-CC="pgcc"
-CXX="pgCC"
-FC="pgf90"
 CCFLAGS=""
 CXXFLAGS=""
 FCFLAGS=""
@@ -90,10 +82,13 @@ FC_DEBUG_FLAGS="-O0 -g"
     verbose=TRUE ;;
 
   --enable-shared)
-    shared=TRUE ;;
+    shared="ON" ;;
 
   --enable-python)
-    python=TRUE ;;
+    python="ON" ;;
+
+  --enable-fortran)
+    fortran="ON" ;;
 
   -*) { echo "$as_me: error: unrecognized option: $ac_option
 Try \`$0 --help' for more information." >&2
@@ -135,8 +130,9 @@ esac
 fi
 
 cmake \
-   -DBUILD_SHARED_LIBS:BOOL="$shared" \
-   -DENABLE_PYTHON:BOOL="$python" \
+   -DENABLE_SHARED_LIBRARY="$shared" \
+   -DENABLE_PYTHON="$python" \
+   -DENABLE_FORTRAN="$fortran" \
    -DCMAKE_VERBOSE_MAKEFILE:BOOL="$verbose" \
    -DCMAKE_C_COMPILER:FILEPATH="$CC" \
    -DCMAKE_C_FLAGS:STRING="$CCFLAGS $CC_DEBUG_FLAGS" \

@@ -11,10 +11,10 @@ SET(CMAKE_CXX_FLAGS "-DGTEST_HAS_TR1_TUPLE=0 ${CMAKE_CXX_FLAGS}")
 ####
 
 if (BUILD_UNIT_TESTS)
-   add_executable (misc_tests.exe misc_tests.cpp)
-   target_link_libraries (misc_tests.exe avmesh_shared
+   add_executable (rev2_misc_tests.exe misc_tests.cpp)
+   target_link_libraries (rev2_misc_tests.exe avmesh_shared
                           gtest gtest_main pthread)
-   add_test (misc_tests misc_tests.exe)
+   add_test (rev2_misc_tests rev2_misc_tests.exe)
 endif (BUILD_UNIT_TESTS)
 
 # setup endian write flag for testing
