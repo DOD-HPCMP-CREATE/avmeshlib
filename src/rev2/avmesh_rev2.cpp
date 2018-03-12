@@ -2170,27 +2170,30 @@ int rev2::avm_unstruc_read_bnd_faces(rev2_avmesh_file* avf,
 
    const unstruc_header& hdr = avf->unstruc[meshid].header;
 
+   int nodesPerTri = avm_nodes_per_tri(hdr.facePolyOrder) + 1;
+   int nodesPerQuad = avm_nodes_per_quad(hdr.facePolyOrder) + 1;
+
 // validate size of face buffers
 // (this is unstruc format revision 1)
-   if (bndTriFaces_size != 4*hdr.nBndTriFaces) {
+   if (bndTriFaces && bndTriFaces_size != nodesPerTri*hdr.nBndTriFaces) {
       RETURN_ERROR("avm_unstruc_read_bnd_faces: bndTriFaces_size does not match header");
    }
-   if (bndQuadFaces_size != 5*hdr.nBndQuadFaces) {
+   if (bndQuadFaces && bndQuadFaces_size != nodesPerQuad*hdr.nBndQuadFaces) {
       RETURN_ERROR("avm_unstruc_read_bnd_faces: bndQuadFaces_size does not match header");
    }
 
    if (avm_unstruc_seek_to(avf,"bndFaces")) return 1;
 
 // Tri patch faces
-   if(hdr.nBndTriFaces > 0) {
-      if (!fread(bndTriFaces, sizeof(int)*4*hdr.nBndTriFaces, 1, avf->fp)) {
+   if(bndTriFaces && hdr.nBndTriFaces > 0) {
+      if (!fread(bndTriFaces, sizeof(int)*nodesPerTri*hdr.nBndTriFaces, 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_bnd_faces: failed reading bndTriFaces array");
       }
    }
 
 // Quad patch faces
-   if(hdr.nBndQuadFaces > 0) {
-      if (!fread(bndQuadFaces, sizeof(int)*5*hdr.nBndQuadFaces, 1, avf->fp)) {
+   if(bndQuadFaces && hdr.nBndQuadFaces > 0) {
+      if (!fread(bndQuadFaces, sizeof(int)*nodesPerQuad*hdr.nBndQuadFaces, 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_bnd_faces: failed reading bndQuadFaces array");
       }
    }
