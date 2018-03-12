@@ -36,6 +36,9 @@ int avm_open(const char* filename, int* id)
    if (filename==NULL) RETURN_ERROR("avm_open: filename is NULL");
    if (id==NULL)       RETURN_ERROR("avm_open: id is NULL");
    avmesh_file *avf = new avmesh_file;
+   avf->rev0 = NULL;
+   avf->rev1 = NULL;
+   avf->rev2 = NULL;
    file_list[file_counter] = avf;
 
    // is this a AVMesh File?
@@ -197,13 +200,13 @@ int avm_close(int fileid)
    if (!avf) RETURN_ERROR("avm_close: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      if (avf->rev0->fp) fclose(avf->rev0->fp);
+      if (avf->rev0 && avf->rev0->fp) fclose(avf->rev0->fp);
    }
    else if (avf->formatRevision == 1) {
-      if (avf->rev1->fp) fclose(avf->rev1->fp);
+      if (avf->rev1 && avf->rev1->fp) fclose(avf->rev1->fp);
    }
    else if (avf->formatRevision == 2) {
-      if (avf->rev2->fp) fclose(avf->rev2->fp);
+      if (avf->rev2 && avf->rev2->fp) fclose(avf->rev2->fp);
    }
 
    delete avf;

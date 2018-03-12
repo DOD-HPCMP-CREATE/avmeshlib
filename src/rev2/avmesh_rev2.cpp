@@ -2121,7 +2121,7 @@ int rev2::avm_unstruc_read_partial_faces(rev2_avmesh_file* avf,
 
 // Quad patch faces
    if(hdr.nBndQuadFaces > 0 && bndQuadStart <= hdr.nBndQuadFaces && bndQuadSize > 0) {
-      if (avm_unstruc_seek_to(avf,"bndTris",bndQuadStart)) return 1;
+      if (avm_unstruc_seek_to(avf,"bndQuads",bndQuadStart)) return 1;
       if (!fread(quadFaces, bndQuadSize*5, 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_faces: failed reading boundary quadFaces array");
       }

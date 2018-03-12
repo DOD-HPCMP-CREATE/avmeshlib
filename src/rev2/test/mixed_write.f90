@@ -300,8 +300,8 @@ contains
       integer :: nEdges
       integer nNodesOnGeometry, nEdgesOnGeometry, nFacesOnGeometry
       real :: xyz(3,nNodes)
-      integer :: triFaces(5,nTriFaces)
-      integer :: quadFaces(6,nQuadFaces)
+      integer :: triFaces(4,nTriFaces)
+      integer :: quadFaces(5,nQuadFaces)
       integer :: hexCells(8, nHexCells)
       integer :: tetCells(4, nTetCells)
       integer :: priCells(6, nPriCells)
@@ -319,26 +319,26 @@ contains
       write(ui) ((xyz(i,j),i=1,3),j=1,nNodes)
       ! Tri patch faces
       do j = 1,nTriFaces
-          if(triFaces(5,j) < 0) then
-              write(ui) (triFaces(i,j),i=1,5)
+          if(triFaces(4,j) < 0) then
+              write(ui) (triFaces(i,j),i=1,4)
           end if
       end do
       ! Quad patch faces
       do j = 1,nQuadFaces
-          if(quadFaces(6,j) < 0) then
-              write(ui) (quadFaces(i,j),i=1,6)
+          if(quadFaces(5,j) < 0) then
+              write(ui) (quadFaces(i,j),i=1,5)
           end if
       end do
       ! Tri interior faces
       do j = 1,nTriFaces
-          if(triFaces(5,j) > 0) then
-              write(ui) (triFaces(i,j),i=1,5)
+          if(triFaces(4,j) >= 0) then
+              write(ui) (triFaces(i,j),i=1,4)
           end if
       end do
       ! Quad interior faces
       do j = 1,nQuadFaces
-          if(quadFaces(6,j) > 0) then
-              write(ui) (quadFaces(i,j),i=1,6)
+          if(quadFaces(5,j) >= 0) then
+              write(ui) (quadFaces(i,j),i=1,5)
           end if
       end do
 
@@ -580,8 +580,8 @@ subroutine init_unstruc_mesh
    end do
 
    allocate(xyz(3,unstruc_hdr%nNodes), &
-            triFaces(5,unstruc_hdr%nTriFaces), &
-            quadFaces(6,unstruc_hdr%nQuadFaces), &
+            triFaces(4,unstruc_hdr%nTriFaces), &
+            quadFaces(5,unstruc_hdr%nQuadFaces), &
             hexCells(8, unstruc_hdr%nHexCells), &
             tetCells(4, unstruc_hdr%nTetCells), &
             priCells(6, unstruc_hdr%nPriCells), &
@@ -609,24 +609,24 @@ subroutine init_unstruc_mesh
     xyz(:,11) = (/6.0,18.0,6.0/)
     xyz(:,12) = (/-6.0,15.0,6.0/)
 
-    triFaces(:,1) = (/5, 12, 6, 3, -1/)
-    triFaces(:,2) = (/5, 12, 11, 3, -1/)
-    triFaces(:,3) = (/6, 11, 12, 3, -1/)
-    triFaces(:,4) = (/5, 6, 11, 3, 2/)
-    triFaces(:,5) = (/6, 7, 11, 2, -1/)
-    triFaces(:,6) = (/7, 8, 11, 2, -1/)
-    triFaces(:,7) = (/5, 8, 11, 2, -1/)
-    triFaces(:,8) = (/7, 8, 9, 4, -1/)
-    triFaces(:,9) = (/2, 3, 10, 4, -2/)
+    triFaces(:,1) = (/5, 12, 6, -1/)
+    triFaces(:,2) = (/5, 12, 11, -1/)
+    triFaces(:,3) = (/6, 11, 12, -1/)
+    triFaces(:,4) = (/5, 6, 11, 1/)
+    triFaces(:,5) = (/6, 7, 11, -1/)
+    triFaces(:,6) = (/7, 8, 11, -1/)
+    triFaces(:,7) = (/5, 8, 11, -1/)
+    triFaces(:,8) = (/7, 8, 9, -1/)
+    triFaces(:,9) = (/2, 3, 10, -2/)
 
-    quadFaces(:,1) = (/1, 4, 5, 6, 1, -1/)
-    quadFaces(:,2) = (/3, 8, 5, 4, 1, -1/)
-    quadFaces(:,3) = (/2, 3, 8, 7, 1, 4/)
-    quadFaces(:,4) = (/1, 6, 7, 2, 1, -1/)
-    quadFaces(:,5) = (/5, 6, 7, 8, 1, 2/)
-    quadFaces(:,6) = (/1, 2, 3, 4, 1, -2/)
-    quadFaces(:,7) = (/3, 10, 9, 8, 4, -1/)
-    quadFaces(:,8) = (/2, 10, 9, 7, 4, -1/)
+    quadFaces(:,1) = (/1, 4, 5, 6, -1/)
+    quadFaces(:,2) = (/3, 8, 5, 4, -1/)
+    quadFaces(:,3) = (/2, 3, 8, 7, 1/)
+    quadFaces(:,4) = (/1, 6, 7, 2, -1/)
+    quadFaces(:,5) = (/5, 6, 7, 8, 1/)
+    quadFaces(:,6) = (/1, 2, 3, 4, -2/)
+    quadFaces(:,7) = (/3, 10, 9, 8, -1/)
+    quadFaces(:,8) = (/2, 10, 9, 7, -1/)
 
     hexCells(:,1) = (/1, 4, 5, 6, 3, 8, 5, 4/)
     tetCells(:,1) = (/5, 12, 11, 3/)

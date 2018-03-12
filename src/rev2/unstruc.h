@@ -86,7 +86,7 @@ namespace rev2 {
  */
 typedef struct unstruc_header_t {
 /*! number of nodes */
-   int64_t nNodes;
+   int nNodes;
 /*! number of faces */
    int nFaces;
 /*! total number of cells */

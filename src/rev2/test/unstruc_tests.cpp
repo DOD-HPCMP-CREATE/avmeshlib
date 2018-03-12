@@ -24,7 +24,7 @@ TEST_F(TestFixture, FileHeader) {
    EXPECT_EQ(0, avm_select(fileid, "header", 0));
 
    EXPECT_EQ(0, avm_get_int(fileid, "formatRevision", &i));
-   EXPECT_EQ(1, i);
+   EXPECT_EQ(2, i);
 
    EXPECT_EQ(0, avm_get_int(fileid, "meshCount", &i));
    EXPECT_EQ(1, i);
@@ -75,7 +75,6 @@ TEST_F(TestFixture, MeshHeaders) {
          EXPECT_EQ(0, avm_get_str(fileid, "gridUnits", str, AVM_STD_STRING_LENGTH));
          EXPECT_STREQ("in", str);
 
-         EXPECT_EQ(0, avm_get_real(fileid, "referenceLength", &d));
          EXPECT_EQ(0, avm_get_real_array(fileid, "referenceLength", vec3, 3));
          EXPECT_DOUBLE_EQ(1.0, vec3[0]);
          EXPECT_DOUBLE_EQ(1.0, vec3[1]);
@@ -168,17 +167,16 @@ TEST_F(TestFixture, DataReads) {
       EXPECT_EQ(0, avm_get_int(fileid, "nBndQuadFaces", &nBndQuadFaces));
 
       double* xyz = new (nothrow) double[3*nNodes];
-      int* triFaces = new (nothrow) int[5*nTriFaces];
-      int* quadFaces = new (nothrow) int[6*nQuadFaces];
+      int* triFaces = new (nothrow) int[4*nTriFaces];
+      int* quadFaces = new (nothrow) int[5*nQuadFaces];
 
       EXPECT_TRUE(0!=xyz);
       EXPECT_TRUE(0!=triFaces);
       EXPECT_TRUE(0!=quadFaces);
 
       EXPECT_EQ(0, avm_unstruc_read_nodes_r8(fileid, xyz, 3*nNodes));
-      EXPECT_EQ(0, avm_unstruc_read_faces(fileid, triFaces,  5*nTriFaces,
-                                                  quadFaces, 6*nQuadFaces,
-                                                  NULL, 0));
+      EXPECT_EQ(0, avm_unstruc_read_faces(fileid, triFaces,  4*nTriFaces,
+                                                  quadFaces, 5*nQuadFaces));
 
       // nodes
       if (0) {
@@ -212,38 +210,34 @@ TEST_F(TestFixture, DataReads) {
 
       // check the first and last triFace 
       {
-         int BUFF_LEN=5, FIRST_POINT=0, LAST_POINT=8;
+         int BUFF_LEN=4, FIRST_POINT=0, LAST_POINT=8;
          p = FIRST_POINT * BUFF_LEN;
          EXPECT_EQ(5, triFaces[p+0]);
          EXPECT_EQ(12, triFaces[p+1]);
          EXPECT_EQ(6, triFaces[p+2]);
-         EXPECT_EQ(3, triFaces[p+3]);
-         EXPECT_EQ(-1, triFaces[p+4]);
+         EXPECT_EQ(-1, triFaces[p+3]);
          p = LAST_POINT * BUFF_LEN;
          EXPECT_EQ(5, triFaces[p+0]);
          EXPECT_EQ(6, triFaces[p+1]);
          EXPECT_EQ(11, triFaces[p+2]);
-         EXPECT_EQ(3, triFaces[p+3]);
-         EXPECT_EQ(2, triFaces[p+4]);
+         EXPECT_EQ(1, triFaces[p+3]);
       }
 
       // check the first and last quadFace 
       {
-         int BUFF_LEN=6, FIRST_POINT=0, LAST_POINT=7;
+         int BUFF_LEN=5, FIRST_POINT=0, LAST_POINT=7;
          p = FIRST_POINT * BUFF_LEN;
          EXPECT_EQ(1, quadFaces[p+0]);
          EXPECT_EQ(4, quadFaces[p+1]);
          EXPECT_EQ(5, quadFaces[p+2]);
          EXPECT_EQ(6, quadFaces[p+3]);
-         EXPECT_EQ(1, quadFaces[p+4]);
-         EXPECT_EQ(-1, quadFaces[p+5]);
+         EXPECT_EQ(-1, quadFaces[p+4]);
          p = LAST_POINT * BUFF_LEN;
          EXPECT_EQ(5, quadFaces[p+0]);
          EXPECT_EQ(6, quadFaces[p+1]);
          EXPECT_EQ(7, quadFaces[p+2]);
          EXPECT_EQ(8, quadFaces[p+3]);
          EXPECT_EQ(1, quadFaces[p+4]);
-         EXPECT_EQ(2, quadFaces[p+5]);
       }
 
       delete []xyz;

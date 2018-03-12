@@ -119,7 +119,7 @@ program unstruc_write
        gridUnits = 'in'
        referenceLength = (/1.0d0,1.0d0,1.0d0/)
        referenceArea = 1.0d0
-       referencePoint = (/0.0,0.0,0.0/)
+       referencePoint = (/0.0d0,0.0d0,0.0d0/)
        referencePointDescription = 'origin'
        refined = 0
        meshDescription = 'A nonsensical unstruc mesh that just demonstrates the format.'

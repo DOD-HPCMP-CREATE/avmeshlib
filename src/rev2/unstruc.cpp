@@ -73,7 +73,7 @@ int unstruc_header_t::size() const
 
 void unstruc_byte_swap_header(unstruc_header_t* p)
 {
-   byte_swap_int64(&p->nNodes);
+   byte_swap_int(&p->nNodes);
    byte_swap_int(&p->nFaces);
    byte_swap_int(&p->nCells);
    byte_swap_int(&p->nMaxNodesPerFace);

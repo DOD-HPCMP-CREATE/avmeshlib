@@ -174,8 +174,7 @@ TEST_F(TestFixture, DataReads) {
 
       EXPECT_EQ(0, avm_unstruc_read_nodes_r8(fileid, xyz, 3*nNodes));
       EXPECT_EQ(0, avm_unstruc_read_faces(fileid, triFaces,  5*nTriFaces,
-                                                  quadFaces, 6*nQuadFaces,
-                                                  NULL, 0));
+                                                  quadFaces, 6*nQuadFaces));
 
       // nodes
       if (0) {

@@ -568,8 +568,7 @@ TEST_F(TestFixture, data_reads) {
 
       EXPECT_EQ(0, avm_unstruc_read_nodes_r4(fileid, xyz, 3*nNodes));
       EXPECT_EQ(0, avm_unstruc_read_faces(fileid, triFaces,  5*nTriFaces,
-                                                  quadFaces, 6*nQuadFaces,
-                                                  NULL, 0));
+                                                  quadFaces, 6*nQuadFaces));
 
       // nodes
       if (0) {
@@ -776,8 +775,7 @@ TEST_F(TestFixture, data_reads_in_opposite_order) {
 
       EXPECT_EQ(0, avm_unstruc_read_nodes_r4(fileid, xyz, 3*nNodes));
       EXPECT_EQ(0, avm_unstruc_read_faces(fileid, triFaces,  5*nTriFaces,
-                                                  quadFaces, 6*nQuadFaces,
-                                                  NULL, 0));
+                                                  quadFaces, 6*nQuadFaces));
 
       // nodes
       if (0) {

@@ -24,7 +24,7 @@ TEST_F(TestFixture, FileHeader) {
    EXPECT_EQ(0, avm_select(fileid, "header", 0));
 
    EXPECT_EQ(0, avm_get_int(fileid, "formatRevision", &i));
-   EXPECT_EQ(1, i);
+   EXPECT_EQ(2, i);
 
    EXPECT_EQ(0, avm_get_int(fileid, "meshCount", &i));
    EXPECT_EQ(3, i);
@@ -75,8 +75,10 @@ TEST_F(TestFixture, MeshHeaders) {
          EXPECT_EQ(0, avm_get_str(fileid, "gridUnits", str, AVM_STD_STRING_LENGTH));
          EXPECT_STREQ("m", str);
 
-         EXPECT_EQ(0, avm_get_real(fileid, "referenceLength", &d));
-         EXPECT_DOUBLE_EQ(1.0, d);
+         EXPECT_EQ(0, avm_get_real_array(fileid, "referenceLength", vec3, 3));
+         EXPECT_DOUBLE_EQ(1.0, vec3[0]);
+         EXPECT_DOUBLE_EQ(1.0, vec3[1]);
+         EXPECT_DOUBLE_EQ(1.0, vec3[2]);
 
          EXPECT_EQ(0, avm_get_real_array(fileid, "referencePoint", vec3, 3));
          EXPECT_DOUBLE_EQ(0.0, vec3[0]);

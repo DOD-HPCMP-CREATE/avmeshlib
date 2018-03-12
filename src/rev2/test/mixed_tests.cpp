@@ -14,7 +14,7 @@ TEST(Example, generic_header_interface_example) {
 
    EXPECT_EQ(0, avm_select(fileid, "header", 0));
    EXPECT_EQ(0, avm_get_int(fileid, "meshCount", &meshCount));
-   EXPECT_EQ(4, meshCount);
+   EXPECT_EQ(2, meshCount);
    EXPECT_EQ(0, avm_get_str(fileid, "contactInfo", contactInfo, AVM_STD_STRING_LENGTH));
 
    for (int i=1; i<=meshCount; ++i) {
@@ -60,7 +60,7 @@ public:
 
 TEST_F(TestFixture, offsets) {
    off_t offset = 0;
-   const int genericMeshHeaderSize = 944;
+   const int genericMeshHeaderSize = 964;
    int precision = 0;
    int dimensions = 0;
 
@@ -73,7 +73,7 @@ TEST_F(TestFixture, offsets) {
       EXPECT_EQ(0, avm_select(fileid, "header", 0));
       EXPECT_EQ(0, avm_get_int(fileid, "descriptionSize", &descriptionSize));
       EXPECT_EQ(0, avm_get_int(fileid, "meshCount", &meshCount));
-      EXPECT_EQ(4, meshCount);
+      EXPECT_EQ(2, meshCount);
       EXPECT_EQ(0, avm_get_int(fileid, "precision", &precision));
       EXPECT_EQ(1, precision);
       EXPECT_EQ(0, avm_get_int(fileid, "dimensions", &dimensions));
@@ -90,7 +90,7 @@ TEST_F(TestFixture, offsets) {
    {
       int nSurfPatches;
       int nEdgePatches;
-      EXPECT_EQ(0, avm_select(fileid, "mesh", 2));
+      EXPECT_EQ(0, avm_select(fileid, "mesh", 1));
       EXPECT_EQ(0, avm_get_int(fileid, "nSurfPatches", &nSurfPatches));
       EXPECT_EQ(0, avm_get_int(fileid, "nEdgePatches", &nEdgePatches));
 
@@ -108,11 +108,11 @@ TEST_F(TestFixture, offsets) {
    // add in unstruc header pieces
    {
       int nPatches;
-      EXPECT_EQ(0, avm_select(fileid, "mesh", 3));
+      EXPECT_EQ(0, avm_select(fileid, "mesh", 2));
       EXPECT_EQ(0, avm_get_int(fileid, "nPatches", &nPatches));
 
       // add in fixed part of unstruc header
-      mesh2headerSize += 100;
+      mesh2headerSize += 88;
 
       // add in unstruc patches
       mesh2headerSize += 52 * nPatches;
@@ -135,7 +135,7 @@ TEST_F(TestFixture, offsets) {
    int meshHeaderSize = mesh1headerSize + mesh2headerSize;
 
    // NOTE: request position of one past the last mesh header block.
-   EXPECT_EQ(0, avm_mesh_header_offset(fileid, 5, &offset));
+   EXPECT_EQ(0, avm_mesh_header_offset(fileid, 3, &offset));
    EXPECT_EQ(fileHeaderSize + meshHeaderSize, int(offset));
 
    int mesh1dataSize = 0;
@@ -149,7 +149,7 @@ TEST_F(TestFixture, offsets) {
       int nStrands;
       int nTriFaces;
       int nNodesOnGeometry, nEdgesOnGeometry, nFacesOnGeometry;
-      EXPECT_EQ(0, avm_select(fileid, "mesh", 2));
+      EXPECT_EQ(0, avm_select(fileid, "mesh", 1));
       EXPECT_EQ(0, avm_get_int(fileid, "nBndEdges", &nBndEdges));
       EXPECT_EQ(0, avm_get_int(fileid, "nPtsPerStrand", &nPtsPerStrand));
       EXPECT_EQ(0, avm_get_int(fileid, "polyFacesSize", &polyFacesSize));
@@ -191,7 +191,7 @@ TEST_F(TestFixture, offsets) {
       int nHexCells, nTetCells, nPriCells, nPyrCells;
       int nNodesOnGeometry, nEdgesOnGeometry, nFacesOnGeometry;
       int nEdges;
-      EXPECT_EQ(0, avm_select(fileid, "mesh", 3));
+      EXPECT_EQ(0, avm_select(fileid, "mesh", 2));
       EXPECT_EQ(0, avm_get_int(fileid, "nNodes", &nNodes));
       EXPECT_EQ(0, avm_get_int(fileid, "nTriFaces", &nTriFaces));
       EXPECT_EQ(0, avm_get_int(fileid, "nQuadFaces", &nQuadFaces));
@@ -208,10 +208,10 @@ TEST_F(TestFixture, offsets) {
 
       // and in unstruc mesh size
       mesh2dataSize += 3 * nNodes * (1==precision ? 4 : 8) +
-                       5 * nBndTriFaces * 4 +
-                       6 * nBndQuadFaces * 4 +
-                       5 * (nTriFaces - nBndTriFaces) * 4 +
-                       6 * (nQuadFaces - nBndQuadFaces) * 4 +
+                       4 * nBndTriFaces * 4 +
+                       5 * nBndQuadFaces * 4 +
+                       4 * (nTriFaces - nBndTriFaces) * 4 +
+                       5 * (nQuadFaces - nBndQuadFaces) * 4 +
                        8 * nHexCells * 4 +
                        4 * nTetCells * 4 +
                        6 * nPriCells * 4 +
@@ -415,8 +415,8 @@ TEST_F(TestFixture, data_reads) {
       EXPECT_EQ(0, avm_get_int(fileid, "nFacesOnGeometry", &nFacesOnGeometry));
 
       float* xyz = new (nothrow) float[3*nNodes];
-      int* triFaces = new (nothrow) int[5*nTriFaces];
-      int* quadFaces = new (nothrow) int[6*nQuadFaces];
+      int* triFaces = new (nothrow) int[4*nTriFaces];
+      int* quadFaces = new (nothrow) int[5*nQuadFaces];
       int* hexCells = new (nothrow) int[8*nHexCells];
       int* tetCells = new (nothrow) int[4*nTetCells];
       int* priCells = new (nothrow) int[6*nPriCells];
@@ -435,8 +435,8 @@ TEST_F(TestFixture, data_reads) {
       EXPECT_TRUE(0!=quadFaces);
 
       EXPECT_EQ(0, avm_unstruc_read_nodes_r4(fileid, xyz, 3*nNodes));
-      EXPECT_EQ(0, avm_unstruc_read_faces(fileid, triFaces,  5*nTriFaces,
-                                                  quadFaces, 6*nQuadFaces));
+      EXPECT_EQ(0, avm_unstruc_read_faces(fileid, triFaces,  4*nTriFaces,
+                                                  quadFaces, 5*nQuadFaces));
       EXPECT_EQ(0, avm_unstruc_read_cells(fileid, hexCells,  8*nHexCells,
                                                   tetCells, 4*nTetCells,
                                                   priCells, 6*nPriCells,
@@ -481,38 +481,34 @@ TEST_F(TestFixture, data_reads) {
 
       // check the first and last triFace 
       {
-         int BUFF_LEN=5, FIRST_POINT=0, LAST_POINT=8;
+         int BUFF_LEN=4, FIRST_POINT=0, LAST_POINT=8;
          p = FIRST_POINT * BUFF_LEN;
          EXPECT_EQ(5, triFaces[p+0]);
          EXPECT_EQ(12, triFaces[p+1]);
          EXPECT_EQ(6, triFaces[p+2]);
-         EXPECT_EQ(3, triFaces[p+3]);
-         EXPECT_EQ(-1, triFaces[p+4]);
+         EXPECT_EQ(-1, triFaces[p+3]);
          p = LAST_POINT * BUFF_LEN;
          EXPECT_EQ(5, triFaces[p+0]);
          EXPECT_EQ(6, triFaces[p+1]);
          EXPECT_EQ(11, triFaces[p+2]);
-         EXPECT_EQ(3, triFaces[p+3]);
-         EXPECT_EQ(2, triFaces[p+4]);
+         EXPECT_EQ(1, triFaces[p+3]);
       }
 
       // check the first and last quadFace 
       {
-         int BUFF_LEN=6, FIRST_POINT=0, LAST_POINT=7;
+         int BUFF_LEN=5, FIRST_POINT=0, LAST_POINT=7;
          p = FIRST_POINT * BUFF_LEN;
          EXPECT_EQ(1, quadFaces[p+0]);
          EXPECT_EQ(4, quadFaces[p+1]);
          EXPECT_EQ(5, quadFaces[p+2]);
          EXPECT_EQ(6, quadFaces[p+3]);
-         EXPECT_EQ(1, quadFaces[p+4]);
-         EXPECT_EQ(-1, quadFaces[p+5]);
+         EXPECT_EQ(-1, quadFaces[p+4]);
          p = LAST_POINT * BUFF_LEN;
          EXPECT_EQ(5, quadFaces[p+0]);
          EXPECT_EQ(6, quadFaces[p+1]);
          EXPECT_EQ(7, quadFaces[p+2]);
          EXPECT_EQ(8, quadFaces[p+3]);
          EXPECT_EQ(1, quadFaces[p+4]);
-         EXPECT_EQ(2, quadFaces[p+5]);
       }
 
       // check the first and last nodesOnGeometry
@@ -570,16 +566,16 @@ TEST_F(TestFixture, data_reads_in_opposite_order) {
       EXPECT_EQ(0, avm_get_int(fileid, "nQuadFaces", &nQuadFaces));
 
       float* xyz = new (nothrow) float[3*nNodes];
-      int* triFaces = new (nothrow) int[5*nTriFaces];
-      int* quadFaces = new (nothrow) int[6*nQuadFaces];
+      int* triFaces = new (nothrow) int[4*nTriFaces];
+      int* quadFaces = new (nothrow) int[5*nQuadFaces];
 
       EXPECT_TRUE(0!=xyz);
       EXPECT_TRUE(0!=triFaces);
       EXPECT_TRUE(0!=quadFaces);
 
       EXPECT_EQ(0, avm_unstruc_read_nodes_r4(fileid, xyz, 3*nNodes));
-      EXPECT_EQ(0, avm_unstruc_read_faces(fileid, triFaces,  5*nTriFaces,
-                                                  quadFaces, 6*nQuadFaces));
+      EXPECT_EQ(0, avm_unstruc_read_faces(fileid, triFaces,  4*nTriFaces,
+                                                  quadFaces, 5*nQuadFaces));
 
       // nodes
       if (0) {
@@ -612,38 +608,34 @@ TEST_F(TestFixture, data_reads_in_opposite_order) {
 
       // check the first and last triFace 
       {
-         int BUFF_LEN=5, FIRST_POINT=0, LAST_POINT=8;
+         int BUFF_LEN=4, FIRST_POINT=0, LAST_POINT=8;
          p = FIRST_POINT * BUFF_LEN;
          EXPECT_EQ(5, triFaces[p+0]);
          EXPECT_EQ(12, triFaces[p+1]);
          EXPECT_EQ(6, triFaces[p+2]);
-         EXPECT_EQ(3, triFaces[p+3]);
-         EXPECT_EQ(-1, triFaces[p+4]);
+         EXPECT_EQ(-1, triFaces[p+3]);
          p = LAST_POINT * BUFF_LEN;
          EXPECT_EQ(5, triFaces[p+0]);
          EXPECT_EQ(6, triFaces[p+1]);
          EXPECT_EQ(11, triFaces[p+2]);
-         EXPECT_EQ(3, triFaces[p+3]);
-         EXPECT_EQ(2, triFaces[p+4]);
+         EXPECT_EQ(1, triFaces[p+3]);
       }
 
       // check the first and last quadFace 
       {
-         int BUFF_LEN=6, FIRST_POINT=0, LAST_POINT=7;
+         int BUFF_LEN=5, FIRST_POINT=0, LAST_POINT=7;
          p = FIRST_POINT * BUFF_LEN;
          EXPECT_EQ(1, quadFaces[p+0]);
          EXPECT_EQ(4, quadFaces[p+1]);
          EXPECT_EQ(5, quadFaces[p+2]);
          EXPECT_EQ(6, quadFaces[p+3]);
-         EXPECT_EQ(1, quadFaces[p+4]);
-         EXPECT_EQ(-1, quadFaces[p+5]);
+         EXPECT_EQ(-1, quadFaces[p+4]);
          p = LAST_POINT * BUFF_LEN;
          EXPECT_EQ(5, quadFaces[p+0]);
          EXPECT_EQ(6, quadFaces[p+1]);
          EXPECT_EQ(7, quadFaces[p+2]);
          EXPECT_EQ(8, quadFaces[p+3]);
          EXPECT_EQ(1, quadFaces[p+4]);
-         EXPECT_EQ(2, quadFaces[p+5]);
       }
 
       delete []xyz;
