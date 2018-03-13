@@ -2069,6 +2069,9 @@ int rev2::avm_unstruc_read_partial_faces(rev2_avmesh_file* avf,
 
    const unstruc_header& hdr = avf->unstruc[meshid].header;
 
+   int nodesPerTri = avm_nodes_per_tri(hdr.facePolyOrder) + 1;
+   int nodesPerQuad = avm_nodes_per_quad(hdr.facePolyOrder) + 1;
+
    if (avm_unstruc_seek_to(avf,"bndFaces")) return 1;
 
    int bndTriStart, bndTriEnd, bndTriSize, intTriStart, intTriEnd, intTriSize;
@@ -2077,24 +2080,24 @@ int rev2::avm_unstruc_read_partial_faces(rev2_avmesh_file* avf,
    bndTriStart = triStart - 1;
    bndTriEnd = triEnd - 1;
    if (bndTriEnd >= hdr.nBndTriFaces) bndTriEnd = hdr.nBndTriFaces - 1;
-   bndTriSize = (bndTriEnd - bndTriStart + 1) * 4;
+   bndTriSize = (bndTriEnd - bndTriStart + 1) * nodesPerTri;
    intTriStart = triStart - hdr.nBndTriFaces - 1;
    if (intTriStart < 0) intTriStart = 0;
    intTriEnd = triEnd - hdr.nBndTriFaces - 1;
    if (intTriEnd >= hdr.nTriFaces - hdr.nBndTriFaces) bndTriEnd = hdr.nTriFaces - hdr.nBndTriFaces - 1;
-   intTriSize = (intTriEnd - intTriStart + 1) * 4;
+   intTriSize = (intTriEnd - intTriStart + 1) * nodesPerTri;
    if (bndTriSize < 0) bndTriSize = 0;
    if (intTriSize < 0) intTriSize = 0;
 
    bndQuadStart = quadStart - 1;
    bndQuadEnd = quadEnd - 1;
    if (bndQuadEnd >= hdr.nBndQuadFaces) bndQuadEnd = hdr.nBndQuadFaces - 1;
-   bndQuadSize = (bndQuadEnd - bndQuadStart + 1) * 5;
+   bndQuadSize = (bndQuadEnd - bndQuadStart + 1) * nodesPerQuad;
    intQuadStart = quadStart - hdr.nBndQuadFaces - 1;
    if (intQuadStart < 0) intQuadStart = 0;
    intQuadEnd = quadEnd - hdr.nBndQuadFaces - 1;
    if (intQuadEnd >= hdr.nQuadFaces - hdr.nBndQuadFaces) bndQuadEnd = hdr.nQuadFaces - hdr.nBndQuadFaces - 1;
-   intQuadSize = (intQuadEnd - intQuadStart + 1) * 5;
+   intQuadSize = (intQuadEnd - intQuadStart + 1) * nodesPerQuad;
    if (bndQuadSize < 0) bndQuadSize = 0;
    if (intQuadSize < 0) intQuadSize = 0;
 
@@ -2114,7 +2117,7 @@ int rev2::avm_unstruc_read_partial_faces(rev2_avmesh_file* avf,
 // Tri patch faces
    if(hdr.nBndTriFaces > 0 && bndTriStart <= hdr.nBndTriFaces && bndTriSize > 0) {
       if (avm_unstruc_seek_to(avf,"bndTris",bndTriStart)) return 1;
-      if (!fread(triFaces, bndTriSize*4, 1, avf->fp)) {
+      if (!fread(triFaces, sizeof(int)*bndTriSize, 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_faces: failed reading boundary triFaces array");
       }
    }
@@ -2122,7 +2125,7 @@ int rev2::avm_unstruc_read_partial_faces(rev2_avmesh_file* avf,
 // Quad patch faces
    if(hdr.nBndQuadFaces > 0 && bndQuadStart <= hdr.nBndQuadFaces && bndQuadSize > 0) {
       if (avm_unstruc_seek_to(avf,"bndQuads",bndQuadStart)) return 1;
-      if (!fread(quadFaces, bndQuadSize*5, 1, avf->fp)) {
+      if (!fread(quadFaces, sizeof(int)*bndQuadSize, 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_faces: failed reading boundary quadFaces array");
       }
    }
@@ -2130,7 +2133,7 @@ int rev2::avm_unstruc_read_partial_faces(rev2_avmesh_file* avf,
 // Tri interior faces
    if(hdr.nTriFaces-hdr.nBndTriFaces > 0 && intTriStart <= hdr.nTriFaces-hdr.nBndTriFaces && intTriSize > 0) {
       if (avm_unstruc_seek_to(avf,"intTris",intTriStart)) return 1;
-      if (!fread(triFaces+bndTriSize, intTriSize*4, 1, avf->fp)) {
+      if (!fread(triFaces+bndTriSize, sizeof(int)*intTriSize, 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_faces: failed reading volume triFaces array");
       }
    }
@@ -2138,7 +2141,7 @@ int rev2::avm_unstruc_read_partial_faces(rev2_avmesh_file* avf,
 // Quad interior faces
    if(hdr.nQuadFaces-hdr.nBndQuadFaces > 0 && intQuadStart <= hdr.nQuadFaces-hdr.nBndQuadFaces && intQuadSize > 0) {
       if (avm_unstruc_seek_to(avf,"intQuads",intQuadStart)) return 1;
-      if (!fread(quadFaces+bndQuadSize, intQuadSize*5, 1, avf->fp)) {
+      if (!fread(quadFaces+bndQuadSize, sizeof(int)*intQuadSize, 1, avf->fp)) {
          RETURN_ERROR("avm_unstruc_read_faces: failed reading volume quadFaces array");
       }
    }
