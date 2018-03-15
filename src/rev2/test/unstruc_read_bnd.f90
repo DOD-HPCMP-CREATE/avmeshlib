@@ -5,6 +5,7 @@ program unstruc_read_bnd
    integer :: avmid, meshCount
    integer :: nNodes,nEdges,nFaces
    integer :: i, istat
+   character(80) :: filename
 
    integer(4) :: nBndTriFaces
    integer(4) :: nBndQuadFaces
@@ -14,7 +15,15 @@ program unstruc_read_bnd
    integer, allocatable :: bndTriFaces(:,:)
    integer, allocatable :: bndQuadFaces(:,:)
 
-   call avm_read_headersf(avmid, 'unstruc.avm', istat)
+   if (iargc() >= 1) then
+      call getarg(1, filename)
+      write(*,*) filename
+   else
+      print '(A)', 'USAGE: ./unstruc_read_bnd.exe <filename>'
+      call exit(1)
+   end if
+
+   call avm_read_headersf(avmid, filename, istat)
    if (istat.ne.0) stop 'ERROR: not an AVMesh file'
 
    call avm_get_intf(avmid, 'meshCount', meshCount, istat)

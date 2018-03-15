@@ -4,7 +4,7 @@ program unstruc_read_out_of_order
 
    implicit none
 
-   character*80, parameter :: filename='unstruc.avm'
+   character(80) :: filename='unstruc.avm'
    integer :: i
    integer(4) :: istat
 
@@ -50,6 +50,14 @@ program unstruc_read_out_of_order
    integer(4), allocatable :: priGeomIds(:)
    integer(4), allocatable :: pyrGeomIds(:)
    integer(4), allocatable :: iNull(:,:)
+
+   if (iargc() >= 1) then
+      call getarg(1, filename)
+      write(*,*) filename
+   else
+      print '(A)', 'USAGE: ./unstruc_read_out_of_order.exe <filename>'
+      call exit(1)
+   end if
 
    !try to read a non-existant file
    call avm_read_headersf(avmid, 'fake.avm', istat)

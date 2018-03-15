@@ -18,7 +18,6 @@ endif (NOT ENABLE_SHARED_LIBRARY)
 if (ENABLE_FORTRAN)
     enable_language (Fortran)
     enable_testing ()
-    set(TEST_NATIVE_FORTRAN_READ YES)
 endif (ENABLE_FORTRAN)
 
 if (EXISTS "${GTEST_DIR}")

@@ -1,6 +1,6 @@
 program unstruc_write
     implicit none
-    character*80, parameter :: filename='unstruc.avm'
+    character*80, parameter :: filename='unstruc_avm.avm'
     integer, parameter :: nMesh=1, nPatches=2, nNodes=12, nTriFaces=9, &
         nQuadFaces=8, nHexCells=1, nTetCells=2, nPriCells=1, nPyrCells=1, &
         nBndTriFaces=8, nBndQuadFaces=6, &

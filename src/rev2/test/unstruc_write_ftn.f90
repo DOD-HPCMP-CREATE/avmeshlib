@@ -1,6 +1,6 @@
 program unstruc_write
    implicit none
-   character*80, parameter :: filename='unstruc.avm'
+   character*80, parameter :: filename='unstruc_ftn.avm'
    integer :: i, j, k, m, p
    integer :: nodesInFace, rightCellIndex
    integer, parameter :: descriptionSize = 256

@@ -1,7 +1,11 @@
 #include <cstdio>
+#include <cstdlib>
+#include <string>
 using namespace std;
 #include <gtest/gtest.h>
 #include "avmesh.h"
+
+string filename;
 
 class TestFixture : public ::testing::Test {
 public:
@@ -11,7 +15,7 @@ public:
    int descriptionSize;
    char* description;
    TestFixture() {
-      EXPECT_EQ(0, avm_read_headers(&fileid, "unstruc.avm"));
+      EXPECT_EQ(0, avm_read_headers(&fileid, filename.c_str()));
       description = 0;
    }
    ~TestFixture() {
@@ -244,4 +248,19 @@ TEST_F(TestFixture, DataReads) {
       delete []quadFaces;
       delete []triFaces;
    }
+}
+
+int main(int argc, char **argv)
+{
+    ::testing::InitGoogleTest(&argc, argv);
+
+    if(argc > 1) {
+        filename = argv[1];
+    }
+    else {
+        printf("USAGE: ./unstruc_tests.exe <filename>\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return RUN_ALL_TESTS();
 }

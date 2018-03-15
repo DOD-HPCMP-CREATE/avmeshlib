@@ -1,7 +1,7 @@
 program unstruc_read
    use avmesh
    implicit none
-   character*80, parameter :: filename='unstruc.avm'
+   character(80) :: filename
    character :: c
    integer :: m,p,i,j,dummy
 
@@ -78,6 +78,14 @@ program unstruc_read
 
    ! array for data dimensions
    integer(4), allocatable :: dims(:,:)
+
+   if (iargc() >= 1) then
+      call getarg(1, filename)
+      write(*,*) filename
+   else
+      print '(A)', 'USAGE: ./unstruc_read.exe <filename>'
+      call exit(1)
+   end if
 
    open(unit=10, file=filename, access='stream', form='unformatted')
 

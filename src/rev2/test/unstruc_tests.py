@@ -3,11 +3,13 @@ sys.path.append('../..')
 import avmeshlib as AVM
 import unittest
 
+filename = ""
+
 class TestAVM(unittest.TestCase):
 
    def setUp(self):
       self.avmid = -1 # avmesh file id 
-      err, self.avmid = AVM.read_headers('unstruc.avm')
+      err, self.avmid = AVM.read_headers(filename)
       self.assertEqual(0, err)
 
    def tearDown(self):
@@ -235,8 +237,6 @@ class TestAVM(unittest.TestCase):
          # nodes
          # check the first couple and last node 
          # node 1
-         for i in range(0,nNodes*3):
-            print xyz[i]
          p = (0*3)
          self.assertAlmostEqual(0.0,xyz[p+0])
          self.assertAlmostEqual(0.0,xyz[p+1])
@@ -372,4 +372,10 @@ class TestAVM(unittest.TestCase):
           self.assertEqual(hexOrder[p], i)
 
 if __name__ == '__main__':
+   if len(sys.argv) > 1:
+      filename = sys.argv[1]
+      del sys.argv[1]
+   else:
+      print('USAGE: python unstruc_tests.py <filename>')
+      sys.exit(1)
    unittest.main()
