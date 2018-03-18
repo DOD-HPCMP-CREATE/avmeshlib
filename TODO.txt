@@ -7,9 +7,9 @@ Update the following unstruc metadata fields from 32-bit to 64-bit integers: nNo
 
 Higher order mesh support
 FIXME: what about higher order edges??
-Update read_partial_faces
-Update read_bnd_faces
-Need better test coverage of read_tri, read_quad, read_bnd_faces, read_partial_faces, etc
+Need better test coverage of read_tri, read_quad, etc
+
+Partial write support
 
 Modify/extend geometry definition for AMR (this could entail the removal of the existing AMR heavy data fields)
 (Looks like the existing AMR fields are OK, at least for Capstone. We could also potentially support Pointwise’s nmb format by interrogating the meshGenerator field)
@@ -20,9 +20,9 @@ Jettison rev0 from repo, kestrel will use a handwritten reader to upconvert
 
 Send Eric a detailed description of the AMR data to check that we really do have everything we need to talk to CapstoneSDK.
 
-Steve Lamberson has a race condition (?) in the build system. See email for details (also tons of gcc warnings)
-
-Todd's weird python-optimize bug
-
 update rev2/test/read_avm_rev1.cpp and write_avm_rev1.cpp
+
+Check Dave Garlisch avm_set_str invalid memory access bug (email from 7/12/2017)
+
+Add a char[32] unstruc mesh metadata elementType/elementScheme/elementFamily, default Uniform (ping Taylor on naming before implementing)
 */
