@@ -306,6 +306,7 @@ program unstruc_write
 
     hexGeomIds(1) = 1
     tetGeomIds(1) = 2
+    tetGeomIds(2) = 3
     priGeomIds(1) = 7
     pyrGeomIds(1) = 8
 

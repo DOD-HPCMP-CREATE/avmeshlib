@@ -39,58 +39,62 @@ int avm_open(const char* filename, int* id)
    avf->rev0 = NULL;
    avf->rev1 = NULL;
    avf->rev2 = NULL;
+   avf->formatRevision = -1;
    file_list[file_counter] = avf;
 
    // is this a AVMesh File?
    FILE* fp = NULL;
    bool byte_swap = 0;
-   file_id_prefix_t* file_prefix = new file_id_prefix_t;
+   file_id_prefix_t file_prefix;
    fp = fopen(filename, "rb");
    if (fp==NULL) RETURN_ERROR("avm_open: fopen failed");
-   if(!file_id_prefix::read(fp, &byte_swap, file_prefix)) {
+   if(!file_id_prefix::read(fp, &byte_swap, &file_prefix)) {
       avm_close(file_counter);
       RETURN_ERROR("avm_open: failed reading file_id_prefix");
    }
 
-   if (file_prefix->formatRevision == 0) {
+   if (file_prefix.formatRevision == 0) {
       avf->formatRevision = 0;
       avf->rev0 = new rev0_avmesh_file;
       avf->rev0->fp = fp;
       avf->rev0->byte_swap = byte_swap;
-      avf->rev0->file_prefix = *file_prefix;
+      avf->rev0->file_prefix = file_prefix;
       avf->rev0->filename = filename;
       avf->rev0->file_prefix.formatRevision = 0;
       if (rev0::avm_open(avf->rev0, id)) {
+         delete avf->rev0;
          delete avf;
          return 1;
       }
       *id = file_counter++;
       return 0;
    }
-   else if (file_prefix->formatRevision == 1) {
+   else if (file_prefix.formatRevision == 1) {
       avf->formatRevision = 1;
       avf->rev1 = new rev1_avmesh_file;
       avf->rev1->fp = fp;
       avf->rev1->byte_swap = byte_swap;
-      avf->rev1->file_prefix = *file_prefix;
+      avf->rev1->file_prefix = file_prefix;
       avf->rev1->filename = filename;
       avf->rev1->file_prefix.formatRevision = 1;
       if (rev1::avm_open(avf->rev1, id)) {
+         delete avf->rev1;
          delete avf;
          return 1;
       }
       *id = file_counter++;
       return 0;
    }
-   else if (file_prefix->formatRevision == 2) {
+   else if (file_prefix.formatRevision == 2) {
       avf->formatRevision = 2;
       avf->rev2 = new rev2_avmesh_file;
       avf->rev2->fp = fp;
       avf->rev2->byte_swap = byte_swap;
-      avf->rev2->file_prefix = *file_prefix;
+      avf->rev2->file_prefix = file_prefix;
       avf->rev2->filename = filename;
       avf->rev2->file_prefix.formatRevision = 2;
       if (rev2::avm_open(avf->rev2, id)) {
+         delete avf->rev2;
          delete avf;
          return 1;
       }
@@ -98,7 +102,6 @@ int avm_open(const char* filename, int* id)
       return 0;
    }
 
-   delete file_prefix;
    avm_close(file_counter);
    RETURN_ERROR("avm_open: unsupported formatRevision in file");
 }
@@ -200,13 +203,22 @@ int avm_close(int fileid)
    if (!avf) RETURN_ERROR("avm_close: fileid invalid");
 
    if (avf->formatRevision == 0) {
-      if (avf->rev0 && avf->rev0->fp) fclose(avf->rev0->fp);
+      if (avf->rev0 && avf->rev0->fp) {
+         fclose(avf->rev0->fp);
+         delete avf->rev0;
+      }
    }
    else if (avf->formatRevision == 1) {
-      if (avf->rev1 && avf->rev1->fp) fclose(avf->rev1->fp);
+      if (avf->rev1 && avf->rev1->fp) {
+         fclose(avf->rev1->fp);
+         delete avf->rev1;
+      }
    }
    else if (avf->formatRevision == 2) {
-      if (avf->rev2 && avf->rev2->fp) fclose(avf->rev2->fp);
+      if (avf->rev2 && avf->rev2->fp) {
+         fclose(avf->rev2->fp);
+         delete avf->rev2;
+      }
    }
 
    delete avf;
