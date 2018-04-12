@@ -112,7 +112,7 @@ TEST_F(TestFixture, offsets) {
       EXPECT_EQ(0, avm_get_int(fileid, "nPatches", &nPatches));
 
       // add in fixed part of unstruc header
-      mesh2headerSize += 88;
+      mesh2headerSize += 88 + 32;
 
       // add in unstruc patches
       mesh2headerSize += 52 * nPatches;

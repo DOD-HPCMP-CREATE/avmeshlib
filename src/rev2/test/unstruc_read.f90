@@ -37,6 +37,7 @@ program unstruc_read
    integer(4) :: nMaxNodesPerFace
    integer(4) :: nMaxNodesPerCell
    integer(4) :: nMaxFacesPerCell
+   character(32) :: elementScheme
    integer(4) :: facePolyOrder
    integer(4) :: cellPolyOrder
    integer(4) :: nPatches
@@ -137,6 +138,7 @@ program unstruc_read
                nMaxNodesPerFace, &
                nMaxNodesPerCell, &
                nMaxFacesPerCell, &
+               elementScheme, &
                facePolyOrder, &
                cellPolyOrder, &
                nPatches, &
@@ -162,6 +164,15 @@ program unstruc_read
          call exit(1)
       end if
 
+      ! if (trim(meshDescription) /= 'A nonsensical unstruc mesh that just demonstrates the format.') then
+         ! print '(A)', meshDescription
+         ! print '(A)', 'A nonsensical unstruc mesh that just demonstrates the format.'
+         ! print '(1X,I0)', len_trim(meshDescription)
+         ! print '(1X,I0)', len_trim('A nonsensical unstruc mesh that just demonstrates the format.')
+         ! print '(A)', 'meshDescription incorrect, exiting'
+         ! call exit(1)
+      ! end if
+
       if (formatRevision /= 2) then
          print '(A)', 'formatRevision incorrect, exiting'
          call exit(1)
@@ -176,6 +187,12 @@ program unstruc_read
          print '(A)', 'refined incorrect, exiting'
          call exit(1)
       end if
+
+      ! if (elementScheme /= 'uniform') then
+      !   print '(A)', elementScheme
+      !   print '(A)', 'elementScheme incorrect, exiting'
+      !   call exit(1)
+      ! end if
 
       if (cellPolyOrder /= 1) then
          print '(A)', 'cellPolyOrder incorrect, exiting'

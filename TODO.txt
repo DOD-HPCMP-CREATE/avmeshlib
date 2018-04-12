@@ -1,7 +1,5 @@
 /** @page todo
 
-Make a stronger connection between test order to ensure both styles of writers are being tested. "DEPENDS" still leaves ambiguity where both writers can run before either of the readers. Easiest way to do this would be to just have the two writers output files with different names. Could also make a test that diffs the two files at that point. Don't run all the tests twice... jus do the diff and call it a day. Have to figure out why description is being written slightly differently first. (Extra byte for a null terminator or something?)
-
 Update the following unstruc metadata fields from 32-bit to 64-bit integers: nNodes, nFaces, nCells, n[Hex|Tet|Pri|Pyr]Cells, n[Bnd]TriFaces, n[Bnd]QuadFaces, n[Bnd]PolyFaces, nEdges, n[Nodes|Edges|Faces]OnGeometry
 * Initially just change on disk format to 64 bit and cast up/down. Later plumb the API itself
 
@@ -18,11 +16,9 @@ Do we need to actually store mesh data on the surface in avm? This would fix som
 
 Jettison rev0 from repo, kestrel will use a handwritten reader to upconvert
 
-Send Eric a detailed description of the AMR data to check that we really do have everything we need to talk to CapstoneSDK.
-
 update rev2/test/read_avm_rev1.cpp and write_avm_rev1.cpp
 
 Check Dave Garlisch avm_set_str invalid memory access bug (email from 7/12/2017)
 
-Add a char[32] unstruc mesh metadata elementType/elementScheme/elementFamily, default Uniform (ping Taylor on naming before implementing)
+String comparisons in tests aren't quite working, see commented out meshDescription/elementScheme in unstruc_read.f90 for an example.
 */

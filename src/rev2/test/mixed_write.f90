@@ -40,6 +40,7 @@ module avmesh_mod
       integer(4) :: nMaxNodesPerFace
       integer(4) :: nMaxNodesPerCell
       integer(4) :: nMaxFacesPerCell
+      character(32) :: elementScheme
       integer(4) :: facePolyOrder
       integer(4) :: cellPolyOrder
       integer(4) :: nPatches
@@ -251,6 +252,7 @@ contains
                   unstruc_hdr%nMaxNodesPerFace, &
                   unstruc_hdr%nMaxNodesPerCell, &
                   unstruc_hdr%nMaxFacesPerCell, &
+                  unstruc_hdr%elementScheme, &
                   unstruc_hdr%facePolyOrder, &
                   unstruc_hdr%cellPolyOrder, &
                   unstruc_hdr%nPatches, &
@@ -556,6 +558,7 @@ subroutine init_unstruc_mesh
    unstruc_hdr%nMaxNodesPerFace = 4
    unstruc_hdr%nMaxNodesPerCell = 8
    unstruc_hdr%nMaxFacesPerCell = 6
+   unstruc_hdr%elementScheme = 'uniform'
    unstruc_hdr%facePolyOrder = 1
    unstruc_hdr%cellPolyOrder = 1
    unstruc_hdr%nPatches = 2

@@ -27,6 +27,15 @@ TEST(Misc, Endianess_API_Checks) {
    EXPECT_EQ(0, avm_close(id));
 }
 
+TEST(Misc, Set_String_Checks) {
+   int id;
+   char str[AVM_STD_STRING_LENGTH];
+   EXPECT_EQ(0, avm_new_file(&id, "/dev/null",1));
+   const char *val = "someValue";
+   EXPECT_EQ(0, avm_set_str(id, "contactInfo", val, AVM_STD_STRING_LENGTH));
+   EXPECT_EQ(0, avm_close(id));
+}
+
 TEST(Misc, Read_Non_Avmesh_File) {
    int id;
    EXPECT_EQ(1, avm_read_headers(&id, "vwing.grd"));

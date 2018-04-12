@@ -26,6 +26,7 @@ namespace rev2 {
    nMaxNodesPerFace
    nMaxNodesPerCell
    nMaxFacesPerCell
+   elementScheme
    facePolyOrder
    cellPolyOrder
    nPatches
@@ -97,6 +98,8 @@ typedef struct unstruc_header_t {
    int nMaxNodesPerCell;
 /*! max number of faces in any cell */
    int nMaxFacesPerCell;
+/*! Scheme used to order nodes on high-order element types */
+   char elementScheme[32];
 /*! polynomial order of faces */
    int facePolyOrder;
 /*! polynomial order of the cells in the volume mesh */

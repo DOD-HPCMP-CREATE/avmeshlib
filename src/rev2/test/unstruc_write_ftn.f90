@@ -36,6 +36,7 @@ program unstruc_write
    integer(4) :: nMaxNodesPerFace
    integer(4) :: nMaxNodesPerCell
    integer(4) :: nMaxFacesPerCell
+   character(32) :: elementScheme
    integer(4) :: facePolyOrder
    integer(4) :: cellPolyOrder
    integer(4) :: nPatches
@@ -131,6 +132,7 @@ program unstruc_write
        nMaxNodesPerFace = 4
        nMaxNodesPerCell = 8
        nMaxFacesPerCell = 6
+       elementScheme = 'uniform'
        facePolyOrder = 1
        cellPolyOrder = 1
        nPatches = 2
@@ -169,6 +171,7 @@ program unstruc_write
                  nMaxNodesPerFace, &
                  nMaxNodesPerCell, &
                  nMaxFacesPerCell, &
+                 elementScheme, &
                  facePolyOrder, &
                  cellPolyOrder, &
                  nPatches, &

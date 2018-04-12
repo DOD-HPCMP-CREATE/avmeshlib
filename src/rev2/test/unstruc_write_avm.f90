@@ -89,6 +89,7 @@ program unstruc_write
         call avm_set_intf(avmid, 'nMaxNodesPerFace', 4, istat)
         call avm_set_intf(avmid, 'nMaxNodesPerCell', 8, istat)
         call avm_set_intf(avmid, 'nMaxFacesPerCell', 6, istat)
+        call avm_set_strf(avmid, 'elementScheme', 'uniform', istat)
         call avm_set_intf(avmid, 'facePolyOrder', 1, istat)
         call avm_set_intf(avmid, 'cellPolyOrder', 1, istat)
         call avm_set_intf(avmid, 'nPatches', nPatches, istat)

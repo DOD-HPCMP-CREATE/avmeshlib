@@ -46,8 +46,8 @@ class TestFileSize(unittest.TestCase):
 
         # Unstruc mesh header
         ###############################################################
-        #unstruc header: 4*20
-        size += 4*22
+        #unstruc header: 4*22 + 32
+        size += 4*22 + 32
         #2x unstruc patch_header: 32 + 16 + 4
         size += 2*(32 + 16 + 4)
 

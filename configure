@@ -115,6 +115,7 @@ if [ "xTRUE" = "x$help" ]; then
    echo "   [--gtest-dir=\$GTEST_PATH] Build unit tests with Google Test"
    echo "   [--enable-shared] Build shared library (.so)"
    echo "   [--enable-python] Build python bindings"
+   echo "   [--enable-fortran] Build fortran bindings"
    echo "   [--debug]"
    echo "   [-v | --verbose]"
    echo "   [-h | --help]"

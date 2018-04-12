@@ -405,6 +405,7 @@ int rev2::avm_get_str(rev2_avmesh_file* avf, const char* field, char* str, int l
       }
       
       if (unstruc_mesh) {
+         if (FIELD_EQ("elementScheme")) RETURN_ANSWER(avf->unstruc[meshid].header.elementScheme, JMIN(len,32))
          //all remaining unstruc fields require a valid patchid
          if (patchid < 0 || patchid >= avf->unstruc[meshid].header.nPatches) {
             RETURN_ERROR("avm_get_str: invalid patchid");
@@ -694,6 +695,7 @@ int rev2::avm_set_str(rev2_avmesh_file* avf, const char* field, const char* str,
    }
       
    if (unstruc_mesh) {
+      if (FIELD_EQ("elementScheme")) STRCPY_AND_RETURN(avf->unstruc[meshid].header.elementScheme, JMIN(len,32))
       //all remaining unstruc fields require a valid patchid
       if (patchid < 0 || patchid >= avf->unstruc[meshid].header.nPatches) {
          RETURN_ERROR("avm_set_str: invalid patchid");
