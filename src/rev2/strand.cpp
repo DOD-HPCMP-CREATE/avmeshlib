@@ -51,28 +51,32 @@ int strand_header_t::size() const
           sizeof(nNodesOnGeometry) +
           sizeof(nEdgesOnGeometry) +
           sizeof(nFacesOnGeometry);
-;
+}
+
+void strand_byte_swap_header(strand_header_t* p)
+{
+   byte_swap_int(&p->surfaceOnly);
+   byte_swap_int(&p->nNodes);
+   byte_swap_int(&p->nStrands);
+   byte_swap_int(&p->nTriFaces);
+   byte_swap_int(&p->nQuadFaces);
+   byte_swap_int(&p->nPolyFaces);
+   byte_swap_int(&p->polyFacesSize);
+   byte_swap_int(&p->nBndEdges);
+   byte_swap_int(&p->nPtsPerStrand);
+   byte_swap_int(&p->nSurfPatches);
+   byte_swap_int(&p->nEdgePatches);
+   byte_swap_double(&p->strandLength);
+   byte_swap_double(&p->stretchRatio);
+   byte_swap_double(&p->smoothingThreshold);
+   byte_swap_int(&p->nNodesOnGeometry);
+   byte_swap_int(&p->nEdgesOnGeometry);
+   byte_swap_int(&p->nFacesOnGeometry);
 }
 
 int strand_header_t::write(FILE* fp, bool swap, strand_header_t* p)
 {
-   if (swap) byte_swap_int(&p->surfaceOnly);
-   if (swap) byte_swap_int(&p->nNodes);
-   if (swap) byte_swap_int(&p->nStrands);
-   if (swap) byte_swap_int(&p->nTriFaces);
-   if (swap) byte_swap_int(&p->nQuadFaces);
-   if (swap) byte_swap_int(&p->nPolyFaces);
-   if (swap) byte_swap_int(&p->polyFacesSize);
-   if (swap) byte_swap_int(&p->nBndEdges);
-   if (swap) byte_swap_int(&p->nPtsPerStrand);
-   if (swap) byte_swap_int(&p->nSurfPatches);
-   if (swap) byte_swap_int(&p->nEdgePatches);
-   if (swap) byte_swap_double(&p->strandLength);
-   if (swap) byte_swap_double(&p->stretchRatio);
-   if (swap) byte_swap_double(&p->smoothingThreshold);
-   if (swap) byte_swap_int(&p->nNodesOnGeometry);
-   if (swap) byte_swap_int(&p->nEdgesOnGeometry);
-   if (swap) byte_swap_int(&p->nFacesOnGeometry);
+   if (swap) strand_byte_swap_header(p);
 
    if (!fwrite(&p->surfaceOnly, sizeof(p->surfaceOnly), 1, fp)) return 0;
    if (!fwrite(&p->nNodes, sizeof(p->nNodes), 1, fp)) return 0;
@@ -93,23 +97,7 @@ int strand_header_t::write(FILE* fp, bool swap, strand_header_t* p)
    if (!fwrite(&p->nEdgesOnGeometry, sizeof(p->nEdgesOnGeometry), 1, fp)) return 0;
    if (!fwrite(&p->nFacesOnGeometry, sizeof(p->nFacesOnGeometry), 1, fp)) return 0;
 
-   if (swap) byte_swap_int(&p->surfaceOnly);
-   if (swap) byte_swap_int(&p->nNodes);
-   if (swap) byte_swap_int(&p->nStrands);
-   if (swap) byte_swap_int(&p->nTriFaces);
-   if (swap) byte_swap_int(&p->nQuadFaces);
-   if (swap) byte_swap_int(&p->nPolyFaces);
-   if (swap) byte_swap_int(&p->polyFacesSize);
-   if (swap) byte_swap_int(&p->nBndEdges);
-   if (swap) byte_swap_int(&p->nPtsPerStrand);
-   if (swap) byte_swap_int(&p->nSurfPatches);
-   if (swap) byte_swap_int(&p->nEdgePatches);
-   if (swap) byte_swap_double(&p->strandLength);
-   if (swap) byte_swap_double(&p->stretchRatio);
-   if (swap) byte_swap_double(&p->smoothingThreshold);
-   if (swap) byte_swap_int(&p->nNodesOnGeometry);
-   if (swap) byte_swap_int(&p->nEdgesOnGeometry);
-   if (swap) byte_swap_int(&p->nFacesOnGeometry);
+   if (swap) strand_byte_swap_header(p);
 
    return 1;
 }
@@ -135,22 +123,7 @@ int strand_header_t::read(FILE* fp, bool swap, strand_header_t* p)
    if (!fread(&p->nEdgesOnGeometry, sizeof(p->nEdgesOnGeometry), 1, fp)) return 0;
    if (!fread(&p->nFacesOnGeometry, sizeof(p->nFacesOnGeometry), 1, fp)) return 0;
 
-   if (swap) byte_swap_int(&p->surfaceOnly);
-   if (swap) byte_swap_int(&p->nStrands);
-   if (swap) byte_swap_int(&p->nTriFaces);
-   if (swap) byte_swap_int(&p->nQuadFaces);
-   if (swap) byte_swap_int(&p->nPolyFaces);
-   if (swap) byte_swap_int(&p->polyFacesSize);
-   if (swap) byte_swap_int(&p->nBndEdges);
-   if (swap) byte_swap_int(&p->nPtsPerStrand);
-   if (swap) byte_swap_int(&p->nSurfPatches);
-   if (swap) byte_swap_int(&p->nEdgePatches);
-   if (swap) byte_swap_double(&p->strandLength);
-   if (swap) byte_swap_double(&p->stretchRatio);
-   if (swap) byte_swap_double(&p->smoothingThreshold);
-   if (swap) byte_swap_int(&p->nNodesOnGeometry);
-   if (swap) byte_swap_int(&p->nEdgesOnGeometry);
-   if (swap) byte_swap_int(&p->nFacesOnGeometry);
+   if (swap) strand_byte_swap_header(p);
 
    return 1;
 }
@@ -194,7 +167,7 @@ int strand_surf_patch_t::readn(FILE* fp, bool swap, vector<strand_surf_patch_t>&
       if (!fread(&p[i].surfPatchBody, sizeof(p[i].surfPatchBody), 1, fp)) return 0;
       if (!fread(&p[i].surfPatchComp, sizeof(p[i].surfPatchComp), 1, fp)) return 0;
       if (!fread(&p[i].surfPatchBCType, sizeof(p[i].surfPatchComp), 1, fp)) return 0;
-      
+
       if (swap) byte_swap_int(&p[i].surfPatchId);
    }
 
@@ -226,10 +199,12 @@ int strand_edge_patch_t::size() const
 int strand_edge_patch_t::writen(FILE* fp, bool swap, vector<strand_edge_patch_t>& p)
 {
    for (unsigned int i=0; i<p.size(); ++i) {
-      if (swap) byte_swap_int(&p[i].edgePatchId);
-      if (swap) byte_swap_double(&p[i].nx);
-      if (swap) byte_swap_double(&p[i].ny);
-      if (swap) byte_swap_double(&p[i].nz);
+      if (swap) {
+        byte_swap_int(&p[i].edgePatchId);
+        byte_swap_double(&p[i].nx);
+        byte_swap_double(&p[i].ny);
+        byte_swap_double(&p[i].nz);
+      }
 
       if (!fwrite(&p[i].edgePatchId, sizeof(p[i].edgePatchId), 1, fp)) return 0;
       if (!fwrite(&p[i].edgePatchBody, sizeof(p[i].edgePatchBody), 1, fp)) return 0;
@@ -239,10 +214,12 @@ int strand_edge_patch_t::writen(FILE* fp, bool swap, vector<strand_edge_patch_t>
       if (!fwrite(&p[i].ny, sizeof(p[i].ny), 1, fp)) return 0;
       if (!fwrite(&p[i].nz, sizeof(p[i].nz), 1, fp)) return 0;
 
-      if (swap) byte_swap_int(&p[i].edgePatchId);
-      if (swap) byte_swap_double(&p[i].nx);
-      if (swap) byte_swap_double(&p[i].ny);
-      if (swap) byte_swap_double(&p[i].nz);
+      if (swap) {
+        byte_swap_int(&p[i].edgePatchId);
+        byte_swap_double(&p[i].nx);
+        byte_swap_double(&p[i].ny);
+        byte_swap_double(&p[i].nz);
+      }
    }
 
    return 1;
@@ -258,11 +235,13 @@ int strand_edge_patch_t::readn(FILE* fp, bool swap, vector<strand_edge_patch_t>&
       if (!fread(&p[i].nx, sizeof(p[i].nx), 1, fp)) return 0;
       if (!fread(&p[i].ny, sizeof(p[i].ny), 1, fp)) return 0;
       if (!fread(&p[i].nz, sizeof(p[i].nz), 1, fp)) return 0;
-      
-      if (swap) byte_swap_int(&p[i].edgePatchId);
-      if (swap) byte_swap_double(&p[i].nx);
-      if (swap) byte_swap_double(&p[i].ny);
-      if (swap) byte_swap_double(&p[i].nz);
+
+      if (swap) {
+        byte_swap_int(&p[i].edgePatchId);
+        byte_swap_double(&p[i].nx);
+        byte_swap_double(&p[i].ny);
+        byte_swap_double(&p[i].nz);
+      }
    }
 
    return 1;
@@ -317,7 +296,7 @@ off_t strand_info::datasize(const file_header_t& filehdr,
    int precision = filehdr.precision;
 
    off_t offset = 0;
-   offset += 3 * header.nNodes * 
+   offset += 3 * header.nNodes *
              (1==precision ? sizeof(float) : sizeof(double)); //xyz
    offset += header.nStrands * sizeof(int); //nodeID
    offset += header.nStrands * sizeof(int); //nodeClip
