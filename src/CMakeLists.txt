@@ -1,9 +1,12 @@
 if (ENABLE_FORTRAN)
    enable_language (Fortran)
    set(F90_SRCS avmesh.f90)
+   include_directories ("${CMAKE_CURRENT_BINARY_DIR}")
 endif (ENABLE_FORTRAN)
 
 set(CPP_SRCS avmesh.cpp byte_swap.c avmesh_file.cpp)
+
+include_directories ("${CMAKE_CURRENT_SOURCE_DIR}")
 
 add_subdirectory (rev0)
 add_subdirectory (rev1)

@@ -1,5 +1,4 @@
 enable_language (Fortran)
-include_directories ("${PROJECT_SOURCE_DIR}/src")
 
 # gfortran note..
 # Required gfortran > 4.3 

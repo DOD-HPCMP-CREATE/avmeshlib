@@ -1,5 +1,4 @@
 enable_language (Fortran)
-include_directories ("${PROJECT_BINARY_DIR}/src")
 
 if (BUILD_UNIT_TESTS)
    SET(CMAKE_CXX_FLAGS "-DGTEST_HAS_TR1_TUPLE=0 ${CMAKE_CXX_FLAGS}")

@@ -1,5 +1,4 @@
 enable_language (Fortran)
-include_directories ("${PROJECT_BINARY_DIR}/src")
 
 # gfortran note..
 set (SUPPORTED_COMPILER TRUE)
