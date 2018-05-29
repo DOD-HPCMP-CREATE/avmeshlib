@@ -212,12 +212,6 @@ program unstruc_write
     priGeomIds(1) = 7
     pyrGeomIds(1) = 8
 
-    !
-    ! write the file data
-    !
-    call avm_write_headersf(avmid, istat)
-    if (istat.ne.0) stop 'ERROR: avm_write_headers'
-
     ! mesh data
     do i = 1,nMesh
         call avm_selectf(avmid, 'mesh', i, istat)
@@ -253,6 +247,12 @@ program unstruc_write
         call avm_unstruc_write_nodes_r8f(avmid, xyz, 3*nNodes, istat)
         if (istat.ne.0) stop 'ERROR: avm_unstruc_write_r8'
     end do
+
+    !
+    ! write the file data
+    !
+    call avm_write_headersf(avmid, istat)
+    if (istat.ne.0) stop 'ERROR: avm_write_headers'
 
     call avm_closef(avmid, istat)
     if (istat.ne.0) stop 'ERROR: avm_close'

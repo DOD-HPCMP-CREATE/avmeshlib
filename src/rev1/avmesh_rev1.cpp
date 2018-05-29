@@ -116,6 +116,7 @@ int rev1::avm_new_file(rev1_avmesh_file* avf, const char* filename)
    avf->selection_levelid = 1;
    avf->selection_blockid = 1;
    avf->write_endian = rev1_avmesh_file::ENDIAN_NATIVE;
+   avf->byte_swap = false;
    avf->filename = filename;
    avf->fp = fopen(filename, "wb");
    if (avf->fp==NULL) RETURN_ERROR("avm_new_file: fopen failed");
@@ -126,14 +127,7 @@ int rev1::avm_write_headers(rev1_avmesh_file* avf)
 {
    if (!avf) RETURN_ERROR("avm_write_headers: avf is NULL");
 
-   if (avf->write_endian == rev1_avmesh_file::ENDIAN_NATIVE) avf->byte_swap = false;
-   else {
-      int one = 1;
-      const char* p1 = (char*)&one;
-      rev1_avmesh_file::Endian machine_endian = p1[0] ? rev1_avmesh_file::ENDIAN_LITTLE :
-                                                   rev1_avmesh_file::ENDIAN_BIG;
-      avf->byte_swap = avf->write_endian != machine_endian;
-   }
+   if (seek(avf->fp, 0)) return 1;
 
    if (!file_id_prefix::write(avf->fp, avf->byte_swap, &avf->file_prefix)) {
       RETURN_ERROR("avm_write_headers: failed writing file_id_prefix");
@@ -903,6 +897,18 @@ int rev1::avm_set_str(rev1_avmesh_file* avf, const char* field, const char* str,
       else if (0==strcmp(str,"little")) avf->write_endian = rev1_avmesh_file::ENDIAN_LITTLE;
       else if (0==strcmp(str,"native")) avf->write_endian = rev1_avmesh_file::ENDIAN_NATIVE;
       else RETURN_ERROR("avm_set_str: invalid endianness");
+
+      if (avf->write_endian == rev1_avmesh_file::ENDIAN_NATIVE) {
+        avf->byte_swap = false;
+      }
+      else {
+         int one = 1;
+         const char* p1 = (char*)&one;
+         rev1_avmesh_file::Endian machine_endian = p1[0] ? rev1_avmesh_file::ENDIAN_LITTLE :
+                                                      rev1_avmesh_file::ENDIAN_BIG;
+         avf->byte_swap = avf->write_endian != machine_endian;
+      }
+
       return 0;
    }
 
