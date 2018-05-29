@@ -81,7 +81,6 @@ void unstruc_byte_swap_header(unstruc_header_t* p)
    byte_swap_int(&p->nMaxNodesPerFace);
    byte_swap_int(&p->nMaxNodesPerCell);
    byte_swap_int(&p->nMaxFacesPerCell);
-   byte_swap_int(&p->nMaxFacesPerCell);
    byte_swap_int(&p->facePolyOrder);
    byte_swap_int(&p->cellPolyOrder);
    byte_swap_int(&p->nPatches);
@@ -199,7 +198,7 @@ int unstruc_patchheader_t::readn(FILE* fp, bool swap, vector<unstruc_patchheader
       if (!fread(p[i].patchLabel, sizeof(p[i].patchLabel), 1, fp)) return 0;
       if (!fread(p[i].patchType, sizeof(p[i].patchType), 1, fp)) return 0;
       if (!fread(&p[i].patchId, sizeof(p[i].patchId), 1, fp)) return 0;
-      
+
       if (swap) byte_swap_int(&p[i].patchId);
    }
 
@@ -252,7 +251,7 @@ off_t unstruc_info::datasize(const file_header_t& filehdr,
    int nodesPerPyr = rev2::avm_nodes_per_pyr(header.cellPolyOrder);
 
    off_t offset = 0;
-   offset += 3 * header.nNodes * 
+   offset += 3 * header.nNodes *
              (1==precision ? sizeof(float) : sizeof(double));
    offset += nodesPerTri * header.nBndTriFaces * sizeof(int);
    offset += nodesPerQuad * header.nBndQuadFaces * sizeof(int);
