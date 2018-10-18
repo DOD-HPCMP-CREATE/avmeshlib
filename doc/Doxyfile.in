@@ -4,7 +4,7 @@ INPUT                  = @PROJECT_SOURCE_DIR@ \
                          @PROJECT_SOURCE_DIR@/src/rev1 \
                          @PROJECT_SOURCE_DIR@/src/rev0
 IMAGE_PATH             = @PROJECT_SOURCE_DIR@/doc
-FILE_PATTERNS          = INSTALL.txt README.txt \
+FILE_PATTERNS          = INSTALL.txt README.txt rev1torev2.txt \
                          avmesh.cpp avmesh.h avmesh_file.cpp avmesh_file.h \
                          avmhdrs.cpp avmhdrs.h \
                          bfstruc.cpp bfstruc.h unstruc.cpp unstruc.h \

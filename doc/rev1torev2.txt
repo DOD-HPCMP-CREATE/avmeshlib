@@ -1,0 +1,129 @@
+/** @page rev1torev2 Porting from rev1 to rev2
+
+This document is a guide for upgrading your code from rev1 to rev2 of the avmesh library.
+
+@section Overview
+
+AVMesh rev2 adds the capability to store high-order elements, as well as other minor changes.
+
+@section Changes
+
+@subsection formatRevision
+
+To write rev2 files, ensure that you are setting the formatRevision argument to 2 when calling avm_new_file:
+<code>
+avm_new_file(avmid, filename, 2)
+</code>
+When reading an avmesh file, you can check the formatRevision metadata to determine the revision of the file:
+<code>
+avm_get_int(fileid, "formatRevision", &rev)
+</code>
+
+@subsection Reference Length
+
+referenceLength is now defined in the x,y,z directions as an array of length 3 instead of as a scalar. Use 
+the avm_set_real_array/avm_get_real_array functions instead of avm_set_real/avm_get_real:
+<code>
+double refLength[3];
+avm_set_real_array(avmid, 'referenceLength', refLength, 3);
+avm_get_real_array(fileid, "referenceLength", refLength, 3);
+</code>
+
+@subsection Polyhedral faces removed
+
+The arbitrary polyhedral face support has been replaced by the new high-order element capability. The signatures
+of some functions have changed as a result.
+
+Note: These new signatures should also be used when interacting with rev1 and rev0 files. Since the arbitrary
+polyhedral support was never used, rather than maintaining backwards-compatibility the polyhedral arguments were
+removed completely.
+
+The new signatures follow:
+
+<code>
+int avm_unstruc_read_faces(rev2_avmesh_file* avf,
+   int* triFaces,  int triFaces_size,
+   int* quadFaces, int quadFaces_size
+);
+
+int avm_unstruc_read_partial_faces(rev2_avmesh_file* avf,
+   int* triFaces,  int triFaces_size,  int triStart,  int triEnd,
+   int* quadFaces, int quadFaces_size, int quadStart, int quadEnd
+);
+
+int avm_unstruc_read_bnd_faces(rev2_avmesh_file* avf,
+   int* bndTriFaces,  int bndTriFaces_size,
+   int* bndQuadFaces, int bndQuadFaces_size
+);
+
+int avm_unstruc_write_faces(rev2_avmesh_file* avf,
+   int* triFaces,  int triFaces_size,
+   int* quadFaces, int quadFaces_size
+);
+
+int avm_unstruc_write_bnd_faces(rev2_avmesh_file* avf,
+   int* triFaces,  int triFaces_size,
+   int* quadFaces, int quadFaces_size
+);
+</code>
+
+The arbitrary polyhedral metadata items were also removed from rev2 as a result of this change. The following unstruc metadata items no longer exist:
+
+<code>
+nPolyFaces
+nPolyCells
+nBndPolyFaces
+polyFacesSize
+bndPolyFacesSize
+</code>
+
+@subsection High-order element support for unstructured meshes
+
+You must now set two new unstruc mesh metadata items to specify the polynomial order of the faces and cells in the
+mesh. These are facePolyOrder and cellPolyOrder. Example:
+
+<code>
+avm_set_int(avmid, 'facePolyOrder', 1)
+avm_set_int(avmid, 'cellPolyOrder', 1)
+</code>
+
+If facePolyOrder and cellPolyOrder are set to 1, then all elements are defined the same as in rev1. (3 nodes per tri, 4 nodes per quad, 4 nodes per tet, 5 nodes per pyramid, 6 nodes per prism, and 8 nodes per hex.
+
+If facePolyOrder > 1, then additional nodes are added to each tri and quad. Similarly, if cellPolyOrder > 1, additional nodes are added to each tet, pyramid, prism, and hex.
+
+Currently only P=1 and P=2 are supported by Kestrel, but the avmeshlib format itself supports arbitrarily high values for P. For details on the node ordering for P=1 and P=2 for each element type, please reference the kestrel-elements.pdf that is included in the avmeshlib documentation.
+
+New functions are included which will return the number of nodes per element for each element type at a given P:
+
+<code>
+nodesPerTri = avm_nodes_per_tri(avmid, p)
+nodesPerQuad = avm_nodes_per_quad(avmid, p)
+nodesPerHex = avm_nodes_per_hex(avmid, p)
+nodesPerTet = avm_nodes_per_tet(avmid, p)
+nodesPerPri = avm_nodes_per_pri(avmid, p)
+nodesPerPyr = avm_nodes_per_pyr(avmid, p)
+</code>
+
+There is also a new "elementScheme" unstruc metadata item which should always be set to "uniform". In future avmesh
+revisions this may be used to define alternate ordering schemes for high-order elements.
+
+@subsection "refined" metadata item
+The "refined" generic mesh metadata added. This metadata is reserved for future usage, and for now should always be
+set to 0:
+<code>
+avm_set_int(fileid, "refined", 0);
+</code>
+
+@subsection Cell Connectivity fields removed from unstruc mesh faces
+
+In rev0 and rev1, the face ID arrays contained extra values to define the 2 neighboring cells for the face. This
+cell connectivity is no longer stored in rev2 meshes.
+
+@subsection Build system changes
+
+Arguments to configure have been updated (FIXME: more detail here)
+
+@subsection bfstruc and cart types
+
+The bfstruc and cart mesh types have been removed from rev2.
+*/
