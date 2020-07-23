@@ -119,36 +119,57 @@ class TestAVM(unittest.TestCase):
 
         #FIXME: these should be one-indexed
         #FIXME: node order is wrong for the faces on the "back" sides of the cube
-        #do the z=0 and z=size faces
-        for z in [0,size-1]:
+        for y in range(size-1):
+            for x in range(size-1):
+                #add the z=0 faces
+                i = (x + y*(size-1)) * 5
+                quadFaces[i]   = x     + (y     * size)
+                quadFaces[i+1] = x     + ((y+1) * size)
+                quadFaces[i+2] = (x+1) + ((y+1) * size)
+                quadFaces[i+3] = (x+1) + (y     * size)
+                quadFaces[i+4] = -1                     #patchID
+                #add the z=size faces
+                z=size-1
+                i = (x + y*(size-1) + z**2) * 5
+                quadFaces[i]   = x     + (y     * size) + (z*size**2)
+                quadFaces[i+1] = (x+1) + (y     * size) + (z*size**2)
+                quadFaces[i+2] = (x+1) + ((y+1) * size) + (z*size**2)
+                quadFaces[i+3] = x     + ((y+1) * size) + (z*size**2)
+                quadFaces[i+4] = -1                     #patchID
+        for z in range(size-1):
             for y in range(size-1):
-                for x in range(size-1):
-                    i = (x + y*(size-1) + z**2) * 5
-                    quadFaces[i]   = x     + (y     * size) + (z*size**2)
-                    quadFaces[i+1] = x     + ((y+1) * size) + (z*size**2)
-                    quadFaces[i+2] = (x+1) + ((y+1) * size) + (z*size**2)
-                    quadFaces[i+3] = (x+1) + (y     * size) + (z*size**2)
-                    quadFaces[i+4] = -1                     #patchID
-        #do the x=0 and x=max faces
-        for x in [0,size-1]:
-            for z in range(size-1):
-                for y in range(size-1):
-                    i = (y + z*(size-1) + x**2 + 2*((size-1)**2)) * 5
-                    quadFaces[i]   = y     + (z     * size) + (x*size**2)
-                    quadFaces[i+1] = y     + ((z+1) * size) + (x*size**2)
-                    quadFaces[i+2] = (y+1) + ((z+1) * size) + (x*size**2)
-                    quadFaces[i+3] = (y+1) + (z     * size) + (x*size**2)
-                    quadFaces[i+4] = -1                     #patchID
-        #do the y=0 and y=max faces
-        for y in [0,size-1]:
-            for z in range(size-1):
-                for x in range(size-1):
-                    i = (x + z*(size-1) + y**2 + 4*((size-1)**2)) * 5
-                    quadFaces[i]   = x     + (z     * size) + (y*size**2)
-                    quadFaces[i+1] = (x+1) + (z     * size) + (y*size**2)
-                    quadFaces[i+2] = (x+1) + ((z+1) * size) + (y*size**2)
-                    quadFaces[i+3] = x     + ((z+1) * size) + (y*size**2)
-                    quadFaces[i+4] = -1                     #patchID
+                #add the x=0 faces
+                i = (y + z*(size-1) + 2*((size-1)**2)) * 5
+                quadFaces[i]   = y     + (z     * size)
+                quadFaces[i+1] = y     + ((z+1) * size)
+                quadFaces[i+2] = (y+1) + ((z+1) * size)
+                quadFaces[i+3] = (y+1) + (z     * size)
+                quadFaces[i+4] = -1                     #patchID
+                #add the x=size faces
+                x=size-1
+                i = (y + z*(size-1) + x**2 + 2*((size-1)**2)) * 5
+                quadFaces[i]   = y     + (z     * size) + (x*size**2)
+                quadFaces[i+1] = y     + ((z+1) * size) + (x*size**2)
+                quadFaces[i+2] = (y+1) + ((z+1) * size) + (x*size**2)
+                quadFaces[i+3] = (y+1) + (z     * size) + (x*size**2)
+                quadFaces[i+4] = -1                     #patchID
+        for z in range(size-1):
+            for x in range(size-1):
+                #add the y=0 faces
+                i = (x + z*(size-1) + 4*((size-1)**2)) * 5
+                quadFaces[i]   = x     + (z     * size)
+                quadFaces[i+1] = (x+1) + (z     * size)
+                quadFaces[i+2] = (x+1) + ((z+1) * size)
+                quadFaces[i+3] = x     + ((z+1) * size)
+                quadFaces[i+4] = -1                     #patchID
+                #add the y=size faces
+                y=size-1
+                i = (x + z*(size-1) + y**2 + 4*((size-1)**2)) * 5
+                quadFaces[i]   = x     + (z     * size) + (y*size**2)
+                quadFaces[i+1] = (x+1) + (z     * size) + (y*size**2)
+                quadFaces[i+2] = (x+1) + ((z+1) * size) + (y*size**2)
+                quadFaces[i+3] = x     + ((z+1) * size) + (y*size**2)
+                quadFaces[i+4] = -1                     #patchID
 
         self.assertEqual(AVM.unstruc_write_faces(self.avmid,
                                                  None, 0,
