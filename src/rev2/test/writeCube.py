@@ -11,7 +11,8 @@ class TestAVM(unittest.TestCase):
         err, self.avmid = AVM.new_file(self.filename, 2)
 
     def test_largeCube(self):
-        self.writeCube(3)
+        #go up to 648x648x648 to overflow int
+        self.writeCube(500)
         #self.readMesh()
 
     def tearDown(self):
@@ -55,7 +56,7 @@ class TestAVM(unittest.TestCase):
         nHexCells = nCells
         nBndQuadFaces = ((size-1)**2) * 6
         nFaces = (nBndQuadFaces + (nHexCells * 6)) / 2
-        print nFaces, nCells
+        #print nFaces, nCells
         nMaxNodesPerFace = 4
         nMaxNodesPerCell = 8
         nMaxFacesPerCell = 6
@@ -175,44 +176,44 @@ class TestAVM(unittest.TestCase):
                                                  None, 0,
                                                  quadFaces, nQuadFaces*5),0)
 
-        print "nodes: ",
-        for z in range(size):
-            print
-            print
-            for y in range(size):
-                print
-                for x in range(size):
-                   i = (x + (y*size) + (z*size**2)) * 3
-                   print xyz[i],xyz[i+1],xyz[i+2], " ",
-        print
-        print
+        #print "nodes: ",
+        #for z in range(size):
+        #    print
+        #    print
+        #    for y in range(size):
+        #        print
+        #        for x in range(size):
+        #           i = (x + (y*size) + (z*size**2)) * 3
+        #           print xyz[i],xyz[i+1],xyz[i+2], " ",
+        #print
+        #print
 
-        print "faces: ",
-        for i in range(nQuadFaces):
-            print quadFaces[i*5],quadFaces[i*5+1],quadFaces[i*5+2],quadFaces[i*5+3],quadFaces[i*5+4]
+        #print "faces: ",
+        #for i in range(nQuadFaces):
+        #    print quadFaces[i*5],quadFaces[i*5+1],quadFaces[i*5+2],quadFaces[i*5+3],quadFaces[i*5+4]
 
-        print
+        #print
 
         for z in range(size-1):
             for y in range(size-1):
                 for x in range(size-1):
                     i = (x + y*(size-1) + z*((size-1)**2)) * 8
-                    hexCells[i] = x     + y*size     + (z+1)*(size**2) + 1
+                    hexCells[i]   = x     + y*size     + (z+1)*(size**2) + 1
                     hexCells[i+1] = (x+1) + y*size     + (z+1)*(size**2) + 1
                     hexCells[i+2] = (x+1) + (y+1)*size + (z+1)*(size**2) + 1
                     hexCells[i+3] = x     + (y+1)*size + (z+1)*(size**2) + 1
 
-                    hexCells[i+4]   = x     + y*size     + z*(size**2) + 1
+                    hexCells[i+4] = x     + y*size     + z*(size**2) + 1
                     hexCells[i+5] = (x+1) + y*size     + z*(size**2) + 1
                     hexCells[i+6] = (x+1) + (y+1)*size + z*(size**2) + 1
                     hexCells[i+7] = x     + (y+1)*size + z*(size**2) + 1
  
 
-        print "cells: ",
-        for i in range(nHexCells*8):
-            if i % 8 == 0: print
-            print hexCells[i],
-        print
+        #print "cells: ",
+        #for i in range(nHexCells*8):
+        #    if i % 8 == 0: print
+        #    print hexCells[i],
+        #print
 
         self.assertEqual(AVM.unstruc_write_cells(self.avmid,
                                                  hexCells, nHexCells*8,
