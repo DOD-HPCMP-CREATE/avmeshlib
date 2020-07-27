@@ -197,15 +197,16 @@ class TestAVM(unittest.TestCase):
             for y in range(size-1):
                 for x in range(size-1):
                     i = (x + y*(size-1) + z*((size-1)**2)) * 8
-                    hexCells[i]   = x     + y*size     + z*(size**2) + 1
-                    hexCells[i+1] = (x+1) + y*size     + z*(size**2) + 1
-                    hexCells[i+2] = (x+1) + (y+1)*size + z*(size**2) + 1
-                    hexCells[i+3] = x     + (y+1)*size + z*(size**2) + 1
+                    hexCells[i] = x     + y*size     + (z+1)*(size**2) + 1
+                    hexCells[i+1] = (x+1) + y*size     + (z+1)*(size**2) + 1
+                    hexCells[i+2] = (x+1) + (y+1)*size + (z+1)*(size**2) + 1
+                    hexCells[i+3] = x     + (y+1)*size + (z+1)*(size**2) + 1
+
+                    hexCells[i+4]   = x     + y*size     + z*(size**2) + 1
+                    hexCells[i+5] = (x+1) + y*size     + z*(size**2) + 1
+                    hexCells[i+6] = (x+1) + (y+1)*size + z*(size**2) + 1
+                    hexCells[i+7] = x     + (y+1)*size + z*(size**2) + 1
  
-                    hexCells[i+4] = x     + y*size     + (z+1)*(size**2) + 1
-                    hexCells[i+5] = (x+1) + y*size     + (z+1)*(size**2) + 1
-                    hexCells[i+6] = (x+1) + (y+1)*size + (z+1)*(size**2) + 1
-                    hexCells[i+7] = x     + (y+1)*size + (z+1)*(size**2) + 1
 
         print "cells: ",
         for i in range(nHexCells*8):
