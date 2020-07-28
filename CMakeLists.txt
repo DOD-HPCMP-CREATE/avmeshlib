@@ -23,7 +23,7 @@ endif (ENABLE_FORTRAN)
 if (EXISTS "${GTEST_DIR}")
    SET (BUILD_UNIT_TESTS YES)
    include_directories ("${GTEST_DIR}/include")
-   link_directories ("${GTEST_DIR}/lib")
+   link_directories ("${GTEST_DIR}/lib64")
 endif (EXISTS "${GTEST_DIR}")
 
 if (ENABLE_PYTHON)
