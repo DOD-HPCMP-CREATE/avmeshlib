@@ -12,7 +12,7 @@ class TestAVM(unittest.TestCase):
 
     def test_largeCube(self):
         #go up to 648x648x648 to overflow int
-        self.writeCube(500)
+        self.writeCube(648)
         #self.readMesh()
 
     def tearDown(self):
@@ -215,11 +215,11 @@ class TestAVM(unittest.TestCase):
         #    print hexCells[i],
         #print
 
-        self.assertEqual(AVM.unstruc_write_cells(self.avmid,
-                                                 hexCells, nHexCells*8,
-                                                 None, 0,
-                                                 None, 0,
-                                                 None, 0),0)
+        self.assertEqual(AVM.unstruc_write_cells_nosize(self.avmid,
+                                                 hexCells,
+                                                 None,
+                                                 None,
+                                                 None),0)
         self.assertEqual(AVM.close(self.avmid),0)
 
     def readMesh(self, p):

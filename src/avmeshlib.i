@@ -70,6 +70,7 @@
 %rename(unstruc_write_bnd_faces)    avm_unstruc_write_bnd_faces;
 %rename(unstruc_write_bnd_faces)    avm_unstruc_write_bnd_faces;
 %rename(unstruc_write_cells)        avm_unstruc_write_cells;
+%rename(unstruc_write_cells_nosize) avm_unstruc_write_cells_nosize;
 %rename(unstruc_write_edges)        avm_unstruc_write_edges;
 %rename(unstruc_write_amr)          avm_unstruc_write_amr;
 %rename(unstruc_write_amr_volumeids) avm_unstruc_write_amr_volumeids;
@@ -258,6 +259,7 @@ extern int avm_unstruc_write_nodes_r8(int, double*, int);
 extern int avm_unstruc_write_faces(int, int*, int, int*, int);
 extern int avm_unstruc_write_bnd_faces(int, int*, int, int*, int);
 extern int avm_unstruc_write_cells(int, int*, int, int*, int, int*, int, int*, int);
+extern int avm_unstruc_write_cells_nosize(int, int*, int*, int*, int*);
 extern int avm_unstruc_write_edges(int, int*, int);
 extern int avm_unstruc_write_amr(int, AMR_Node_Data*, int, int*, int, int*, int);
 extern int avm_unstruc_write_amr_volumeids(int, int*, int, int*, int, int*, int, int*, int);

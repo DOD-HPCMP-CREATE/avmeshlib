@@ -204,6 +204,12 @@ int avm_unstruc_write_bnd_faces(rev2_avmesh_file* avf,
    int* triFaces,  int triFaces_size,
    int* quadFaces, int quadFaces_size
 );
+int avm_unstruc_write_cells_nosize(rev2_avmesh_file* avf,
+   int* hexCells,
+   int* tetCells,
+   int* priCells,
+   int* pyrCells
+);
 int avm_unstruc_write_cells(rev2_avmesh_file* avf,
    int* hexCells, int hexCells_size,
    int* tetCells, int tetCells_size,

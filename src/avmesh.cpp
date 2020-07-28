@@ -1716,6 +1716,29 @@ int avm_unstruc_write_bnd_faces(int fileid,
    RETURN_ERROR("avm_unstruc_write_bnd_faces: unsupported formatRevision in file");
 }
 
+int avm_unstruc_write_cells_nosize(int fileid,
+   int* hexCells,
+   int* tetCells,
+   int* priCells,
+   int* pyrCells)
+{
+   avmesh_file *avf = file_list[fileid];
+   if (!avf) RETURN_ERROR("avm_unstruc_write_cells_nosize: fileid invalid");
+
+   if (avf->formatRevision == 0 || avf->formatRevision == 1) {
+      RETURN_ERROR("avm_unstruc_write_cells_nosize: This call is only supported in formatRevision 2");
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_write_cells_nosize(avf->rev2,
+                                hexCells,
+                                tetCells,
+                                priCells,
+                                pyrCells);
+   }
+
+   RETURN_ERROR("avm_unstruc_write_cells_nosize: unsupported formatRevision in file");
+}
+
 int avm_unstruc_write_cells(int fileid,
    int* hexCells, int hexCells_size,
    int* tetCells, int tetCells_size,
@@ -2422,6 +2445,20 @@ void FTNFUNC(avm_unstruc_write_bnd_faces)(int* fileid,
  *status = avm_unstruc_write_bnd_faces(*fileid,
                triFaces,  *triFaces_size,
                quadFaces, *quadFaces_size);
+}
+
+void FTNFUNC(avm_unstruc_write_cells_nosize)(int* fileid,
+   int* hexCells,
+   int* tetCells,
+   int* priCells,
+   int* pyrCells,
+   int* status
+) {
+ *status = avm_unstruc_write_cells_nosize(*fileid,
+               hexCells,
+               tetCells,
+               priCells,
+               pyrCells);
 }
 
 void FTNFUNC(avm_unstruc_write_cells)(int* fileid,

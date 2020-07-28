@@ -2814,6 +2814,102 @@ int rev2::avm_unstruc_write_faces(rev2_avmesh_file* avf,
    return 0;
 }
 
+int rev2::avm_unstruc_write_cells_nosize(rev2_avmesh_file* avf,
+   int* hexCells,
+   int* tetCells,
+   int* priCells,
+   int* pyrCells)
+{
+   size_t hexCells_size, tetCells_size, priCells_size, pyrCells_size;
+
+   if (!avf) RETURN_ERROR("avm_unstruc_write_cells_nosize: avf is NULL");
+
+   int meshid = avf->selection_meshid-1;
+   if (meshid < 0 || meshid >= avf->file_hdr.meshCount) {
+      RETURN_ERROR("avm_unstruc_write_cells_nosize: invalid meshid");
+   }
+   if (0!=strncmp("unstruc", avf->mesh_hdrs[meshid].meshType, strlen("unstruc"))) {
+      RETURN_ERROR("avm_unstruc_write_cells_nosize: selected mesh is not an unstruc mesh");
+   }
+
+   const unstruc_header& hdr = avf->unstruc[meshid].header;
+
+   int nodesPerHex = avm_nodes_per_hex(hdr.cellPolyOrder);
+   int nodesPerTet = avm_nodes_per_tet(hdr.cellPolyOrder);
+   int nodesPerPri = avm_nodes_per_pri(hdr.cellPolyOrder);
+   int nodesPerPyr = avm_nodes_per_pyr(hdr.cellPolyOrder);
+
+   hexCells_size = nodesPerHex*hdr.nHexCells;
+   tetCells_size = nodesPerTet*hdr.nTetCells;
+   priCells_size = nodesPerPri*hdr.nPriCells;
+   pyrCells_size = nodesPerPyr*hdr.nPyrCells;
+
+   if (hexCells_size>0 && hexCells==NULL) RETURN_ERROR("avm_unstruc_write_cells_nosize: hexCells is NULL");
+   if (tetCells_size>0 && tetCells==NULL) RETURN_ERROR("avm_unstruc_write_cells_nosize: tetCells is NULL");
+   if (priCells_size>0 && priCells==NULL) RETURN_ERROR("avm_unstruc_write_cells_nosize: priCells is NULL");
+   if (pyrCells_size>0 && pyrCells==NULL) RETURN_ERROR("avm_unstruc_write_cells_nosize: pyrCells is NULL");
+
+   if (nodesPerHex < 8) {
+      RETURN_ERROR("avm_unstruc_write_cells_nosize: invalid nodesPerHex (check cellPolyOrder >= 1)");
+   }
+   if (nodesPerTet < 4) {
+      RETURN_ERROR("avm_unstruc_write_cells_nosize: invalid nodesPerTet (check cellPolyOrder >= 1)");
+   }
+   if (nodesPerPri < 6) {
+      RETURN_ERROR("avm_unstruc_write_cells_nosize: invalid nodesPerPri (check cellPolyOrder >= 1)");
+   }
+   if (nodesPerPyr < 5) {
+      RETURN_ERROR("avm_unstruc_write_cells_nosize: invalid nodesPerPyr (check cellPolyOrder >= 1)");
+   }
+
+// byte swap
+   if (avf->byte_swap) {
+      for (size_t i=0; i<hexCells_size; ++i) byte_swap_int(hexCells+i);
+      for (size_t i=0; i<tetCells_size; ++i) byte_swap_int(tetCells+i);
+      for (size_t i=0; i<priCells_size; ++i) byte_swap_int(priCells+i);
+      for (size_t i=0; i<pyrCells_size; ++i) byte_swap_int(pyrCells+i);
+   }
+
+   if (avm_unstruc_seek_to(avf,"cells")) return 1;
+
+// Hex cells
+   if (hdr.nHexCells > 0) {
+      if (!fwrite(hexCells, sizeof(int)*hexCells_size, 1, avf->fp)) {
+         RETURN_ERROR("avm_unstruc_write_cells_nosize: failed writing hexCells array");
+      }
+   }
+
+// Tet cells
+   if (hdr.nTetCells > 0) {
+      if (!fwrite(tetCells, sizeof(int)*tetCells_size, 1, avf->fp)) {
+         RETURN_ERROR("avm_unstruc_write_cells_nosize: failed writing tetCells array");
+      }
+   }
+
+// Prism cells
+   if (hdr.nPriCells > 0) {
+      if (!fwrite(priCells, sizeof(int)*priCells_size, 1, avf->fp)) {
+         RETURN_ERROR("avm_unstruc_write_cells_nosize: failed writing priCells array");
+      }
+   }
+
+// Pyramid cells
+   if (hdr.nPyrCells > 0) {
+      if (!fwrite(pyrCells, sizeof(int)*pyrCells_size, 1, avf->fp)) {
+         RETURN_ERROR("avm_unstruc_write_cells_nosize: failed writing pyrCells array");
+      }
+   }
+
+// byte swap
+   if (avf->byte_swap) {
+      for (size_t i=0; i<hexCells_size; ++i) byte_swap_int(hexCells+i);
+      for (size_t i=0; i<tetCells_size; ++i) byte_swap_int(tetCells+i);
+      for (size_t i=0; i<priCells_size; ++i) byte_swap_int(priCells+i);
+      for (size_t i=0; i<pyrCells_size; ++i) byte_swap_int(pyrCells+i);
+   }
+
+   return 0;
+}
 int rev2::avm_unstruc_write_cells(rev2_avmesh_file* avf,
    int* hexCells, int hexCells_size,
    int* tetCells, int tetCells_size,
