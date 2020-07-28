@@ -220,6 +220,14 @@ class TestAVM(unittest.TestCase):
                                                  None,
                                                  None,
                                                  None),0)
+        #AVM.unstruc_write_cells_nosize(self.avmid,
+        #                                         hexCells,
+        #                                         None,
+        #                                         None,
+        #                                         None)
+        #errorMsg = AVM.get_error_str()
+        #print "ERROR MSG:", errorMsg
+
         self.assertEqual(AVM.close(self.avmid),0)
 
     def readMesh(self, p):

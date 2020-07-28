@@ -2839,10 +2839,10 @@ int rev2::avm_unstruc_write_cells_nosize(rev2_avmesh_file* avf,
    int nodesPerPri = avm_nodes_per_pri(hdr.cellPolyOrder);
    int nodesPerPyr = avm_nodes_per_pyr(hdr.cellPolyOrder);
 
-   hexCells_size = nodesPerHex*hdr.nHexCells;
-   tetCells_size = nodesPerTet*hdr.nTetCells;
-   priCells_size = nodesPerPri*hdr.nPriCells;
-   pyrCells_size = nodesPerPyr*hdr.nPyrCells;
+   hexCells_size = (size_t)nodesPerHex*hdr.nHexCells;
+   tetCells_size = (size_t)nodesPerTet*hdr.nTetCells;
+   priCells_size = (size_t)nodesPerPri*hdr.nPriCells;
+   pyrCells_size = (size_t)nodesPerPyr*hdr.nPyrCells;
 
    if (hexCells_size>0 && hexCells==NULL) RETURN_ERROR("avm_unstruc_write_cells_nosize: hexCells is NULL");
    if (tetCells_size>0 && tetCells==NULL) RETURN_ERROR("avm_unstruc_write_cells_nosize: tetCells is NULL");
