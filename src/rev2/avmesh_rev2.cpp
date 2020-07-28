@@ -2218,6 +2218,31 @@ int rev2::avm_unstruc_read_bnd_faces(rev2_avmesh_file* avf,
    return 0;
 }
 
+int rev2::avm_unstruc_read_cells_nosize(rev2_avmesh_file* avf,
+   int* hexCells,
+   int* tetCells,
+   int* priCells,
+   int* pyrCells)
+{
+   if (!avf) RETURN_ERROR("avm_unstruc_read_cells_nosize: avf is NULL");
+
+   int meshid = avf->selection_meshid-1;
+   if (meshid < 0 || meshid >= avf->file_hdr.meshCount) {
+      RETURN_ERROR("avm_unstruc_read_cells_nosize: invalid meshid");
+   }
+   if (0!=strncmp("unstruc", avf->mesh_hdrs[meshid].meshType, strlen("unstruc"))) {
+      RETURN_ERROR("avm_unstruc_read_cells_nosize: selected mesh is not an unstruc mesh");
+   }
+
+   const unstruc_header& hdr = avf->unstruc[meshid].header;
+
+   return(rev2::avm_unstruc_read_partial_cells_nosize(avf,
+                hexCells, 1, hdr.nHexCells,
+                tetCells, 1, hdr.nTetCells,
+                priCells, 1, hdr.nPriCells,
+                pyrCells, 1, hdr.nPyrCells));
+}
+
 int rev2::avm_unstruc_read_cells(rev2_avmesh_file* avf,
    int* hexCells, int hexCells_size,
    int* tetCells, int tetCells_size,
@@ -2241,6 +2266,127 @@ int rev2::avm_unstruc_read_cells(rev2_avmesh_file* avf,
                 tetCells, tetCells_size, 1, hdr.nTetCells,
                 priCells, priCells_size, 1, hdr.nPriCells,
                 pyrCells, pyrCells_size, 1, hdr.nPyrCells));
+}
+
+int rev2::avm_unstruc_read_partial_cells_nosize(rev2_avmesh_file* avf,
+   int* hexCells, int hexStart, int hexEnd,
+   int* tetCells, int tetStart, int tetEnd,
+   int* priCells, int priStart, int priEnd,
+   int* pyrCells, int pyrStart, int pyrEnd)
+{
+   if (!avf) RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: avf is NULL");
+
+   int meshid = avf->selection_meshid-1;
+   if (meshid < 0 || meshid >= avf->file_hdr.meshCount) {
+      RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: invalid meshid");
+   }
+   if (0!=strncmp("unstruc", avf->mesh_hdrs[meshid].meshType, strlen("unstruc"))) {
+      RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: selected mesh is not an unstruc mesh");
+   }
+
+   const unstruc_header& hdr = avf->unstruc[meshid].header;
+
+   size_t hexesToRead = hexEnd-hexStart+1;
+   size_t tetsToRead = tetEnd-tetStart+1;
+   size_t prisToRead = priEnd-priStart+1;
+   size_t pyrsToRead = pyrEnd-pyrStart+1;
+
+   //handle the zero hex/tet/pri/pyr case gracefully
+   if(hexStart < 0 && hexEnd < 0) hexesToRead = 0;
+   if(tetStart < 0 && tetEnd < 0) tetsToRead = 0;
+   if(priStart < 0 && priEnd < 0) prisToRead = 0;
+   if(pyrStart < 0 && pyrEnd < 0) pyrsToRead = 0;
+
+   int nodesPerHex = avm_nodes_per_hex(hdr.cellPolyOrder);
+   int nodesPerTet = avm_nodes_per_tet(hdr.cellPolyOrder);
+   int nodesPerPri = avm_nodes_per_pri(hdr.cellPolyOrder);
+   int nodesPerPyr = avm_nodes_per_pyr(hdr.cellPolyOrder);
+
+   size_t hexCells_size, tetCells_size, priCells_size, pyrCells_size;
+   hexCells_size = (size_t)nodesPerHex*hexesToRead;
+   tetCells_size = (size_t)nodesPerTet*tetsToRead;
+   priCells_size = (size_t)nodesPerPri*prisToRead;
+   pyrCells_size = (size_t)nodesPerPyr*pyrsToRead;
+
+   if (hexCells_size>0 && hexCells==NULL) RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: hexCells is NULL");
+   if (tetCells_size>0 && tetCells==NULL) RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: tetCells is NULL");
+   if (priCells_size>0 && priCells==NULL) RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: priCells is NULL");
+   if (pyrCells_size>0 && pyrCells==NULL) RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: pyrCells is NULL");
+
+   if (nodesPerHex < 8) {
+      RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: invalid nodesPerHex (check cellPolyOrder >= 1)");
+   }
+   if (nodesPerTet < 4) {
+      RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: invalid nodesPerTet (check cellPolyOrder >= 1)");
+   }
+   if (nodesPerPri < 6) {
+      RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: invalid nodesPerPri (check cellPolyOrder >= 1)");
+   }
+   if (nodesPerPyr < 5) {
+      RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: invalid nodesPerPyr (check cellPolyOrder >= 1)");
+   }
+
+   if (hexesToRead > 0 && hexStart > hdr.nHexCells) RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: hexStart cannot be greater than nHexCells");
+   if (hexesToRead > 0 && hexStart > hexEnd) RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: hexStart cannot be greater than hexEnd");
+   if (hexesToRead > 0 && hexEnd > hdr.nHexCells) RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: hexEnd cannot be greater than nHexCells");
+
+   if (tetsToRead > 0 && tetStart > hdr.nTetCells) RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: tetStart cannot be greater than nTetCells");
+   if (tetsToRead > 0 && tetStart > tetEnd) RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: tetStart cannot be greater than tetEnd");
+   if (tetsToRead > 0 && tetEnd > hdr.nTetCells) RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: tetEnd cannot be greater than nTetCells");
+
+   if (prisToRead > 0 && priStart > hdr.nPriCells) RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: priStart cannot be greater than nPriCells");
+   if (prisToRead > 0 && priStart > priEnd) RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: priStart cannot be greater than priEnd");
+   if (prisToRead > 0 && priEnd > hdr.nPriCells) RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: priEnd cannot be greater than nPriCells");
+
+   if (pyrsToRead > 0 && pyrStart > hdr.nPyrCells) RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: pyrStart cannot be greater than nPyrCells");
+   if (pyrsToRead > 0 && pyrStart > pyrEnd) RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: pyrStart cannot be greater than pyrEnd");
+   if (pyrsToRead > 0 && pyrEnd > hdr.nPyrCells) RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: pyrEnd cannot be greater than nPyrCells");
+
+   if (avm_unstruc_seek_to(avf,"hexes",hexStart-1)) return 1;
+
+// Hex cells
+   if (hdr.nHexCells > 0 && hexesToRead > 0) {
+      if (!fread(hexCells, sizeof(int)*nodesPerHex*hexesToRead, 1, avf->fp)) {
+         RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: failed reading hexCells array");
+      }
+   }
+
+   if (avm_unstruc_seek_to(avf,"tets",tetStart-1)) return 1;
+
+// Tet cells
+   if (hdr.nTetCells > 0 && tetsToRead > 0) {
+      if (!fread(tetCells, sizeof(int)*nodesPerTet*tetsToRead, 1, avf->fp)) {
+         RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: failed reading tetCells array");
+      }
+   }
+
+   if (avm_unstruc_seek_to(avf,"pris",priStart-1)) return 1;
+
+// Prism cells
+   if (hdr.nPriCells > 0 && prisToRead > 0) {
+      if (!fread(priCells, sizeof(int)*nodesPerPri*prisToRead, 1, avf->fp)) {
+         RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: failed reading priCells array");
+      }
+   }
+
+   if (avm_unstruc_seek_to(avf,"pyrs",pyrStart-1)) return 1;
+
+// Pyramid cells
+   if (hdr.nPyrCells > 0 && pyrsToRead > 0) {
+      if (!fread(pyrCells, sizeof(int)*nodesPerPyr*pyrsToRead, 1, avf->fp)) {
+         RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: failed reading pyrCells array");
+      }
+   }
+
+// byte swap
+   if (avf->byte_swap) {
+      for (size_t i=0; i<hexCells_size; ++i) byte_swap_int(hexCells+i);
+      for (size_t i=0; i<tetCells_size; ++i) byte_swap_int(tetCells+i);
+      for (size_t i=0; i<priCells_size; ++i) byte_swap_int(priCells+i);
+      for (size_t i=0; i<pyrCells_size; ++i) byte_swap_int(pyrCells+i);
+   }
+
+   return 0;
 }
 
 int rev2::avm_unstruc_read_partial_cells(rev2_avmesh_file* avf,

@@ -167,11 +167,23 @@ int avm_unstruc_read_bnd_faces(rev2_avmesh_file* avf,
    int* bndTriFaces,  int bndTriFaces_size,
    int* bndQuadFaces, int bndQuadFaces_size
 );
+int avm_unstruc_read_cells_nosize(rev2_avmesh_file* avf,
+   int* hexCells,
+   int* tetCells,
+   int* priCells,
+   int* pyrCells
+);
 int avm_unstruc_read_cells(rev2_avmesh_file* avf,
    int* hexCells, int hexCells_size,
    int* tetCells, int tetCells_size,
    int* priCells, int priCells_size,
    int* pyrCells, int pyrCells_size
+);
+int avm_unstruc_read_partial_cells_nosize(rev2_avmesh_file* avf,
+   int* hexCells, int hexStart, int hexEnd,
+   int* tetCells, int tetStart, int tetEnd,
+   int* priCells, int priStart, int priEnd,
+   int* pyrCells, int pyrStart, int pyrEnd
 );
 int avm_unstruc_read_partial_cells(rev2_avmesh_file* avf,
    int* hexCells, int hexCells_size, int hexStart, int hexEnd,

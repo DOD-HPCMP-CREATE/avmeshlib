@@ -1007,6 +1007,26 @@ int avm_unstruc_read_bnd_faces(int avmid,
    This routine is used to read in the cells for an unstructured mesh.
    For 2D cases, use hexCells/tetCells only. In this case, each "cell" is actually a face, so 3 or 4 points should
    be specified, depending on whether triangles or quads are used. The unused indices should be set to -1.
+   This version does not check against array size arguments passed by the user. This is to accomadate large meshes
+   where 8*nHexes (for example) would overflow an int. Rev3 will use an int64 interface to better avoid this issue.
+@param[in] fileid - fileid as returned from @ref avm_read_headers
+@param[in] hexCells - For each cell: 8 node indices. Length in bytes = 8 * nHexCells * 4
+@param[in] tetCells - For each cell: 4 node indices. Length in bytes = 4 * nTetCells * 4
+@param[in] priCells - For each cell: 6 node indices. Length in bytes = 6 * nPriCells * 4
+@param[in] pyrCells - For each cell: 5 node indices. Length in bytes = 5 * nPyrCells * 4
+@return 0 on success, >0 on failure
+*/
+int avm_unstruc_read_cells_nosize(int avmid,
+   int* hexCells,
+   int* tetCells,
+   int* priCells,
+   int* pyrCells
+);
+/**
+@brief Read unstructured cell data.
+   This routine is used to read in the cells for an unstructured mesh.
+   For 2D cases, use hexCells/tetCells only. In this case, each "cell" is actually a face, so 3 or 4 points should
+   be specified, depending on whether triangles or quads are used. The unused indices should be set to -1.
 @param[in] fileid - fileid as returned from @ref avm_read_headers
 @param[in] hexCells - For each cell: 8 node indices. Length in bytes = 8 * nHexCells * 4
 @param[in] hexCells_size - number of elements in hexCells array
@@ -1025,6 +1045,35 @@ int avm_unstruc_read_cells(int avmid,
    int* pyrCells, int pyrCells_size
 );
 
+/**
+@brief Read unstructured cell data.
+   This routine is used to read in a contiguous portion of the cells for an unstructured mesh.
+   For 2D cases, use hexCells/tetCells only. In this case, each "cell" is actually a face, so 3 or 4 points should
+   be specified, depending on whether triangles or quads are used. The unused indices should be set to -1.
+   If you don't want to read a certain cell type at all, pass a size of zero, and start/end indices of -1.
+   This version does not check against array size arguments passed by the user. This is to accomadate large meshes
+   where 8*nHexes (for example) would overflow an int. Rev3 will use an int64 interface to better avoid this issue.
+@param[in] fileid - fileid as returned from @ref avm_read_headers
+@param[in] hexCells - For each cell: 8 node indices. Length in bytes = 8 * nHexCells * 4
+@param[in] hexStart - first hexFace to read
+@param[in] hexEnd - last hexFace to read
+@param[in] tetCells - For each cell: 4 node indices. Length in bytes = 4 * nTetCells * 4
+@param[in] tetStart - first tetFace to read
+@param[in] tetEnd - last tetFace to read
+@param[in] priCells - For each cell: 6 node indices. Length in bytes = 6 * nPriCells * 4
+@param[in] priStart - first priFace to read
+@param[in] priEnd - last priFace to read
+@param[in] pyrCells - For each cell: 5 node indices. Length in bytes = 5 * nPyrCells * 4
+@param[in] pyrStart - first pyrFace to read
+@param[in] pyrEnd - last pyrFace to read
+@return 0 on success, >0 on failure
+*/
+int avm_unstruc_read_partial_cells_nosize(int avmid,
+   int* hexCells, int hexStart, int hexEnd,
+   int* tetCells, int tetStart, int tetEnd,
+   int* priCells, int priStart, int priEnd,
+   int* pyrCells, int pyrStart, int pyrEnd
+);
 /**
 @brief Read unstructured cell data.
    This routine is used to read in a contiguous portion of the cells for an unstructured mesh.
@@ -1187,13 +1236,9 @@ int avm_unstruc_write_bnd_faces(int avmid,
    where 8*nHexes (for example) would overflow an int. Rev3 will use an int64 interface to better avoid this issue.
 @param[in] fileid - fileid as returned from @ref avm_read_headers
 @param[in] hexCells - For each cell: 8 node indices. Length in bytes = 8 * nHexCells * 4
-@param[in] hexCells_size - number of elements in hexCells array
 @param[in] tetCells - For each cell: 4 node indices. Length in bytes = 4 * nTetCells * 4
-@param[in] tetCells_size - number of elements in tetCells array
 @param[in] priCells - For each cell: 6 node indices. Length in bytes = 6 * nPriCells * 4
-@param[in] priCells_size - number of elements in priCells array
 @param[in] pyrCells - For each cell: 5 node indices. Length in bytes = 5 * nPyrCells * 4
-@param[in] pyrCells_size - number of elements in pyrCells array
 @return 0 on success, >0 on failure
 */
 int avm_unstruc_write_cells_nosize(int avmid,

@@ -1460,6 +1460,29 @@ int avm_unstruc_read_bnd_faces(int fileid,
    RETURN_ERROR("avm_unstruc_read_bnd_faces: unsupported formatRevision in file");
 }
 
+int avm_unstruc_read_cells_nosize(int fileid,
+   int* hexCells,
+   int* tetCells,
+   int* priCells,
+   int* pyrCells)
+{
+   avmesh_file *avf = file_list[fileid];
+   if (!avf) RETURN_ERROR("avm_unstruc_read_cells_nosize: fileid invalid");
+
+   if (avf->formatRevision == 0 || avf->formatRevision == 1) {
+      RETURN_ERROR("avm_unstruc_read_cells_nosize: This call is only supported in formatRevision 2");
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_read_cells_nosize(avf->rev2, 
+                                hexCells,
+                                tetCells,
+                                priCells,
+                                pyrCells);
+   }
+
+   RETURN_ERROR("avm_unstruc_read_cells_nosize: unsupported formatRevision in file");
+}
+
 int avm_unstruc_read_cells(int fileid,
    int* hexCells, int hexCells_size,
    int* tetCells, int tetCells_size,
@@ -1493,6 +1516,29 @@ int avm_unstruc_read_cells(int fileid,
    }
 
    RETURN_ERROR("avm_unstruc_read_cells: unsupported formatRevision in file");
+}
+
+int avm_unstruc_read_partial_cells_nosize(int fileid,
+   int* hexCells, int hexStart, int hexEnd,
+   int* tetCells, int tetStart, int tetEnd,
+   int* priCells, int priStart, int priEnd,
+   int* pyrCells, int pyrStart, int pyrEnd)
+{
+   avmesh_file *avf = file_list[fileid];
+   if (!avf) RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: fileid invalid");
+
+   if (avf->formatRevision == 0 || avf->formatRevision == 1) {
+      RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: This call is only supported in formatRevision 1+");
+   }
+   else if (avf->formatRevision == 2) {
+      return rev2::avm_unstruc_read_partial_cells_nosize(avf->rev2, 
+                                hexCells,  hexStart,  hexEnd,
+                                tetCells,  tetStart,  tetEnd,
+                                priCells,  priStart,  priEnd,
+                                pyrCells,  pyrStart,  pyrEnd);
+   }
+
+   RETURN_ERROR("avm_unstruc_read_partial_cells_nosize: unsupported formatRevision in file");
 }
 
 int avm_unstruc_read_partial_cells(int fileid,
@@ -2375,6 +2421,32 @@ void FTNFUNC(avm_unstruc_read_cells)(int* fileid,
                tetCells, *tetCells_size,
                priCells, *priCells_size,
                pyrCells, *pyrCells_size);
+}
+void FTNFUNC(avm_unstruc_read_cells_nosize)(int* fileid,
+   int* hexCells,
+   int* tetCells,
+   int* priCells,
+   int* pyrCells,
+   int* status
+) {
+ *status = avm_unstruc_read_cells_nosize(*fileid,
+               hexCells,
+               tetCells,
+               priCells,
+               pyrCells);
+}
+void FTNFUNC(avm_unstruc_read_partial_cells_nosize)(int* fileid,
+   int* hexCells, int *hexStart, int *hexEnd,
+   int* tetCells, int *tetStart, int *tetEnd,
+   int* priCells, int *priStart, int *priEnd,
+   int* pyrCells, int *pyrStart, int *pyrEnd,
+   int* status
+) {
+ *status = avm_unstruc_read_partial_cells_nosize(*fileid,
+               hexCells, *hexStart, *hexEnd,
+               tetCells, *tetStart, *tetEnd,
+               priCells, *priStart, *priEnd,
+               pyrCells, *pyrStart, *pyrEnd);
 }
 void FTNFUNC(avm_unstruc_read_partial_cells)(int* fileid,
    int* hexCells, int *hexCells_size, int *hexStart, int *hexEnd,
