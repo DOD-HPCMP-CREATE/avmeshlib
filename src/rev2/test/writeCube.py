@@ -1,6 +1,7 @@
 import sys
 import os
-sys.path.append('../..')
+#sys.path.append('../..')
+sys.path.append('/home/bpittman/src/avmeshlib.git/INSTALL/python')
 import avmeshlib as AVM
 import unittest
 
@@ -12,7 +13,7 @@ class TestAVM(unittest.TestCase):
 
     def test_largeCube(self):
         #go up to 648x648x648 to overflow int
-        self.writeCube(648)
+        self.writeCube(894)
         #self.readMesh()
 
     def tearDown(self):
@@ -110,6 +111,7 @@ class TestAVM(unittest.TestCase):
         priCells = None
         pyrCells = None
 
+        print "computing nodes..."
         for z in range(size):
             for y in range(size):
                 for x in range(size):
@@ -118,60 +120,63 @@ class TestAVM(unittest.TestCase):
                     xyz[i+1] = y
                     xyz[i+2] = z
 
+        print "writing nodes..."
         self.assertEqual(AVM.unstruc_write_nodes_r8(self.avmid, xyz, nNodes*3),0)
 
+        print "computing faces..."
         for y in range(size-1):
             for x in range(size-1):
                 #add the z=0 faces
                 i = (x + y*(size-1)) * 5
                 quadFaces[i]   = x     + (y     * size) + 1
-                quadFaces[i+1] = x     + ((y+1) * size) + 1
+                quadFaces[i+1] = (x+1) + (y     * size) + 1
                 quadFaces[i+2] = (x+1) + ((y+1) * size) + 1
-                quadFaces[i+3] = (x+1) + (y     * size) + 1
+                quadFaces[i+3] = x     + ((y+1) * size) + 1
                 quadFaces[i+4] = -1                     #patchID
                 #add the z=size faces
                 z=size-1
                 i = (x + y*(size-1) + z**2) * 5
                 quadFaces[i]   = x     + (y     * size) + (z*size**2) + 1
-                quadFaces[i+1] = (x+1) + (y     * size) + (z*size**2) + 1
+                quadFaces[i+1] = x     + ((y+1) * size) + (z*size**2) + 1
                 quadFaces[i+2] = (x+1) + ((y+1) * size) + (z*size**2) + 1
-                quadFaces[i+3] = x     + ((y+1) * size) + (z*size**2) + 1
+                quadFaces[i+3] = (x+1) + (y     * size) + (z*size**2) + 1
                 quadFaces[i+4] = -1                     #patchID
         for z in range(size-1):
             for y in range(size-1):
                 #add the x=0 faces
                 i = (y + z*(size-1) + 2*((size-1)**2)) * 5
                 quadFaces[i]   = y*size     + (z     * size**2) + 1
-                quadFaces[i+1] = y*size     + ((z+1) * size**2) + 1
+                quadFaces[i+1] = (y+1)*size + (z     * size**2) + 1
                 quadFaces[i+2] = (y+1)*size + ((z+1) * size**2) + 1
-                quadFaces[i+3] = (y+1)*size + (z     * size**2) + 1
+                quadFaces[i+3] = y*size     + ((z+1) * size**2) + 1
                 quadFaces[i+4] = -1                     #patchID
                 #add the x=size faces
                 x=size-1
                 i = (y + z*(size-1) + x**2 + 2*((size-1)**2)) * 5
                 quadFaces[i]   = y*size     + (z     * size**2) + (size-1) + 1
-                quadFaces[i+1] = (y+1)*size + (z     * size**2) + (size-1) + 1
+                quadFaces[i+1] = y*size     + ((z+1) * size**2) + (size-1) + 1
                 quadFaces[i+2] = (y+1)*size + ((z+1) * size**2) + (size-1) + 1
-                quadFaces[i+3] = y*size     + ((z+1) * size**2) + (size-1) + 1
+                quadFaces[i+3] = (y+1)*size + (z     * size**2) + (size-1) + 1
                 quadFaces[i+4] = -1                     #patchID
         for z in range(size-1):
             for x in range(size-1):
                 #add the y=0 faces
                 i = (x + z*(size-1) + 4*((size-1)**2)) * 5
                 quadFaces[i]   = x     + (z     * size**2) + 1
-                quadFaces[i+1] = (x+1) + (z     * size**2) + 1
+                quadFaces[i+1] = x     + ((z+1) * size**2) + 1
                 quadFaces[i+2] = (x+1) + ((z+1) * size**2) + 1
-                quadFaces[i+3] = x     + ((z+1) * size**2) + 1
+                quadFaces[i+3] = (x+1) + (z     * size**2) + 1
                 quadFaces[i+4] = -1                     #patchID
                 #add the y=size faces
                 y=size-1
                 i = (x + z*(size-1) + y**2 + 4*((size-1)**2)) * 5
                 quadFaces[i]   = x     + (z     * size**2) + (size*(size-1)) + 1
-                quadFaces[i+1] = x     + ((z+1) * size**2) + (size*(size-1)) + 1
+                quadFaces[i+1] = (x+1) + (z     * size**2) + (size*(size-1)) + 1
                 quadFaces[i+2] = (x+1) + ((z+1) * size**2) + (size*(size-1)) + 1
-                quadFaces[i+3] = (x+1) + (z     * size**2) + (size*(size-1)) + 1
+                quadFaces[i+3] = x     + ((z+1) * size**2) + (size*(size-1)) + 1
                 quadFaces[i+4] = -1                     #patchID
 
+        print "writing faces..."
         self.assertEqual(AVM.unstruc_write_faces(self.avmid,
                                                  None, 0,
                                                  quadFaces, nQuadFaces*5),0)
@@ -194,19 +199,20 @@ class TestAVM(unittest.TestCase):
 
         #print
 
+        print "computing cells..."
         for z in range(size-1):
             for y in range(size-1):
                 for x in range(size-1):
                     i = (x + y*(size-1) + z*((size-1)**2)) * 8
                     hexCells[i]   = x     + y*size     + (z+1)*(size**2) + 1
-                    hexCells[i+1] = (x+1) + y*size     + (z+1)*(size**2) + 1
+                    hexCells[i+1] = x     + (y+1)*size + (z+1)*(size**2) + 1
                     hexCells[i+2] = (x+1) + (y+1)*size + (z+1)*(size**2) + 1
-                    hexCells[i+3] = x     + (y+1)*size + (z+1)*(size**2) + 1
+                    hexCells[i+3] = (x+1) + y*size     + (z+1)*(size**2) + 1
 
                     hexCells[i+4] = x     + y*size     + z*(size**2) + 1
-                    hexCells[i+5] = (x+1) + y*size     + z*(size**2) + 1
+                    hexCells[i+5] = x     + (y+1)*size + z*(size**2) + 1
                     hexCells[i+6] = (x+1) + (y+1)*size + z*(size**2) + 1
-                    hexCells[i+7] = x     + (y+1)*size + z*(size**2) + 1
+                    hexCells[i+7] = (x+1) + y*size     + z*(size**2) + 1
  
 
         #print "cells: ",
@@ -215,6 +221,7 @@ class TestAVM(unittest.TestCase):
         #    print hexCells[i],
         #print
 
+        print "writing cells..."
         self.assertEqual(AVM.unstruc_write_cells_nosize(self.avmid,
                                                  hexCells,
                                                  None,
