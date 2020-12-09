@@ -25,12 +25,12 @@ install (TARGETS avmesh_static DESTINATION lib)
 install (FILES avmesh.h DESTINATION include)
 
 if (ENABLE_PYTHON)
-   swig_add_module (avmeshlib python avmeshlib.i ${CPP_SRCS})
-   swig_link_libraries (avmeshlib ${PYTHON_LIBRARIES})
+   swig_add_library (avmeshlib LANGUAGE python SOURCES avmeshlib.i ${CPP_SRCS})
+   target_link_libraries (avmeshlib ${Python_LIBRARIES})
    add_custom_command(TARGET avmesh_shared
-                      COMMAND ${PYTHON_EXECUTABLE} -O -m compileall -f -q ${CMAKE_CURRENT_BINARY_DIR}/avmeshlib.py)
+                      COMMAND ${Python_EXECUTABLE} -O -m compileall -f -q ${CMAKE_CURRENT_BINARY_DIR}/avmeshlib.py)
    add_custom_command(TARGET avmesh_shared
-                      COMMAND ${PYTHON_EXECUTABLE} -m compileall -f -q ${CMAKE_CURRENT_BINARY_DIR}/avmeshlib.py)
+                      COMMAND ${Python_EXECUTABLE} -m compileall -f -q ${CMAKE_CURRENT_BINARY_DIR}/avmeshlib.py)
    install (FILES avmeshlib.py _avmeshlib.so DESTINATION python)
    install (FILES avmeshlib.pyc avmeshlib.pyo DESTINATION python OPTIONAL)
 endif (ENABLE_PYTHON)

@@ -1,5 +1,11 @@
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 3.12)
 project (avmeshlib)
+
+if(POLICY CMP0078)
+    # CMP0078: ``UseSWIG`` generated standard target name.
+    # cmake 3.13.5 warns if this policy is not set, and defaults to OLD.
+    cmake_policy(SET CMP0078 NEW)
+endif()
 
 option (ENABLE_FORTRAN "Enable Fortran API. Requires Fortran compiler" OFF)
 option (ENABLE_PYTHON "Enable Python API." OFF)
@@ -29,9 +35,9 @@ endif (EXISTS "${GTEST_DIR}")
 if (ENABLE_PYTHON)
    find_package (SWIG REQUIRED)
    include (UseSWIG)
-   include (FindPythonInterp)
-   include (FindPythonLibs)
-   include_directories (${PYTHON_INCLUDE_DIRS})
+   find_package (Python 3 COMPONENTS Interpreter Development REQUIRED)
+   set(CMAKE_SWIG_FLAGS -py3)
+   include_directories (${Python_INCLUDE_DIRS})
 endif (ENABLE_PYTHON)
 
 IF(COMPILER_FAMILY STREQUAL "intel")

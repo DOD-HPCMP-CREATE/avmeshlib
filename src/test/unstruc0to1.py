@@ -4,12 +4,12 @@ import avmeshlib as AVM
 
 def checkError(err,msg):
    if err != 0:
-      print msg
+      print(msg)
       sys.exit(1)
 
 if __name__ == '__main__':
    if len(sys.argv) < 3:
-      print "USAGE: python unstruc0to1.py <input_mesh> <output_mesh>"
+      print("USAGE: python unstruc0to1.py <input_mesh> <output_mesh>")
       sys.exit(1)
 
    err, rev0id = AVM.read_headers(sys.argv[1])
@@ -24,7 +24,7 @@ if __name__ == '__main__':
    
    err, meshCount = AVM.get_int(rev0id, 'meshCount')
    checkError(err,"get meshCount failed")
-   print "meshCount", meshCount
+   print("meshCount", meshCount)
 
    err, contactName = AVM.get_str(rev0id, 'contactName', 128)
    checkError(err,"get contactName failed")
@@ -32,22 +32,22 @@ if __name__ == '__main__':
    checkError(err,"get contactOrg failed")
    err, contactEmail = AVM.get_str(rev0id, 'contactEmail', 128)
    checkError(err,"get contactEmail failed")
-   print "contactName", contactName
-   print "contactOrg", contactOrg
-   print "contactEmail", contactEmail
+   print("contactName", contactName)
+   print("contactOrg", contactOrg)
+   print("contactEmail", contactEmail)
 
    err, precision = AVM.get_int(rev0id, 'precision')
    checkError(err,"get precision failed")
-   print "precision", precision
+   print("precision", precision)
    err, dimensions = AVM.get_int(rev0id, 'dimensions')
    checkError(err,"get dimensions failed")
-   print "dimensions", dimensions
+   print("dimensions", dimensions)
    err, descriptionSize = AVM.get_int(rev0id, 'descriptionSize')
    checkError(err,"get descriptionSize failed")
-   print "descriptionSize", descriptionSize
+   print("descriptionSize", descriptionSize)
    err, description = AVM.get_str(rev0id, 'description', descriptionSize)
    checkError(err,"get description failed")
-   print "description", description
+   print("description", description)
 
    #write rev1 file header
    err = AVM.select(rev1id, 'header', 0)
@@ -95,7 +95,7 @@ if __name__ == '__main__':
 
       err, nNodes = AVM.get_int(rev0id, 'nNodes')
       checkError(err,"get nNodes failed")
-      print "nNodes", nNodes
+      print("nNodes", nNodes)
       err, nFaces = AVM.get_int(rev0id, 'nFaces')
       checkError(err,"get nFaces failed")
       err, nMaxNodesPerFace = AVM.get_int(rev0id, 'nMaxNodesPerFace')
@@ -116,7 +116,7 @@ if __name__ == '__main__':
       checkError(err,"get nMaxFacesPerCell failed")
       err, nPatches = AVM.get_int(rev0id, 'nPatches')
       checkError(err,"get nPatches failed")
-      print "nPatches", nPatches
+      print("nPatches", nPatches)
 
       #write rev1 mesh headers
       err = AVM.select(rev1id, 'mesh', meshNum)
@@ -164,7 +164,7 @@ if __name__ == '__main__':
       err = AVM.set_int(rev1id, 'nPatches', nPatches)
       checkError(err,"set nPatches failed")
 
-      print "nPatches", nPatches
+      print("nPatches", nPatches)
       for patchNum in range(1,nPatches+1):
          #read rev0 patch headers
          err = AVM.select(rev0id, 'patch', patchNum)
@@ -175,7 +175,7 @@ if __name__ == '__main__':
          checkError(err,"get patchType failed")
          err, patchId = AVM.get_int(rev0id, 'patchId')
          checkError(err,"get patchId failed")
-         print patchLabel, patchType, patchId
+         print(patchLabel, patchType, patchId)
 
          #write rev1 patch headers
          err = AVM.select(rev1id, 'patch', patchNum)

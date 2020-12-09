@@ -123,11 +123,11 @@ class TestAVM(unittest.TestCase):
          edgeTag, nBndEdges)
       self.assertEqual(0, err)
 
-      for i in xrange(nTriFaces):
-         for j in xrange(3):
+      for i in range(nTriFaces):
+         for j in range(3):
             self.assertEqual(i+1+j+1, triFaces[(i*3)+j])
 
-      for i in xrange(nPtsPerStrand):
+      for i in range(nPtsPerStrand):
          self.assertEqual(i, xStrand[i])
 
    def test_unstruc(self):
@@ -230,7 +230,7 @@ class TestAVM(unittest.TestCase):
       err, nBlocks = AVM.get_int(self.avmid, 'nBlocks')
       self.assertEqual(0, err)
       
-      for blockid in xrange(1, nBlocks+1):
+      for blockid in range(1, nBlocks+1):
          err = AVM.select(self.avmid, 'block', blockid)
          self.assertEqual(0, err)
          err, iblFlag = AVM.get_int(self.avmid, 'iblFlag')

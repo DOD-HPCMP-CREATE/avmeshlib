@@ -258,7 +258,7 @@ class TestAVM(unittest.TestCase):
          # check the first couple and last node 
          # node 1
          for i in range(0,nNodes*3):
-            print xyz[i]
+            print(xyz[i])
          p = (0*3)
          self.assertAlmostEqual(0.0,xyz[p+0])
          self.assertAlmostEqual(0.0,xyz[p+1])

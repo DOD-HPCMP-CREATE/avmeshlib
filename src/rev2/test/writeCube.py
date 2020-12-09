@@ -111,7 +111,7 @@ class TestAVM(unittest.TestCase):
         priCells = None
         pyrCells = None
 
-        print "computing nodes..."
+        print("computing nodes...")
         for z in range(size):
             for y in range(size):
                 for x in range(size):
@@ -120,10 +120,10 @@ class TestAVM(unittest.TestCase):
                     xyz[i+1] = y
                     xyz[i+2] = z
 
-        print "writing nodes..."
+        print("writing nodes...")
         self.assertEqual(AVM.unstruc_write_nodes_r8(self.avmid, xyz, nNodes*3),0)
 
-        print "computing faces..."
+        print("computing faces...")
         for y in range(size-1):
             for x in range(size-1):
                 #add the z=0 faces
@@ -176,7 +176,7 @@ class TestAVM(unittest.TestCase):
                 quadFaces[i+3] = x     + ((z+1) * size**2) + (size*(size-1)) + 1
                 quadFaces[i+4] = -1                     #patchID
 
-        print "writing faces..."
+        print("writing faces...")
         self.assertEqual(AVM.unstruc_write_faces(self.avmid,
                                                  None, 0,
                                                  quadFaces, nQuadFaces*5),0)
@@ -199,7 +199,7 @@ class TestAVM(unittest.TestCase):
 
         #print
 
-        print "computing cells..."
+        print("computing cells...")
         for z in range(size-1):
             for y in range(size-1):
                 for x in range(size-1):
@@ -221,7 +221,7 @@ class TestAVM(unittest.TestCase):
         #    print hexCells[i],
         #print
 
-        print "writing cells..."
+        print("writing cells...")
         self.assertEqual(AVM.unstruc_write_cells_nosize(self.avmid,
                                                  hexCells,
                                                  None,

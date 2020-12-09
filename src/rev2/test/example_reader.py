@@ -17,19 +17,19 @@ err, contactName = avmesh.get_str(avmid, 'contactName', 128)
 ref_point = avmesh.r8Array(3)
 avmesh.get_real_array(avmid, 'referencePoint', ref_point, 3)
 
-print 'Mesh Count is %d' % meshCount
+print('Mesh Count is %d' % meshCount)
 
-for i in xrange(1, meshCount+1):
+for i in range(1, meshCount+1):
    avmesh.select(avmid, 'mesh', i)
    err, name = avmesh.get_str(avmid, 'meshName', 128)
    err, type = avmesh.get_str(avmid, 'meshType', 128)
    err, modelScale = avmesh.get_real(avmid, 'modelScale')
    avmesh.get_real_array(avmid, 'referencePoint', ref_point, 3)
 
-   print  "Mesh #%d named '%s' is type '%s'" % (i, name, type)
-   print  'Model Scale is %f' % modelScale
-   print  'Reference Point is %f, %f, %f' \
-          % (ref_point[0], ref_point[1], ref_point[2])
+   print("Mesh #%d named '%s' is type '%s'" % (i, name, type))
+   print('Model Scale is %f' % modelScale)
+   print('Reference Point is %f, %f, %f' \
+          % (ref_point[0], ref_point[1], ref_point[2]))
 
    if type == 'strand':
       err, nBndEdges = avmesh.get_int(avmid, 'nBndEdges')

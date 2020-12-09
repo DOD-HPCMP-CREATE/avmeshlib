@@ -279,7 +279,7 @@ class TestAVM(unittest.TestCase):
 
 if __name__ == '__main__':
    if len(sys.argv) < 3:
-      print "USAGE: python compare0to1.py <rev0_mesh> <rev1_mesh>"
+      print("USAGE: python compare0to1.py <rev0_mesh> <rev1_mesh>")
       sys.exit(1)
 
    unittest.main(argv=sys.argv[:1])

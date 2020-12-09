@@ -108,13 +108,13 @@ for filename in sys.argv[1:]:
             tdstr = tdstr.strip()
             tds.append(TypeDef(tdstr)) 
 
-print 'Name,Bytes,Type,Default,Description'
+print('Name,Bytes,Type,Default,Description')
 
 typeMap = {'int':'Integer','double':'Float','char':'String'}
 
 for td in tds:
-   print td.name
+   print(td.name)
    for field in td.fields:
-      print '%s,%s,%s,...,%s' % (field['name'], field['bytes'], 
-      typeMap[field['type']], field['description'].replace(',',''))
-   print
+      print('%s,%s,%s,...,%s' % (field['name'], field['bytes'], 
+      typeMap[field['type']], field['description'].replace(',','')))
+   print()
