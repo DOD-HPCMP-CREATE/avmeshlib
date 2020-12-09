@@ -80,7 +80,7 @@ if (BUILD_UNIT_TESTS)
    PROPERTIES DEPENDS rev2_unstruc_write_with_pure_fortran)
 endif (BUILD_UNIT_TESTS)
 if (ENABLE_PYTHON)
-   add_test (rev2_unstruc_tests_with_fortran_written_file_w_pythonAPI python unstruc_tests.py unstruc_ftn.avm)
+   add_test (rev2_unstruc_tests_with_fortran_written_file_w_pythonAPI python3 unstruc_tests.py unstruc_ftn.avm)
    set_tests_properties(
    rev2_unstruc_tests_with_fortran_written_file_w_pythonAPI
    PROPERTIES DEPENDS rev2_unstruc_write_with_pure_fortran)
@@ -107,7 +107,7 @@ if (BUILD_UNIT_TESTS)
    PROPERTIES DEPENDS rev2_unstruc_write_with_avmeshlib)
 endif (BUILD_UNIT_TESTS)
 if (ENABLE_PYTHON)
-   add_test (rev2_unstruc_tests_with_avmeshlib_written_file_w_pythonAPI python unstruc_tests.py unstruc_avm.avm)
+   add_test (rev2_unstruc_tests_with_avmeshlib_written_file_w_pythonAPI python3 unstruc_tests.py unstruc_avm.avm)
    set_tests_properties(
    rev2_unstruc_tests_with_avmeshlib_written_file_w_pythonAPI
    PROPERTIES DEPENDS rev2_unstruc_write_with_avmeshlib)
@@ -123,7 +123,7 @@ PROPERTIES PASS_REGULAR_EXPRESSION "Successfully read"
 DEPENDS rev2_unstruc_write_out_of_order)
 
 if (ENABLE_PYTHON)
-   add_test (rev2_higher_order_python_tests python higherOrder.py)
+   add_test (rev2_higher_order_python_tests python3 higherOrder.py)
 endif (ENABLE_PYTHON)
 
 ####
@@ -177,11 +177,11 @@ if (BUILD_UNIT_TESTS)
 endif (BUILD_UNIT_TESTS)
 
 if (ENABLE_PYTHON)
-   add_test (rev2_mixed_tests.py python mixed_tests.py)
+   add_test (rev2_mixed_tests.py python3 mixed_tests.py)
    set_tests_properties(rev2_mixed_tests.py
    PROPERTIES DEPENDS rev2_mixed_write_with_pure_fortran)
 
-   add_test (rev2_mesh_size_tests.py python mesh_size_tests.py)
+   add_test (rev2_mesh_size_tests.py python3 mesh_size_tests.py)
    set_tests_properties(rev2_mesh_size_tests.py
    PROPERTIES DEPENDS rev2_example_offset.exe)
 endif (ENABLE_PYTHON)
@@ -212,7 +212,7 @@ PROPERTIES PASS_REGULAR_EXPRESSION
 DEPENDS rev2_mixed_write_with_pure_fortran)
 
 if (ENABLE_PYTHON)
-   add_test (rev2_example_reader.py python example_reader.py)
+   add_test (rev2_example_reader.py python3 example_reader.py)
    set_tests_properties (rev2_example_reader.py
    PROPERTIES PASS_REGULAR_EXPRESSION
    "Mesh Count is 2")

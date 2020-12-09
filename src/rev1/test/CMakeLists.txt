@@ -113,7 +113,7 @@ if (SUPPORTED_COMPILER)
       PROPERTIES DEPENDS unstruc_write_with_pure_fortran)
    endif (BUILD_UNIT_TESTS)
    if (ENABLE_PYTHON)
-      add_test (unstruc_tests_with_fortran_written_file_w_pythonAPI python unstruc_tests.py)
+      add_test (unstruc_tests_with_fortran_written_file_w_pythonAPI python3 unstruc_tests.py)
       set_tests_properties(
       unstruc_tests_with_fortran_written_file_w_pythonAPI
       PROPERTIES DEPENDS unstruc_write_with_pure_fortran)
@@ -144,7 +144,7 @@ if (BUILD_UNIT_TESTS)
    PROPERTIES DEPENDS unstruc_write_with_avmeshlib)
 endif (BUILD_UNIT_TESTS)
 if (ENABLE_PYTHON)
-   add_test (unstruc_tests_with_avmeshlib_written_file_w_pythonAPI python unstruc_tests.py)
+   add_test (unstruc_tests_with_avmeshlib_written_file_w_pythonAPI python3 unstruc_tests.py)
    set_tests_properties(
    unstruc_tests_with_avmeshlib_written_file_w_pythonAPI
    PROPERTIES DEPENDS unstruc_write_with_avmeshlib)
@@ -244,7 +244,7 @@ if (SUPPORTED_COMPILER)
    endif (BUILD_UNIT_TESTS)
 
    if (ENABLE_PYTHON)
-      add_test (mixed_tests.py python mixed_tests.py)
+      add_test (mixed_tests.py python3 mixed_tests.py)
       set_tests_properties(mixed_tests.py
       PROPERTIES DEPENDS mixed_write_with_pure_fortran)
    endif (ENABLE_PYTHON)
@@ -281,7 +281,7 @@ endif (SUPPORTED_COMPILER)
 
 if (SUPPORTED_COMPILER)
 if (ENABLE_PYTHON)
-   add_test (example_reader.py python example_reader.py)
+   add_test (example_reader.py python3 example_reader.py)
    set_tests_properties (example_reader.py
    PROPERTIES PASS_REGULAR_EXPRESSION
    "Mesh Count is 4")
